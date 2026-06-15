@@ -15,7 +15,15 @@
 
 var SUBMISSIONS = 'Submissions';
 var ANSWER_KEY  = 'AnswerKey';
-var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display', 'Answer 1', 'Answer 2', 'Answer 3'];
+var MAX_PROBLEMS = 6;   // supports 3–6 problems/week; AnswerKey/Submissions use Answer 1..6
+var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display']
+  .concat(answerCols());  // -> ... 'Answer 1' .. 'Answer 6'
+
+function answerCols() {
+  var cols = [];
+  for (var i = 1; i <= MAX_PROBLEMS; i++) cols.push('Answer ' + i);
+  return cols;
+}
 
 /* ───────────────────────── Write: receive a submission ───────────────────────── */
 
@@ -28,17 +36,19 @@ function doPost(e) {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SUBMISSIONS) || ss.insertSheet(SUBMISSIONS);
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(SUB_HEADER);
+      sheet.getRange(1, 1, 1, SUB_HEADER.length).setValues([SUB_HEADER]);
       sheet.setFrozenRows(1);
+    } else if (sheet.getLastColumn() < SUB_HEADER.length) {
+      // Widen an older 3-answer sheet to Answer 1..6 (existing rows keep blanks).
+      sheet.getRange(1, 1, 1, SUB_HEADER.length).setValues([SUB_HEADER]);
     }
 
     // Default to Private unless the student explicitly chose Public.
     var display = (norm(data.display) === 'public') ? 'Public' : 'Private';
 
-    sheet.appendRow([
-      new Date(), data.week || '', data.name || '', display,
-      data.a1 || '', data.a2 || '', data.a3 || ''
-    ]);
+    var row = [new Date(), data.week || '', data.name || '', display];
+    for (var i = 1; i <= MAX_PROBLEMS; i++) row.push(data['a' + i] || '');
+    sheet.appendRow(row);
 
     return json({ ok: true });
   } catch (err) {
@@ -158,13 +168,12 @@ function computeStandings(weekLabel) {
   return { standings: standings, weeks: Object.keys(weeksSet).sort() };
 }
 
-/** Points for one submission vs the week's key ([a1,a2,a3]). 1 point per correct answer. */
+/** Points for one submission vs the week's key (array of Answer 1..N). 1 point per correct answer. */
 function scoreOne(row, keyArr) {
   if (!keyArr) return 0;                     // no key entered for this week yet
-  var given = [row['Answer 1'], row['Answer 2'], row['Answer 3']];
   var pts = 0;
   for (var i = 0; i < keyArr.length; i++) {
-    if (keyArr[i] !== '' && norm(given[i]) === keyArr[i]) pts++;
+    if (keyArr[i] !== '' && norm(row['Answer ' + (i + 1)]) === keyArr[i]) pts++;
   }
   return pts;
 }
@@ -192,7 +201,11 @@ function getAnswerKey() {
   var map = {};
   getRows(ANSWER_KEY).forEach(function (r) {
     var wk = norm(r['Week']);
-    if (wk) map[wk] = [norm(r['Answer 1']), norm(r['Answer 2']), norm(r['Answer 3'])];
+    if (!wk) return;
+    var arr = [];
+    for (var i = 1; i <= MAX_PROBLEMS; i++) arr.push(norm(r['Answer ' + i]));
+    while (arr.length && arr[arr.length - 1] === '') arr.pop();  // trim unused trailing answers
+    map[wk] = arr;
   });
   return map;
 }
