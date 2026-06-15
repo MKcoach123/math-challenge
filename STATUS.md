@@ -115,8 +115,7 @@ Both weeks save to the `Submissions` tab; the leaderboard reads + scores live ag
 
 ### Answer keys (in the Sheet's `AnswerKey` tab — Week text must match the page label)
 - **Grade 4 — Week 2:** P1 = `9`, P2 = `E`, P3 = `C`  ✅ entered & scoring
-- **Grade 4 — Week 1:** not yet recorded — add a row `Grade 4 — Week 1` with the 3 answers
-  (squares count / fewest tiles / triangle digit). Page collects fine; scores 0 until the key is in.
+- **Grade 4 — Week 1:** P1 = `9`, P2 = `12`, P3 = `9`  ✅ entered & scoring
 
 ### Near-term
 - [ ] Add the `Grade 4 — Week 1` row to the `AnswerKey` tab

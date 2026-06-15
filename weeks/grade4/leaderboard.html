@@ -94,7 +94,7 @@ tr.me { background: #fff7ed; box-shadow: inset 4px 0 0 #f59e0b; }
     <button class="tab active" id="tabOverall" onclick="selectOverall()">Overall</button>
     <button class="tab" id="tabWeek" onclick="selectWeekMode()">By week</button>
     <select class="week-select" id="weekSelect" style="display:none" onchange="load()"></select>
-    <button class="refresh" onclick="load()" title="Refresh">↻ Refresh</button>
+    <button class="refresh" id="refreshBtn" onclick="load()" title="Refresh">↻ Refresh</button>
   </div>
 
   <div class="card">
@@ -157,10 +157,39 @@ function apiUrl(params) {
   return u.toString();
 }
 
+// ── Instant-load cache: show last-seen standings immediately, refresh in background.
+// The Apps Script backend takes 2–3s/call, so cached data makes the page feel instant.
+function cacheKey(week) { return 'mathlb:' + (week || '__overall__'); }
+function readCache(week) {
+  try {
+    const c = JSON.parse(localStorage.getItem(cacheKey(week)));
+    return (c && c.data && Array.isArray(c.data.rows)) ? c : null;
+  } catch (e) { return null; }
+}
+function writeCache(week, data) {
+  try { localStorage.setItem(cacheKey(week), JSON.stringify({ t: Date.now(), data })); } catch (e) {}
+}
+function setRefresh(state) {
+  const b = document.getElementById('refreshBtn');
+  if (!b) return;
+  b.textContent = state === 'updating' ? '↻ Updating…' : (state === 'retry' ? '↻ Retry' : '↻ Refresh');
+}
+
 async function load() {
   if (!ENDPOINT_URL) { showMsg('Leaderboard not connected yet — set ENDPOINT_URL in this file.'); return; }
-  showMsg('Loading…');
   const week = (mode === 'week') ? document.getElementById('weekSelect').value : '';
+
+  // 1) Paint cached standings instantly (if we have any for this view).
+  const cached = readCache(week);
+  if (cached) {
+    if (!week && cached.data.weeks && cached.data.weeks.length) syncWeeks(cached.data.weeks);
+    render(cached.data);
+    setRefresh('updating');
+  } else {
+    showMsg('Loading…');
+  }
+
+  // 2) Fetch fresh in the background and update when it arrives.
   try {
     const res = await fetch(apiUrl({ view: 'leaderboard', week }));
     const data = await res.json();
@@ -168,9 +197,16 @@ async function load() {
     // Only refresh the week list from an unfiltered (Overall) load — a per-week
     // response only lists the selected week and would otherwise shrink the dropdown.
     if (!week && data.weeks && data.weeks.length) syncWeeks(data.weeks);
+    writeCache(week, data);
     render(data);
+    setRefresh('idle');
   } catch (e) {
-    showMsg('Could not load the leaderboard. ' + e.message, true);
+    if (cached) {
+      setRefresh('retry');   // keep showing cached standings; let them retry
+    } else {
+      showMsg('Could not load the leaderboard. ' + e.message, true);
+      setRefresh('idle');
+    }
   }
 }
 
