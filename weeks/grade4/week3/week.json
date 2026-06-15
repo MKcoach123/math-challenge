@@ -2,6 +2,7 @@
   "number": 3,
   "week_label": "Grade 4 — Week 3",
   "due": "Sunday night",
+  "image_max_width": "260px",
   "problems": [
     { "type": "number", "text": "How many squares are in the picture?", "image": "p1_squares_count.png", "unit": "squares" },
     { "type": "number", "text": "How many triangles are in the picture?", "image": "p2_triangles_count.png", "unit": "triangles" },
