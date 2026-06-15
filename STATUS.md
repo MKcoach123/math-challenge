@@ -114,8 +114,9 @@ Deployed Web App URL is wired into `week1`, `week2`, and `leaderboard.html`.
 Both weeks save to the `Submissions` tab; the leaderboard reads + scores live against `AnswerKey`.
 
 ### Answer keys (in the Sheet's `AnswerKey` tab — Week text must match the page label)
-- **Grade 4 — Week 2:** P1 = `9`, P2 = `E`, P3 = `C`  ✅ entered & scoring
 - **Grade 4 — Week 1:** P1 = `9`, P2 = `12`, P3 = `9`  ✅ entered & scoring
+- **Grade 4 — Week 2:** P1 = `9`, P2 = `E`, P3 = `C`  ✅ entered & scoring
+- **Grade 4 — Week 3:** P1 = `10` (squares), P2 = `8` (triangles), P3 = `11` (pebbles)  ✅ confirmed
 
 ### Near-term
 - [ ] Add the `Grade 4 — Week 1` row to the `AnswerKey` tab
