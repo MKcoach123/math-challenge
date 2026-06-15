@@ -115,7 +115,7 @@ Both weeks save to the `Submissions` tab; the leaderboard reads + scores live ag
 
 ### Answer keys (in the Sheet's `AnswerKey` tab — Week text must match the page label)
 - **Grade 4 — Week 1:** P1 = `9`, P2 = `12`, P3 = `9`  ✅ entered & scoring
-- **Grade 4 — Week 2:** P1 = `9`, P2 = `E`, P3 = `C`  ✅ entered & scoring
+- **Grade 4 — Week 2:** P1 = `36` (Anna's father), P2 = `9` (Nancy), P3 = `6` (star), P4 = `E` (Tom's house), P5 = `C` (cubes)  — 5 problems, reordered
 - **Grade 4 — Week 3:** P1 = `10` (squares), P2 = `8` (triangles), P3 = `16` (rectangles), P4 = `9` (cubes), P5 = `11` (pebbles)  ✅ confirmed (5 problems)
 
 ### Near-term
