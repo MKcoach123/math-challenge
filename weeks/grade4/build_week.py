@@ -144,13 +144,16 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 }}"""
 
 
-def render_problem(i, p, week_dir):
+def render_problem(i, p, week_dir, img_max_width=None):
     n = i + 1
     parts = [f'    <div class="problem">', f'      <div class="problem-num">Problem {n}</div>']
     if p.get("text"):
         parts.append(f'      <p class="problem-text">{esc(p["text"])}</p>')
     if p.get("image"):
-        parts.append(f'      <img src="{b64_img(week_dir, p["image"])}" alt="Problem {n} figure">')
+        # Per-problem "image_width" overrides the week-level "image_max_width"; else full width.
+        w = p.get("image_width") or img_max_width
+        style = f' style="max-width:{esc(w)}"' if w else ""
+        parts.append(f'      <img src="{b64_img(week_dir, p["image"])}"{style} alt="Problem {n} figure">')
 
     ptype = p.get("type", "number")
     if ptype == "choice":
@@ -181,7 +184,8 @@ def render_week(week_dir, cfg):
     num = len(problems)
     title = cfg.get("title", cfg["week_label"])
     due = cfg.get("due", "Sunday night")
-    problems_html = "\n\n".join(render_problem(i, p, week_dir) for i, p in enumerate(problems))
+    img_max_width = cfg.get("image_max_width")   # week-level default cap for figures, e.g. "280px"
+    problems_html = "\n\n".join(render_problem(i, p, week_dir, img_max_width) for i, p in enumerate(problems))
 
     return f"""<!DOCTYPE html>
 <html lang="en">
