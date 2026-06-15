@@ -1,4 +1,6 @@
 .DS_Store
 **/.DS_Store
 .claude/
-weeks/grade4/week2/_extract/
+__pycache__/
+**/__pycache__/
+**/_extract/
