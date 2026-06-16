@@ -3,6 +3,8 @@
   "week_label": "Grade 4 — Week 1",
   "due": "Sunday night",
   "image_max_width": "400px",
+  "solutions": "solutions_week1.html",
+  "solutions_available": true,
   "problems": [
     {
       "type": "number",
