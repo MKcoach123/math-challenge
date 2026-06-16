@@ -377,17 +377,29 @@ def rebuild_index():
     print(f"  index.html: {len(cards)} week cards")
 
 
+def update_leaderboard_weeks():
+    """Keep leaderboard.html's ALL_WEEKS list in sync with the weeks that exist."""
+    lb = GRADE_DIR / "leaderboard.html"
+    labels = [json.loads((d / "week.json").read_text())["week_label"] for d in all_weeks()]
+    text = lb.read_text()
+    start, end = "/* WEEKS:START */", "/* WEEKS:END */"
+    a, b = text.index(start) + len(start), text.index(end)
+    js = "\n  " + ", ".join(json.dumps(l, ensure_ascii=False) for l in labels) + "\n  "
+    lb.write_text(text[:a] + js + text[b:])
+    print(f"  leaderboard.html: {len(labels)} weeks listed")
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__); return
     if argv[0] == "--index":
-        rebuild_index(); return
+        rebuild_index(); update_leaderboard_weeks(); return
     if argv[0] == "--all":
         for d in all_weeks():
             build_week(d)
-        rebuild_index(); return
+        rebuild_index(); update_leaderboard_weeks(); return
     build_week(argv[0])
-    rebuild_index()
+    rebuild_index(); update_leaderboard_weeks()
 
 
 if __name__ == "__main__":

@@ -123,6 +123,14 @@ tr.me { background: #fff7ed; box-shadow: inset 4px 0 0 #f59e0b; }
 // ── Paste the SAME Google Apps Script Web App URL used by the problem pages.
 const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec";
 
+// Every week that exists (kept in sync by build_week.py). The "By week" dropdown always lists
+// these, merged with any weeks that already have submissions — so new weeks show up immediately.
+const ALL_WEEKS = [
+  /* WEEKS:START */
+  "Grade 4 — Week 1", "Grade 4 — Week 2", "Grade 4 — Week 3", "Grade 4 — Week 4"
+  /* WEEKS:END */
+];
+
 let mode = 'overall';        // 'overall' | 'week'
 let knownWeeks = [];
 
@@ -211,12 +219,14 @@ async function load() {
 }
 
 function syncWeeks(weeks) {
-  if (JSON.stringify(weeks) === JSON.stringify(knownWeeks)) return;
-  knownWeeks = weeks;
+  const merged = ALL_WEEKS.slice();
+  (weeks || []).forEach(w => { if (!merged.includes(w)) merged.push(w); });
+  if (JSON.stringify(merged) === JSON.stringify(knownWeeks)) return;
+  knownWeeks = merged;
   const sel = document.getElementById('weekSelect');
   const current = sel.value;
-  sel.innerHTML = weeks.map(w => `<option value="${escapeAttr(w)}">${escapeHtml(w)}</option>`).join('');
-  if (weeks.includes(current)) sel.value = current;
+  sel.innerHTML = merged.map(w => `<option value="${escapeAttr(w)}">${escapeHtml(w)}</option>`).join('');
+  if (merged.includes(current)) sel.value = current;
 }
 
 function render(data) {
@@ -274,6 +284,7 @@ async function findMe() {
 function escapeHtml(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 function escapeAttr(s) { return escapeHtml(s).replace(/'/g, '&#39;'); }
 
+syncWeeks([]);   // populate the week dropdown from ALL_WEEKS right away
 load();
 </script>
 </body>
