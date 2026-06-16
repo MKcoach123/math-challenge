@@ -2,6 +2,8 @@
   "number": 2,
   "week_label": "Grade 4 — Week 2",
   "due": "Sunday night",
+  "solutions": "solutions_week2.html",
+  "solutions_available": true,
   "problems": [
     { "type": "number", "text": "Anna is 6 years old. Her father will be 40 years old when Anna reaches the age of 10. How old is Anna's father?", "unit": "years old" },
     { "type": "number", "text": "Nancy is 3 years older than Mary. Clark is 2 years younger than Nancy. Ben is 14 years old and twice as old as Clark. How old is Nancy?", "unit": "years old" },
