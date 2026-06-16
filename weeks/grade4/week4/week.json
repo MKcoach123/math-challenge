@@ -1,0 +1,43 @@
+{
+  "number": 4,
+  "week_label": "Grade 4 — Week 4",
+  "due": "Sunday night",
+  "image_max_width": "360px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "Kenga always makes one large jump followed by two small jumps. Kenga starts at 0 and ends on 11. How many jumps did Kenga make?",
+      "image": "p1_kenga.png",
+      "unit": "jumps"
+    },
+    {
+      "type": "number",
+      "text": "A full glass of water weighs 400 g and the empty glass weighs 100 g. How many grams does a half-full glass of water weigh?",
+      "image": "p2_glasses.png",
+      "image_width": "220px",
+      "unit": "grams"
+    },
+    {
+      "type": "number",
+      "text": "Albert rearranges the five number cards shown below to make the smallest possible 8-digit number. (He cannot cut a card to separate its digits — e.g. 59 is always 59, never 5 and 9.) Which card will be at the right-hand end?",
+      "image": "p3_cards.png",
+      "image_width": "440px",
+      "label": "Card at the right end:",
+      "maxlength": 2
+    },
+    {
+      "type": "number",
+      "text": "How many squares will balance the three triangles?",
+      "image": "p4_balance.png",
+      "image_width": "480px",
+      "unit": "squares"
+    },
+    {
+      "type": "number",
+      "text": "3 hens lay 3 eggs in 3 days. How many eggs will 6 hens lay in 6 days?",
+      "image": "p5_hens.png",
+      "image_width": "220px",
+      "unit": "eggs"
+    }
+  ]
+}
