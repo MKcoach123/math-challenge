@@ -1,1 +1,36 @@
-{ "number": 1, "week_label": "Grade 4 — Week 1", "html": "grade4_week1.html", "num_problems": 3 }
+{
+  "number": 1,
+  "week_label": "Grade 4 — Week 1",
+  "due": "Sunday night",
+  "image_max_width": "400px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "Here are the first three patterns of squares in a sequence. How many squares are there in the 5th pattern?",
+      "image": "p1_sequence.png",
+      "unit": "squares"
+    },
+    {
+      "type": "number",
+      "html": "Sarah has tiles in this shape: <svg width=\"40\" height=\"40\" viewBox=\"0 0 2 2\" style=\"vertical-align:middle;margin:0 6px\"><g fill=\"#e2e8f0\" stroke=\"#334155\" stroke-width=\"0.07\"><rect x=\"0\" y=\"0\" width=\"1\" height=\"1\"/><rect x=\"0\" y=\"1\" width=\"1\" height=\"1\"/><rect x=\"1\" y=\"1\" width=\"1\" height=\"1\"/></g></svg> What is the fewest number of tiles Sarah needs to cover her bedroom floor (shown below)?",
+      "image": "p2_floor.png",
+      "unit": "tiles"
+    },
+    {
+      "type": "number",
+      "text": "Clare lives with her parents, her brother, one cat, two dogs, two parrots, and four fish. What is the total number of legs that they have altogether?",
+      "unit": "legs"
+    },
+    {
+      "type": "number",
+      "text": "Find the missing number in the pattern:  24, 3, 21, 6, 18, ?"
+    },
+    {
+      "type": "number",
+      "html": "In the following subtraction problem one digit is covered by a triangle and one by a square. What digit is covered by the triangle?",
+      "image": "p5_subtraction.png",
+      "label": "Triangle digit:",
+      "maxlength": 1
+    }
+  ]
+}
