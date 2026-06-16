@@ -157,11 +157,15 @@ def render_problem(i, p, week_dir, img_max_width=None):
         parts.append(f'      <p class="problem-text">{p["html"]}</p>')
     elif p.get("text"):
         parts.append(f'      <p class="problem-text">{esc(p["text"])}</p>')
-    if p.get("image"):
-        # Per-problem "image_width" overrides the week-level "image_max_width"; else full width.
-        w = p.get("image_width") or img_max_width
+    # One or more figures. Use "images": [{"file","width"}, …] for several; or a single "image".
+    figs = p.get("images")
+    if figs is None and p.get("image"):
+        figs = [{"file": p["image"], "width": p.get("image_width")}]
+    for fig in (figs or []):
+        # per-image "width" overrides the week-level "image_max_width"; else full width.
+        w = fig.get("width") or img_max_width
         style = f' style="max-width:{esc(w)}"' if w else ""
-        parts.append(f'      <img src="{b64_img(week_dir, p["image"])}"{style} alt="Problem {n} figure">')
+        parts.append(f'      <img src="{b64_img(week_dir, fig["file"])}"{style} alt="Problem {n} figure">')
 
     ptype = p.get("type", "number")
     if ptype == "choice":

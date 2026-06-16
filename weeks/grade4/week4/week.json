@@ -6,23 +6,31 @@
   "problems": [
     {
       "type": "number",
-      "text": "Kenga always makes one large jump followed by two small jumps. Kenga starts at 0 and ends on 11. How many jumps did Kenga make?",
+      "text": "Kenga always makes one large jump following with two small jumps. Kenga starts at 0 and ends on 11. How many jumps did Keegan make?",
       "image": "p1_kenga.png",
       "unit": "jumps"
     },
     {
       "type": "number",
-      "text": "A full glass of water weighs 400 g and the empty glass weighs 100 g. How many grams does a half-full glass of water weigh?",
+      "text": "A full glass of water weighs 400g and the empty glass weights 100g. How many grams does a half full glass of water weigh?",
       "image": "p2_glasses.png",
       "image_width": "220px",
       "unit": "grams"
     },
     {
       "type": "number",
-      "text": "Albert rearranges the five number cards shown below to make the smallest possible 8-digit number. (He cannot cut a card to separate its digits — e.g. 59 is always 59, never 5 and 9.) Which card will be at the right-hand end?",
-      "image": "p3_cards.png",
-      "image_width": "440px",
-      "label": "Card at the right end:",
+      "text": "Albert rearranges five cards with numbers printed on them shown below. He wants to get smallest 8 digit number. (He cannot cut the cards to separate the digits e.g 59 always is 59 and cannot be made into 5 and 9). Which number will be at the right hand end?",
+      "images": [
+        {
+          "file": "p3_cards.png",
+          "width": "440px"
+        },
+        {
+          "file": "p3_boxes.png",
+          "width": "440px"
+        }
+      ],
+      "label": "My answer:",
       "maxlength": 2
     },
     {
