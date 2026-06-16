@@ -21,6 +21,24 @@ body { font-family:'Segoe UI',system-ui,Arial,sans-serif; background:#f0f4ff; co
 .work { font-size:15px; line-height:1.6; }
 .work img { max-width:300px; display:block; margin:12px 0; border:1px solid #e2e8f0; border-radius:8px; }
 .note { font-size:13px; color:#94a3b8; margin-top:8px; }
+.print-btn { background:rgba(255,255,255,.16); border:1.5px solid rgba(255,255,255,.65); border-radius:8px; padding:8px 18px; font-size:14px; font-weight:600; color:#fff; cursor:pointer; float:right; margin-top:2px; transition:background .2s, border-color .2s; }
+.print-btn:hover { background:rgba(255,255,255,.30); border-color:#fff; }
+
+@media print {
+  @page { size:A4 portrait; margin:14mm; }
+  html, body { background:#fff !important; padding:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { max-width:100%; }
+  .topnav, .print-btn { display:none !important; }
+  .header { background:none !important; color:#000 !important; box-shadow:none !important; border-radius:0 !important; padding:0 0 8pt 0 !important; margin-bottom:12pt !important; border-bottom:2.5pt solid #1d4ed8; }
+  .header h1 { font-size:20pt !important; color:#1d4ed8 !important; }
+  .header .sub { font-size:10.5pt !important; opacity:1 !important; color:#333 !important; }
+  .sol { background:none !important; box-shadow:none !important; border-radius:0 !important; padding:0 0 0 10pt !important; margin:0 0 12pt 0 !important; border-left-width:3.5pt !important; page-break-inside:avoid; break-inside:avoid; }
+  .pnum { font-size:10pt !important; }
+  .q { font-size:11pt !important; margin:3pt 0 6pt !important; }
+  .ans { font-size:12pt !important; padding:3pt 12pt !important; margin-bottom:6pt !important; }
+  .work { font-size:11pt !important; line-height:1.45 !important; }
+  .work img { max-width:230px !important; margin:6pt 0 !important; border:none !important; }
+}
 </style></head>
 <body>
 <div class="page">
@@ -30,6 +48,7 @@ body { font-family:'Segoe UI',system-ui,Arial,sans-serif; background:#f0f4ff; co
     <a class="lb" href="../leaderboard.html">🏆 Leaderboard</a>
   </div>
   <div class="header">
+    <button class="print-btn" onclick="window.print()">🖨 Print</button>
     <h1>Week 2 — Answers &amp; Solutions</h1>
     <div class="sub">Grade 4 · Math Challenge</div>
   </div>
