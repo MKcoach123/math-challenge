@@ -93,6 +93,7 @@ All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (co
 | **Grade 4 — Week 1** | 5 | squares sequence-5th (num,img), Sarah's tiles on 6×6 (num,img), Clare's legs (num), missing number 24,3,21,6,18,? (num), △5−48=4□ triangle digit (num,img) | `9, 12, 24, 9, 9` |
 | **Grade 4 — Week 2** | 5 | Anna's father (num), Nancy (num), star value (num, img), Tom's house (A–E), 8-cube view (A–E) | `36, 9, 6, E, C` |
 | **Grade 4 — Week 3** | 5 | squares (num,img), triangles (num,img), rectangles (num,img), cubes (num,img), pebbles (num) | `10, 8, 16, 9, 11` |
+| **Grade 4 — Week 4** | 5 | Kenga jumps (num,img), half glass (num,img), Albert's cards right-end (num,img), squares balance 3 triangles (num,img), hens&eggs (num,img) | `8, 250, 8, 6, 12` |
 
 All three verified scoring 5/5 (or 3/3) on all-correct test submissions.
 
