@@ -38,6 +38,108 @@ GRADE_DIR = pathlib.Path(__file__).parent
 REPO_ROOT = GRADE_DIR.parent.parent
 INDEX = REPO_ROOT / "index.html"
 
+# ── Scribble / scratchpad overlay (a draw-on-the-page canvas). Plain strings so their braces
+# stay literal when dropped into the render_week f-string. ───────────────────────────────────
+SCRIBBLE_CSS = """
+#scribble-canvas { position: absolute; top: 0; left: 0; z-index: 50; pointer-events: none; }
+#scribble-canvas.active { pointer-events: auto; touch-action: none; cursor: crosshair; }
+#scribble-bar { position: fixed; right: 16px; bottom: 16px; z-index: 100; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 8px 10px; }
+#scribble-bar button { border: none; background: #f1f5f9; border-radius: 8px; padding: 8px 11px; font-size: 16px; cursor: pointer; line-height: 1; }
+#scribble-bar button:hover { background: #e2e8f0; }
+#scribble-bar .sc-toggle { font-weight: 700; font-size: 14px; white-space: nowrap; }
+#scribble-bar .sc-toggle.on { background: #4f46e5; color: #fff; }
+#scribble-bar .sc-tools { display: none; align-items: center; gap: 6px; }
+#scribble-bar.open .sc-tools { display: flex; }
+#scribble-bar .sc-color { width: 22px; height: 22px; border-radius: 50%; padding: 0; box-shadow: 0 0 0 1px #cbd5e1; }
+#scribble-bar .sc-color.sel { box-shadow: 0 0 0 2px #1e293b; }
+#scribble-bar button.sel { outline: 2px solid #4f46e5; }
+@media print { #scribble-canvas, #scribble-bar { display: none !important; } }
+"""
+
+SCRIBBLE_HTML = """
+<canvas id="scribble-canvas"></canvas>
+<div id="scribble-bar">
+  <button class="sc-toggle" id="scToggle" title="Draw / scribble on the page">✏️ Scribble</button>
+  <div class="sc-tools">
+    <button class="sc-color sel" data-color="#2563eb" style="background:#2563eb" title="Blue"></button>
+    <button class="sc-color" data-color="#111827" style="background:#111827" title="Black"></button>
+    <button class="sc-color" data-color="#dc2626" style="background:#dc2626" title="Red"></button>
+    <button class="sc-color" data-color="#16a34a" style="background:#16a34a" title="Green"></button>
+    <button id="scErase" title="Eraser">\U0001f9fd</button>
+    <button id="scClear" title="Clear everything">\U0001f5d1️</button>
+  </div>
+</div>
+"""
+
+SCRIBBLE_JS = """
+(function () {
+  var canvas = document.getElementById('scribble-canvas');
+  var ctx = canvas.getContext('2d');
+  var bar = document.getElementById('scribble-bar');
+  var toggle = document.getElementById('scToggle');
+  var active = false, drawing = false, erasing = false, color = '#2563eb', last = null;
+
+  function sizeCanvas() {
+    var w = Math.max(document.documentElement.scrollWidth, window.innerWidth);
+    var h = Math.max(document.documentElement.scrollHeight, window.innerHeight);
+    if (canvas.width === w && canvas.height === h) return;
+    var prev = null;
+    if (canvas.width && canvas.height) { try { prev = ctx.getImageData(0, 0, canvas.width, canvas.height); } catch (e) {} }
+    canvas.width = w; canvas.height = h;
+    if (prev) ctx.putImageData(prev, 0, 0);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  }
+  sizeCanvas();
+  window.addEventListener('load', sizeCanvas);
+  window.addEventListener('resize', sizeCanvas);
+
+  function setActive(on) {
+    active = on;
+    canvas.classList.toggle('active', on);
+    bar.classList.toggle('open', on);
+    toggle.classList.toggle('on', on);
+    toggle.textContent = on ? '✏️ Scribbling' : '✏️ Scribble';
+  }
+  toggle.addEventListener('click', function () { sizeCanvas(); setActive(!active); });
+
+  var colorBtns = bar.querySelectorAll('.sc-color');
+  colorBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      color = b.getAttribute('data-color'); erasing = false;
+      colorBtns.forEach(function (x) { x.classList.remove('sel'); });
+      b.classList.add('sel');
+      document.getElementById('scErase').classList.remove('sel');
+    });
+  });
+  document.getElementById('scErase').addEventListener('click', function () {
+    erasing = true; this.classList.add('sel');
+    colorBtns.forEach(function (x) { x.classList.remove('sel'); });
+  });
+  document.getElementById('scClear').addEventListener('click', function () {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  canvas.addEventListener('pointerdown', function (e) {
+    if (!active) return;
+    drawing = true; last = { x: e.pageX, y: e.pageY };
+    try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  canvas.addEventListener('pointermove', function (e) {
+    if (!active || !drawing) return;
+    var x = e.pageX, y = e.pageY;
+    ctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = erasing ? 26 : 3;
+    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
+    last = { x: x, y: y };
+  });
+  function endStroke() { drawing = false; }
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+  canvas.addEventListener('pointerleave', endStroke);
+})();
+"""
+
 
 def b64_img(week_dir, name):
     data = (week_dir / "source_images" / name).read_bytes()
@@ -207,6 +309,7 @@ def render_week(week_dir, cfg):
 <title>{esc(title)}</title>
 <style>
 {css()}
+{SCRIBBLE_CSS}
 </style>
 </head>
 <body>
@@ -259,7 +362,7 @@ def render_week(week_dir, cfg):
   </form>
 
 </div>
-
+{SCRIBBLE_HTML}
 <script>
 const ENDPOINT_URL = "{ENDPOINT_URL}";
 const WEEK_LABEL = "{esc(cfg['week_label'])}";
@@ -308,6 +411,7 @@ async function submitAnswers(btn) {{
   }}
 }}
 </script>
+<script>{SCRIBBLE_JS}</script>
 </body>
 </html>
 """
