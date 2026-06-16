@@ -16,6 +16,7 @@
       "type": "number",
       "html": "Sarah has tiles in this shape: <svg width=\"40\" height=\"40\" viewBox=\"0 0 2 2\" style=\"vertical-align:middle;margin:0 6px\"><g fill=\"#e2e8f0\" stroke=\"#334155\" stroke-width=\"0.07\"><rect x=\"0\" y=\"0\" width=\"1\" height=\"1\"/><rect x=\"0\" y=\"1\" width=\"1\" height=\"1\"/><rect x=\"1\" y=\"1\" width=\"1\" height=\"1\"/></g></svg> What is the fewest number of tiles Sarah needs to cover her bedroom floor (shown below)?",
       "image": "p2_floor.png",
+      "image_width": "260px",
       "unit": "tiles"
     },
     {
