@@ -90,7 +90,7 @@ All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (co
 
 | Week | # | Problems (type) | Answer key |
 |------|---|-----------------|-----------|
-| **Grade 4 — Week 1** | 3 | squares pattern (num), Morgan tiles (num), △/□ subtraction (num) | `9, 12, 9` |
+| **Grade 4 — Week 1** | 5 | squares sequence-5th (num,img), Sarah's tiles on 6×6 (num,img), Clare's legs (num), missing number 24,3,21,6,18,? (num), △5−48=4□ triangle digit (num,img) | `15, 12, 24, 9, 9` |
 | **Grade 4 — Week 2** | 5 | Anna's father (num), Nancy (num), star value (num, img), Tom's house (A–E), 8-cube view (A–E) | `36, 9, 6, E, C` |
 | **Grade 4 — Week 3** | 5 | squares (num,img), triangles (num,img), rectangles (num,img), cubes (num,img), pebbles (num) | `10, 8, 16, 9, 11` |
 
