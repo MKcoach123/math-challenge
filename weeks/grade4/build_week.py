@@ -147,7 +147,9 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 def render_problem(i, p, week_dir, img_max_width=None):
     n = i + 1
     parts = [f'    <div class="problem">', f'      <div class="problem-num">Problem {n}</div>']
-    if p.get("text"):
+    if p.get("html"):                         # raw HTML (e.g. inline SVG) — not escaped
+        parts.append(f'      <p class="problem-text">{p["html"]}</p>')
+    elif p.get("text"):
         parts.append(f'      <p class="problem-text">{esc(p["text"])}</p>')
     if p.get("image"):
         # Per-problem "image_width" overrides the week-level "image_max_width"; else full width.
