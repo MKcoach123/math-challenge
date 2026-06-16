@@ -1,161 +1,173 @@
-# Math Challenge — Status
+# Math Challenge — Project Status & Resume Guide
 
-Last updated: 2026-06-12
+Last updated: 2026-06-15
 
----
-
-## What this project is
-
-A classroom math challenge website where students solve 3 Math Kangaroo problems per week, submit answers online or on paper, and compete on a leaderboard. After the weekly deadline, correct answers and solutions are revealed and a new set of problems goes live.
+> **Read this first if starting a new session.** It captures the whole project state, how it's
+> deployed, and exactly how to make changes. Companion: `planning/project_analysis.md` (concept).
 
 ---
 
-## Folder structure
+## 1. What this is
+
+A classroom math-challenge website. Each week, students solve a set of Math Kangaroo problems
+(currently 3–5 per week), submit answers online (or print on paper), and compete on a leaderboard.
+After the weekly deadline the answers + solutions are revealed. Planned run: **8 weeks**, Grade 4.
+
+**It is fully live and working** — pages hosted, submissions saving, scoring + leaderboard running.
+
+---
+
+## 2. Live URLs
+
+- **Site (share this):** https://MKcoach123.github.io/math-challenge/
+  - Leaderboard: `…/weeks/grade4/leaderboard.html`
+  - Week N problems: `…/weeks/grade4/weekN/grade4_weekN.html`
+  - Week 2 solutions: `…/weeks/grade4/week2/solutions_week2.html`
+- **GitHub repo:** `MKcoach123/math-challenge` (public; GitHub Pages from `main` / root)
+- **Backend endpoint (Apps Script Web App):**
+  `https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec`
+
+---
+
+## 3. How it's built (architecture)
+
+- **Static HTML pages**, fully self-contained (problem images base64-embedded). Hosted on GitHub Pages.
+- **One Google Apps Script Web App + one Google Sheet** is the entire backend:
+  - `doPost` → appends a row to the **`Submissions`** tab.
+  - `doGet` → grades submissions against the **`AnswerKey`** tab (server-side; the key never
+    reaches the browser) and returns ranked JSON for the leaderboard.
+- **`leaderboard.html`** fetches that JSON: Overall (cumulative) + per-week views, top-3 medals,
+  "Find my rank" self-lookup, and instant-load `localStorage` caching (Apps Script is ~2–3 s/call).
+- **`build_week.py`** is a reusable generator: reads a per-week `week.json` + images, emits the
+  week's HTML, and auto-rebuilds the home-page cards.
+
+### Privacy model
+Submission form has a Public/Private choice, **defaults to Private**. Private students are hidden
+from the public board but can find their own rank via "Find my rank". (Decided 2026-06-13.)
+
+---
+
+## 4. File structure
 
 ```
 MathChallenge/
-├── STATUS.md                        ← this file
-├── planning/
-│   └── project_analysis.md          ← full concept analysis, pros/cons, open questions
-└── weeks/
-    └── grade4/
-        ├── leaderboard.html         ← reads scores from the backend; Overall + per-week + "Find my rank"
-        ├── week1/
-        │   ├── grade4_week1.html    ← self-contained problem page (images base64-embedded)
-        │   └── source_images/
-        │       ├── p1_sequence_pattern.png   ← "5th pattern in sequence" problem
-        │       ├── p2_morgan_tiles.png       ← "Morgan's bedroom tiles" problem
-        │       └── p3_subtraction_digits.png ← "triangle/square digits" subtraction problem
-        └── week2/
-            ├── grade4_week2.html    ← self-contained page; free-text + multiple-choice problems
-            ├── _build.py            ← regenerates the HTML, base64-embedding source_images
-            ├── apps_script_backend.gs ← Google Apps Script that saves submissions to a Sheet
-            ├── SHEET_SETUP.md        ← 5-min setup to connect the page to a Google Sheet
-            ├── problems.pages        ← original Apple Pages doc the problems came from
-            └── source_images/
-                ├── p2_tom_house.png   ← "back of Tom's house" (multiple choice A–E)
-                └── p3_cube_solid.png  ← "8-cube solid from above" (multiple choice A–E)
+├── index.html                         ← home page (hub): leaderboard + week cards (auto-generated)
+├── STATUS.md                          ← this file
+├── .gitignore
+├── planning/project_analysis.md       ← concept analysis, pros/cons, open questions
+└── weeks/grade4/
+    ├── build_week.py                  ← THE generator (build a week + rebuild index)
+    ├── leaderboard.html               ← Overall + per-week + Find-my-rank + caching
+    ├── week1/
+    │   ├── grade4_week1.html          ← hand-built page (NOT from generator); wired to backend
+    │   ├── week.json                  ← metadata only (no problems[]) — used for the index card
+    │   └── source_images/ (3 png)
+    ├── week2/
+    │   ├── grade4_week2.html          ← generated (5 problems)
+    │   ├── week.json                  ← full config incl. "solutions" + "solutions_available"
+    │   ├── solutions_week2.html       ← answers + solutions page (gated button on home)
+    │   ├── solutions_week2.pages      ← source doc for the solutions
+    │   ├── problems.pages             ← source doc for the problems
+    │   ├── apps_script_backend.gs     ← THE backend script (paste this into Apps Script)
+    │   ├── SHEET_SETUP.md             ← one-time Sheet/Apps-Script setup notes
+    │   └── source_images/ (3 png: star_value, tom_house, cube_solid)
+    └── week3/
+        ├── grade4_week3.html          ← generated (5 problems)
+        ├── week.json                  ← full config (image_max_width 260px)
+        ├── problems_week3.pages        ← source doc
+        └── source_images/ (4 png)
 ```
 
----
-
-## Current state
-
-### What exists
-
-**`weeks/grade4/week1/grade4_week1.html`** — fully working single-file HTML page:
-- Blue gradient header: "Grade 4 — Week 1 · Math Challenge Problems"
-- Due date and point info in header (📅 Due: Sunday night · 🏆 3 problems · 1 point each)
-- Student name field
-- 3 problem cards, each with:
-  - Problem screenshot (base64-embedded — no external files needed)
-  - Free-text answer input with unit hint
-  - Color-coded left border (blue / teal / purple per problem)
-- Submit button with basic client-side validation (name + all 3 answers required)
-- Submit currently shows a confirmation alert — **no backend yet**
-- Print button (top-right of header)
-- Print CSS: A4 page, problems distributed across full page height, due date visible, answer boxes become underlines
-
-### Week 1 problems (Grade 4)
-
-| # | Problem | Answer type |
-|---|---------|-------------|
-| 1 | Sequence of square patterns — how many squares in the 5th pattern? | Number |
-| 2 | Morgan's L-shaped tiles — fewest tiles to cover a 6×6 floor? | Number |
-| 3 | Subtraction with △ and □ hiding digits — what digit is the triangle? | Single digit |
-
-Answer key not yet recorded in the project (to be added when ready to score).
+Note: `apps_script_backend.gs` lives in `week2/` for historical reasons but is the **global** backend
+for all weeks. `_extract/`, `__pycache__/`, `.DS_Store`, `.claude/` are gitignored.
 
 ---
 
-### Week 2 problems (Grade 4)
+## 5. Weeks & answer keys
 
-Built from `week2/problems.pages`. Mixes answer types (the page template now supports both):
+All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (columns:
+`Week | Answer 1 … Answer 6`). The `Week` cell must match the page label (dash/spacing tolerant).
 
-| # | Problem | Answer type |
-|---|---------|-------------|
-| 1 | Ages — Nancy/Mary/Clark/Ben; how old is Nancy? | Number (free text) |
-| 2 | Back of Tom's house (3 windows, no door) — which view? | Multiple choice A–E |
-| 3 | Solid of 8 cubes — view from above? | Multiple choice A–E |
+| Week | # | Problems (type) | Answer key |
+|------|---|-----------------|-----------|
+| **Grade 4 — Week 1** | 3 | squares pattern (num), Morgan tiles (num), △/□ subtraction (num) | `9, 12, 9` |
+| **Grade 4 — Week 2** | 5 | Anna's father (num), Nancy (num), star value (num, img), Tom's house (A–E), 8-cube view (A–E) | `36, 9, 6, E, C` |
+| **Grade 4 — Week 3** | 5 | squares (num,img), triangles (num,img), rectangles (num,img), cubes (num,img), pebbles (num) | `10, 8, 16, 9, 11` |
 
-Answer key: Problem 1 = **9** (Ben 14 → Clark 7 → Nancy 9). Problems 2 & 3 multiple-choice
-answers not yet confirmed — teacher to record.
+All three verified scoring 5/5 (or 3/3) on all-correct test submissions.
 
-### Submission backend (Google Sheet)
-
-Chosen approach: **Google Apps Script Web App → Google Sheet** (keeps the custom page, no server to host).
-- `week2/apps_script_backend.gs` appends one row per submission to a `Submissions` tab.
-- `week2/SHEET_SETUP.md` has the one-time deploy steps.
-- The page's `ENDPOINT_URL` constant is **still blank** — until set, Submit shows a local
-  confirmation only. Paste the deployed `/exec` URL into both `grade4_week2.html` and `_build.py`.
-- Same URL is reused for every week; the `Week` column distinguishes submissions.
+⚠️ **Reorder gotcha:** if you insert/reorder problems, the answer-key columns shift. Always re-check
+the `AnswerKey` row order after editing a week (this bit us on Weeks 2 & 3).
 
 ---
 
-## Leaderboard plan (decided 2026-06-13)
+## 6. How to do common tasks
 
-- **Two views:** per-week leaderboard AND cumulative-across-weeks, toggled on one page
-  (kids may shine in a single week or by consistency over the whole run).
-- **Run length:** plan for **8 weeks** total.
-- **Privacy:** each student chooses at submission whether to appear **publicly (name shown)**
-  or **privately**. Exact "private" appearance still being decided (hidden + self-lookup,
-  anonymous alias, or fully hidden) — see open question below.
-- **Architecture:** same single Apps Script + Sheet. A read endpoint (`doGet`) grades
-  submissions against an `AnswerKey` tab server-side (key never reaches the browser) and
-  returns ranked JSON; a static `leaderboard.html` fetches and renders it.
-- **Sheet gains:** an `AnswerKey` tab (Week, A1, A2, A3) and a `Display` column
-  (Public/Private) on `Submissions`. Latest submission's choice wins per student.
+### Update / add a week's problems
+1. Drop the updated `.pages` (or images) into `weeks/grade4/weekN/`.
+2. Extract: unzip the `.pages` (it's a zip) → `Data/*.png` are the figures; `preview.jpg` is page 1.
+   For text on later pages, decompress `Index/Document.iwa` (pure-Python Snappy decoder — see git
+   history of this session / the technique: IWA chunks = `00` + 3-byte LE length + snappy block).
+3. Save chosen images into `weekN/source_images/` and write/update `weekN/week.json`.
+   - problem `type`: `"number"`/`"text"` (free-text box) or `"choice"` (A–E radios).
+   - optional per-problem `"image"`, `"image_width"`; week-level `"image_max_width"` (e.g. "260px").
+4. Build: `cd weeks/grade4 && python3 build_week.py weekN`  (also rebuilds `index.html` cards).
+5. Update the `AnswerKey` tab row (add `Answer N` columns as needed) — backend already supports up to 6.
+6. **Deploy:** `git add -A && git commit -m "…" && git push`  (Pages updates in ~1 min).
 
-## What needs to be built next
+### Add a solutions page (with the gated reveal button)
+- Build a `solutions_weekN.html` in the week folder (see `week2/solutions_week2.html` as the model).
+- In `weekN/week.json` add `"solutions": "solutions_weekN.html"` and `"solutions_available": false`.
+- The home-page button shows **🔒 locked** until you flip `solutions_available` to `true`, then
+  rebuild (`python3 build_week.py --index`) + push to "reveal" after the deadline.
 
-### Backend — LIVE
-Deployed Web App URL is wired into `week1`, `week2`, and `leaderboard.html`.
-`ENDPOINT_URL = https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec`
-Both weeks save to the `Submissions` tab; the leaderboard reads + scores live against `AnswerKey`.
+### Change the backend script
+1. Edit `weeks/grade4/week2/apps_script_backend.gs`, commit/push.
+2. Copy the new code from the raw GitHub URL (guaranteed current):
+   `https://raw.githubusercontent.com/MKcoach123/math-challenge/main/weeks/grade4/week2/apps_script_backend.gs`
+3. ⚠️ **Open the Sheet → Extensions → Apps Script** (the *Sheet-bound* project — NOT script.google.com,
+   which opens a different/empty project). Paste over `Code.gs`, Save.
+4. **Deploy → Manage deployments → Edit ✏ → Version: New version → Deploy** (keeps the same URL).
+5. Verify: `curl '<endpoint>?view=debug'` shows the parsed keys.
 
-### Answer keys (in the Sheet's `AnswerKey` tab — Week text must match the page label)
-- **Grade 4 — Week 1:** P1 = `9`, P2 = `12`, P3 = `9`  ✅ entered & scoring
-- **Grade 4 — Week 2:** P1 = `36` (Anna's father), P2 = `9` (Nancy), P3 = `6` (star), P4 = `E` (Tom's house), P5 = `C` (cubes)  — 5 problems, reordered
-- **Grade 4 — Week 3:** P1 = `10` (squares), P2 = `8` (triangles), P3 = `16` (rectangles), P4 = `9` (cubes), P5 = `11` (pebbles)  ✅ confirmed (5 problems)
-
-### Near-term
-- [ ] Add the `Grade 4 — Week 1` row to the `AnswerKey` tab
-- [ ] Delete leftover test rows from `Submissions` (e.g. `DELETE_ME_W1`, Probe*, Test Bot T, Lalala, YoYoYo)
-- [x] Deploy the Apps Script and wire `ENDPOINT_URL` into all pages
-- [x] Confirm multiple-choice answer keys for Week 2 problems 2 & 3 (E, C)
-- [x] Backfill Week 1 page with save-to-Sheet wiring + privacy toggle (`Grade 4 — Week 1`)
-- [x] Add `Display` (public/private) choice to the submission forms (defaults Private)
-- [x] Extend Apps Script with scoring `doGet` (cumulative + per-week + Find-my-rank)
-- [x] Build `leaderboard.html` (Overall + per-week toggle, top-3 medals, private self-lookup)
-- [ ] Create the `AnswerKey` tab and record answers as weeks close
-
-### For a proper web app
-- [ ] Student identity system (teacher-issued codes or nicknames; no email)
-- [ ] Server-side submission storage (one submission per student per week)
-- [ ] Auto-scoring against answer key
-- [ ] Leaderboard page (sortable, per-grade optional)
-- [ ] Weekly state machine: Active → Closed → Revealed
-- [ ] Solution reveal page (shown after deadline)
-- [ ] Teacher admin dashboard (upload problems, enter answer key, advance week)
-
-### Design decisions still open
-- See `planning/project_analysis.md` for full list
-- Key ones: score reset policy, per-grade leaderboards, point values, mobile priority
+### Verify scoring / debug
+- `…/exec?view=debug` → tabs, AnswerKey headers, parsed keys, submission weeks, week-match flags.
+- `…/exec?view=leaderboard[&week=Grade 4 — Week N]` → ranked public rows + hiddenCount.
+- `…/exec?view=findme&name=…[&week=…]` → one student's rank/points (works for private students).
 
 ---
 
-## How to continue in a new session
+## 7. Deployment / environment notes
 
-1. Read this file first, then `planning/project_analysis.md` for full context
-2. Open `weeks/grade4/week1/grade4_week1.html` in a browser to see the current state
-3. The HTML file is self-contained — edit it directly; no build step needed
-4. Next likely task: choose a submission backend and wire up the Submit button
+- The local folder `/Users/natalia/FunWithAI/MathChallenge` is a **git repo** → `MKcoach123/math-challenge`.
+- Authenticated via `gh` (account MKcoach123, brew-installed at `/opt/homebrew/bin`). Updates = `git push`.
+- **Do NOT use the browser drag-upload** on GitHub — it kept dropping files in the wrong folder.
+  Always push from the local repo instead.
+- **Local preview:** `python3 -m http.server 8000` in the repo root → http://localhost:8000/.
+  Needed because Safari blocks `file://` navigation between pages ("outside the sandbox").
+- GitHub Pages CDN lags ~20–60 s after a push; `raw.githubusercontent.com/.../main/...` reflects the
+  repo immediately. Browsers cache — hard-refresh with **Cmd+Shift+R**.
 
 ---
 
-## Tech notes
+## 8. Open items / next steps
 
-- Problem images are base64-encoded PNGs embedded directly in the HTML — the file is fully portable
-- Print CSS uses `@media print` with `@page { size: A4 }` and flex layout to fill the page
-- Submit button calls `submitAnswers()` JS function — currently just shows an alert; replace with a fetch/POST call once a backend exists
-- The `nth-child` color scheme on problem cards depends on them being direct children of `<form id="quiz">`
+- [ ] **Clean test rows** from the `Submissions` tab: `ZZ_W2`, `ZZ_W3`, `ZZ_TEST*`, `DELETE_ME_W1`,
+      `Probe*`, `Test Bot T`, `Lalala`, `YoYoYo`, etc.
+- [ ] Week 2 solutions button is currently **enabled** (`solutions_available: true`) for testing. For
+      real use, set it `false` during the week and flip to `true` after the deadline.
+- [ ] Add solutions pages for Weeks 1 & 3 if desired.
+- [ ] Weeks 4–8 problems (drop `.pages` in `weekN/` and run the generator).
+- [ ] Add the per-week **due date** to `week.json` (`"due"`) — currently "Sunday night" placeholder.
+- [ ] (Optional) one-submission-per-student enforcement; per-grade leaderboards; score reset policy.
+
+---
+
+## 9. Design decisions locked
+
+- Backend: Google Apps Script + Sheet (no server to host).
+- Hosting: GitHub Pages, updated via `git push`.
+- Leaderboard: Overall **and** per-week; up to 8 weeks; backend supports 3–6 problems/week.
+- Privacy: per-student Public/Private, defaults Private; private = hidden + self-lookup.
+- Identity: first name + last initial, no email (COPPA-conscious).
+- Manual "reveal" of solutions (flag flip) rather than time-based automation.
