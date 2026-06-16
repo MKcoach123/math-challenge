@@ -42,7 +42,7 @@
     },
     {
       "type": "number",
-      "text": "3 hens lay 3 eggs in 3 days. How many eggs will 6 hens lay in 6 days?",
+      "html": "3 hens lay 3 eggs in 3 days. How many eggs will 6 hens lay in 6 days? <em style=\"color:#64748b\">(Hint: how many eggs does one hen lay in 3 days?)</em>",
       "image": "p5_hens.png",
       "image_width": "220px",
       "unit": "eggs"
