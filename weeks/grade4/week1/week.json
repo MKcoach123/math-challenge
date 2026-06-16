@@ -29,6 +29,7 @@
       "type": "number",
       "html": "In the following subtraction problem one digit is covered by a triangle and one by a square. What digit is covered by the triangle?",
       "image": "p5_subtraction.png",
+      "image_width": "190px",
       "label": "Triangle digit:",
       "maxlength": 1
     }
