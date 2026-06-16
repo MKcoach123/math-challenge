@@ -137,7 +137,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
   .problem:last-of-type {{ margin-bottom: 0 !important; }}
   .problem-num {{ font-size: 10pt !important; margin-bottom: 4pt !important; }}
   .problem-text {{ font-size: 11pt !important; line-height: 1.35 !important; margin: 2pt 0 4pt !important; }}
-  .problem img {{ width: auto !important; max-width: 100% !important; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }}
+  .problem img {{ width: auto; max-width: 100%; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }}
   .answer-area {{ margin-top: 6pt !important; gap: 12pt !important; }}
   .answer-label {{ font-size: 11pt !important; }}
   .answer-area input[type=text] {{ border: none !important; border-bottom: 1.5pt solid #333 !important; border-radius: 0 !important; font-size: 12pt !important; width: 90px !important; background: none !important; padding: 1pt 2pt !important; }}
