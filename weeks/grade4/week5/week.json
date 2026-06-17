@@ -30,7 +30,7 @@
       "type": "number",
       "text": "Hanna has a drawer with 5 red, 7 green, and 3 blue socks in it. How many times does she need to draw a sock at random from the drawer to be sure she has at least one matching pair?",
       "image": "p4_socks.png",
-      "image_width": "170px",
+      "image_width": "440px",
       "unit": "draws"
     },
     {
