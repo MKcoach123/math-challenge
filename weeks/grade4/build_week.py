@@ -53,6 +53,8 @@ SCRIBBLE_CSS = """
 #scribble-bar .sc-color { width: 22px; height: 22px; border-radius: 50%; padding: 0; box-shadow: 0 0 0 1px #cbd5e1; }
 #scribble-bar .sc-color.sel { box-shadow: 0 0 0 2px #1e293b; }
 #scribble-bar button.sel { outline: 2px solid #4f46e5; }
+/* Keep answer controls clickable above the scribble canvas (so tapping them works & exits scribble) */
+.name-box input, .answer-area input, .choice, .btn-submit, .vis-opt { position: relative; z-index: 60; }
 @media print { #scribble-canvas, #scribble-bar { display: none !important; } }
 """
 
@@ -65,6 +67,7 @@ SCRIBBLE_HTML = """
     <button class="sc-color" data-color="#111827" style="background:#111827" title="Black"></button>
     <button class="sc-color" data-color="#dc2626" style="background:#dc2626" title="Red"></button>
     <button class="sc-color" data-color="#16a34a" style="background:#16a34a" title="Green"></button>
+    <button id="scHl" title="Highlighter">\U0001f58d️</button>
     <button id="scErase" title="Eraser">\U0001f9fd</button>
     <button id="scClear" title="Clear everything">\U0001f5d1️</button>
   </div>
@@ -77,7 +80,7 @@ SCRIBBLE_JS = """
   var ctx = canvas.getContext('2d');
   var bar = document.getElementById('scribble-bar');
   var toggle = document.getElementById('scToggle');
-  var active = false, drawing = false, erasing = false, color = '#2563eb', last = null;
+  var active = false, drawing = false, tool = 'pen', color = '#2563eb', last = null;
 
   function sizeCanvas() {
     var w = Math.max(document.documentElement.scrollWidth, window.innerWidth);
@@ -103,20 +106,24 @@ SCRIBBLE_JS = """
   toggle.addEventListener('click', function () { sizeCanvas(); setActive(!active); });
 
   var colorBtns = bar.querySelectorAll('.sc-color');
+  var hlBtn = document.getElementById('scHl');
+  var eraseBtn = document.getElementById('scErase');
+  function clearSel() { colorBtns.forEach(function (x) { x.classList.remove('sel'); }); hlBtn.classList.remove('sel'); eraseBtn.classList.remove('sel'); }
   colorBtns.forEach(function (b) {
     b.addEventListener('click', function () {
-      color = b.getAttribute('data-color'); erasing = false;
-      colorBtns.forEach(function (x) { x.classList.remove('sel'); });
-      b.classList.add('sel');
-      document.getElementById('scErase').classList.remove('sel');
+      tool = 'pen'; color = b.getAttribute('data-color');
+      clearSel(); b.classList.add('sel');
     });
   });
-  document.getElementById('scErase').addEventListener('click', function () {
-    erasing = true; this.classList.add('sel');
-    colorBtns.forEach(function (x) { x.classList.remove('sel'); });
-  });
+  hlBtn.addEventListener('click', function () { tool = 'highlighter'; clearSel(); hlBtn.classList.add('sel'); });
+  eraseBtn.addEventListener('click', function () { tool = 'eraser'; clearSel(); eraseBtn.classList.add('sel'); });
   document.getElementById('scClear').addEventListener('click', function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+  });
+
+  // Young students: tapping an answer box should turn scribbling OFF so they can type.
+  document.addEventListener('focusin', function (e) {
+    if (active && e.target && e.target.matches && e.target.matches('input, textarea')) setActive(false);
   });
 
   canvas.addEventListener('pointerdown', function (e) {
@@ -127,9 +134,9 @@ SCRIBBLE_JS = """
   canvas.addEventListener('pointermove', function (e) {
     if (!active || !drawing) return;
     var x = e.pageX, y = e.pageY;
-    ctx.globalCompositeOperation = erasing ? 'destination-out' : 'source-over';
-    ctx.strokeStyle = color;
-    ctx.lineWidth = erasing ? 26 : 3;
+    if (tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.lineWidth = 26; }
+    else if (tool === 'highlighter') { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = 'rgba(250,204,21,0.35)'; ctx.lineWidth = 18; }
+    else { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = color; ctx.lineWidth = 3; }
     ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
     last = { x: x, y: y };
   });
