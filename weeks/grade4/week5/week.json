@@ -10,14 +10,16 @@
       "image": "p1_house.png",
       "image_width": "200px",
       "label": "Floor:",
-      "maxlength": 1
+      "maxlength": 1,
+      "print_width": "150px"
     },
     {
       "type": "number",
       "text": "A big square is divided into small squares. If the smallest one has area of 1, what is the area of the shaded square?",
       "image": "p2_square.png",
       "image_width": "260px",
-      "unit": "area"
+      "unit": "area",
+      "print_width": "170px"
     },
     {
       "type": "number",
@@ -31,7 +33,8 @@
       "text": "Hanna has a drawer with 5 red, 7 green, and 3 blue socks in it. How many times does she need to draw a sock at random from the drawer to be sure she has at least one matching pair?",
       "image": "p4_socks.png",
       "image_width": "440px",
-      "unit": "draws"
+      "unit": "draws",
+      "print_width": "280px"
     },
     {
       "type": "number",
@@ -39,7 +42,8 @@
       "image": "p5_scales.png",
       "image_width": "460px",
       "label": "Heaviest ball (number):",
-      "maxlength": 1
+      "maxlength": 1,
+      "print_width": "300px"
     },
     {
       "type": "number",
