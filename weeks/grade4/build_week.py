@@ -189,6 +189,9 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 {accent_nth}
 .problem-num {{ font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: #4f46e5; margin-bottom: 10px; }}
 .problem-text {{ font-size: 17px; line-height: 1.5; margin: 6px 0 4px; }}
+.hint-toggle {{ display: inline-block; cursor: pointer; font-size: 13px; font-weight: 700; color: #b45309; background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 2px 10px; user-select: none; white-space: nowrap; }}
+.hint-toggle:hover {{ background: #fef3c7; }}
+.hint-text {{ font-style: italic; color: #64748b; }}
 .problem img {{ max-width: 100%; border-radius: 8px; margin: 16px 0; border: 1px solid #e2e8f0; }}
 
 .answer-area {{ margin-top: 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }}
@@ -246,6 +249,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
   .problem:last-of-type {{ margin-bottom: 0 !important; }}
   .problem-num {{ font-size: 10pt !important; margin-bottom: 4pt !important; }}
   .problem-text {{ font-size: 11pt !important; line-height: 1.35 !important; margin: 2pt 0 4pt !important; }}
+  .hint-toggle {{ display: none !important; }}
   .problem img {{ width: auto; max-width: 100%; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }}
   .answer-area {{ margin-top: 6pt !important; gap: 12pt !important; }}
   .answer-label {{ font-size: 11pt !important; }}
