@@ -119,7 +119,9 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
   .submit-row { display: none !important; }
 }
 
-#scribble-canvas { position: absolute; top: 0; left: 0; z-index: 50; pointer-events: none; }
+#scribble-canvas, #scribble-live { position: absolute; top: 0; left: 0; pointer-events: none; }
+#scribble-canvas { z-index: 50; }
+#scribble-live { z-index: 51; opacity: 0.2; }
 #scribble-canvas.active { pointer-events: auto; touch-action: none; cursor: crosshair; }
 #scribble-bar { position: fixed; right: 16px; bottom: 16px; z-index: 100; display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: 8px 10px; }
 #scribble-bar button { border: none; background: #f1f5f9; border-radius: 8px; padding: 8px 11px; font-size: 16px; cursor: pointer; line-height: 1; }
@@ -133,7 +135,7 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 #scribble-bar button.sel { outline: 2px solid #4f46e5; }
 /* Keep answer controls clickable above the scribble canvas (so tapping them works & exits scribble) */
 .name-box input, .answer-area input, .choice, .btn-submit, .vis-opt { position: relative; z-index: 60; }
-@media print { #scribble-canvas, #scribble-bar { display: none !important; } }
+@media print { #scribble-canvas, #scribble-live, #scribble-bar { display: none !important; } }
 
 </style>
 </head>
@@ -241,6 +243,7 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 </div>
 
 <canvas id="scribble-canvas"></canvas>
+<canvas id="scribble-live"></canvas>
 <div id="scribble-bar">
   <button class="sc-toggle" id="scToggle" title="Draw / scribble on the page">✏️ Scribble</button>
   <div class="sc-tools">
@@ -306,9 +309,12 @@ async function submitAnswers(btn) {
 (function () {
   var canvas = document.getElementById('scribble-canvas');
   var ctx = canvas.getContext('2d');
+  var live = document.getElementById('scribble-live');
+  var lctx = live.getContext('2d');
   var bar = document.getElementById('scribble-bar');
   var toggle = document.getElementById('scToggle');
   var active = false, drawing = false, tool = 'pen', color = '#2563eb', last = null;
+  var HL_ALPHA = 0.2;   // keep in sync with #scribble-live CSS opacity
 
   function sizeCanvas() {
     var w = Math.max(document.documentElement.scrollWidth, window.innerWidth);
@@ -317,8 +323,10 @@ async function submitAnswers(btn) {
     var prev = null;
     if (canvas.width && canvas.height) { try { prev = ctx.getImageData(0, 0, canvas.width, canvas.height); } catch (e) {} }
     canvas.width = w; canvas.height = h;
+    live.width = w; live.height = h;
     if (prev) ctx.putImageData(prev, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    lctx.lineCap = 'round'; lctx.lineJoin = 'round';
   }
   sizeCanvas();
   window.addEventListener('load', sizeCanvas);
@@ -347,6 +355,7 @@ async function submitAnswers(btn) {
   eraseBtn.addEventListener('click', function () { tool = 'eraser'; clearSel(); eraseBtn.classList.add('sel'); });
   document.getElementById('scClear').addEventListener('click', function () {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    lctx.clearRect(0, 0, live.width, live.height);
   });
 
   // Young students: tapping an answer box should turn scribbling OFF so they can type.
@@ -362,13 +371,30 @@ async function submitAnswers(btn) {
   canvas.addEventListener('pointermove', function (e) {
     if (!active || !drawing) return;
     var x = e.pageX, y = e.pageY;
-    if (tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.lineWidth = 26; }
-    else if (tool === 'highlighter') { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = 'rgba(250,204,21,0.14)'; ctx.lineWidth = 18; }
-    else { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = color; ctx.lineWidth = 3; }
-    ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
+    if (tool === 'highlighter') {
+      // draw OPAQUE on the live layer; its CSS opacity gives a uniform highlight (no slow-draw build-up)
+      lctx.globalCompositeOperation = 'source-over'; lctx.strokeStyle = 'rgb(250,204,21)'; lctx.lineWidth = 18;
+      lctx.beginPath(); lctx.moveTo(last.x, last.y); lctx.lineTo(x, y); lctx.stroke();
+    } else if (tool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out'; ctx.lineWidth = 26;
+      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
+    } else {
+      ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = color; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
+    }
     last = { x: x, y: y };
   });
-  function endStroke() { drawing = false; }
+  function endStroke() {
+    if (drawing && tool === 'highlighter') {
+      // bake the uniform live stroke onto the main canvas at the same alpha, then clear the live layer
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = HL_ALPHA;
+      ctx.drawImage(live, 0, 0);
+      ctx.globalAlpha = 1;
+      lctx.clearRect(0, 0, live.width, live.height);
+    }
+    drawing = false;
+  }
   canvas.addEventListener('pointerup', endStroke);
   canvas.addEventListener('pointercancel', endStroke);
   canvas.addEventListener('pointerleave', endStroke);
