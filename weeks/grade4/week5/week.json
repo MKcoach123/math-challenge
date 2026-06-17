@@ -1,0 +1,48 @@
+{
+  "number": 5,
+  "week_label": "Grade 4 — Week 5",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "In a five-story house, Maia lives above Pablo but below Rafael, and Jaylon lives below Pablo. If Jaylon lives on the 2nd floor, on what floor does Maia live?",
+      "image": "p1_house.png",
+      "image_width": "200px",
+      "label": "Floor:",
+      "maxlength": 1
+    },
+    {
+      "type": "number",
+      "text": "A big square is divided into small squares. If the smallest one has area of 1, what is the area of the shaded square?",
+      "image": "p2_square.png",
+      "image_width": "260px",
+      "unit": "area"
+    },
+    {
+      "type": "number",
+      "text": "Amelia bakes some cookies. She gives half the cookies to her friend and eats 4. She then gives half of the remaining cookies to her older sister. Amelia now has 2 cookies remaining. How many cookies did Amelia bake?",
+      "unit": "cookies"
+    },
+    {
+      "type": "number",
+      "text": "Hanna has a drawer with 5 red, 7 green, and 3 blue socks in it. How many times does she need to draw a sock at random from the drawer to be sure she has at least one matching pair?",
+      "image": "p4_socks.png",
+      "image_width": "170px",
+      "unit": "draws"
+    },
+    {
+      "type": "number",
+      "text": "Which ball is the heaviest?",
+      "image": "p5_scales.png",
+      "image_width": "460px",
+      "label": "Heaviest ball (number):",
+      "maxlength": 1
+    },
+    {
+      "type": "number",
+      "text": "Aarav is 6th in an ice cream line. Ivaan is 8th in the same line but counted from the end of the line. If there are 3 children between Aarav and Ivaan, how many children are in the line?",
+      "unit": "children"
+    }
+  ]
+}
