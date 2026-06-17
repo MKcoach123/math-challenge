@@ -22,7 +22,9 @@
     {
       "type": "number",
       "text": "Amelia bakes some cookies. She gives half the cookies to her friend and eats 4. She then gives half of the remaining cookies to her older sister. Amelia now has 2 cookies remaining. How many cookies did Amelia bake?",
-      "unit": "cookies"
+      "unit": "cookies",
+      "image": "p3_cookies.png",
+      "image_width": "180px"
     },
     {
       "type": "number",
