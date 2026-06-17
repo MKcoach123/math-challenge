@@ -6,7 +6,7 @@
   "problems": [
     {
       "type": "number",
-      "text": "Kenga always makes one large jump following with two small jumps. Kenga starts at 0 and ends on 11. How many jumps did Keegan make?",
+      "text": "Kenga always makes one large jump following with two small jumps. Kenga starts at 0 and ends on 11. How many jumps did Kenga make?",
       "image": "p1_kenga.png",
       "unit": "jumps"
     },
@@ -42,7 +42,7 @@
     },
     {
       "type": "number",
-      "html": "3 hens lay 3 eggs in 3 days. How many eggs will 6 hens lay in 6 days? <em style=\"color:#64748b\">(Hint: how many eggs does one hen lay in 3 days?)</em>",
+      "html": "3 hens lay 3 eggs in 3 days. How many eggs will 6 hens lay in 6 days? <em style=\"color:#64748b\">(Hint: how many eggs does 1 hen lay in 3 days?)</em>",
       "image": "p5_hens.png",
       "image_width": "220px",
       "unit": "eggs"
