@@ -276,7 +276,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
   .problem-num {{ font-size: 10pt !important; margin-bottom: 4pt !important; }}
   .problem-text {{ font-size: 11pt !important; line-height: 1.35 !important; margin: 2pt 0 4pt !important; }}
   .hint-toggle {{ display: none !important; }}
-  .problem img {{ width: auto; max-width: 100%; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }}
+  .problem img {{ width: auto; max-width: var(--pw, var(--sw, 100%)) !important; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }}
   .answer-area {{ margin-top: 6pt !important; gap: 12pt !important; }}
   .answer-label {{ font-size: 11pt !important; }}
   .answer-area input[type=text] {{ border: none !important; border-bottom: 1.5pt solid #333 !important; border-radius: 0 !important; font-size: 12pt !important; width: 90px !important; background: none !important; padding: 1pt 2pt !important; }}
@@ -299,11 +299,15 @@ def render_problem(i, p, week_dir, img_max_width=None):
     # One or more figures. Use "images": [{"file","width"}, …] for several; or a single "image".
     figs = p.get("images")
     if figs is None and p.get("image"):
-        figs = [{"file": p["image"], "width": p.get("image_width")}]
+        figs = [{"file": p["image"], "width": p.get("image_width"), "print_width": p.get("print_width")}]
     for fig in (figs or []):
-        # per-image "width" overrides the week-level "image_max_width"; else full width.
+        # screen width (--sw) overrides week-level "image_max_width"; optional print width (--pw).
         w = fig.get("width") or img_max_width
-        style = f' style="max-width:{esc(w)}"' if w else ""
+        pw = fig.get("print_width")
+        sty = []
+        if w: sty += [f"--sw:{esc(w)}", "max-width:var(--sw)"]
+        if pw: sty.append(f"--pw:{esc(pw)}")
+        style = f' style="{";".join(sty)}"' if sty else ""
         parts.append(f'      <img src="{b64_img(week_dir, fig["file"])}"{style} alt="Problem {n} figure">')
 
     ptype = p.get("type", "number")
