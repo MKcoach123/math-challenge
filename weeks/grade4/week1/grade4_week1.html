@@ -356,7 +356,7 @@ async function submitAnswers(btn) {
     if (!active || !drawing) return;
     var x = e.pageX, y = e.pageY;
     if (tool === 'eraser') { ctx.globalCompositeOperation = 'destination-out'; ctx.strokeStyle = 'rgba(0,0,0,1)'; ctx.lineWidth = 26; }
-    else if (tool === 'highlighter') { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = 'rgba(250,204,21,0.6)'; ctx.lineWidth = 18; }
+    else if (tool === 'highlighter') { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = 'rgba(250,204,21,0.22)'; ctx.lineWidth = 18; }
     else { ctx.globalCompositeOperation = 'source-over'; ctx.strokeStyle = color; ctx.lineWidth = 3; }
     ctx.beginPath(); ctx.moveTo(last.x, last.y); ctx.lineTo(x, y); ctx.stroke();
     last = { x: x, y: y };
