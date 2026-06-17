@@ -50,5 +50,7 @@
       "text": "Aarav is 6th in an ice cream line. Ivaan is 8th in the same line but counted from the end of the line. If there are 3 children between Aarav and Ivaan, how many children are in the line?",
       "unit": "children"
     }
-  ]
+  ],
+  "solutions": "solutions_week5.html",
+  "solutions_available": true
 }
