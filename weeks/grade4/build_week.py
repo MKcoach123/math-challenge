@@ -497,10 +497,11 @@ def rebuild_index():
         sol_btn = ""
         if sol:
             href = f"weeks/grade4/week{n}/{sol}"
+            # Both states link to the page; when not yet available it shows a passcode gate.
             if cfg.get("solutions_available"):
                 sol_btn = f'\n    <a class="sol-btn" href="{href}">📖 Solutions</a>'
             else:
-                sol_btn = '\n    <span class="sol-btn disabled" title="Locked — opens after the deadline">🔒 Solutions (locked)</span>'
+                sol_btn = f'\n    <a class="sol-btn" href="{href}" title="Teacher/developer passcode required">🔒 Solutions</a>'
 
         cards.append(
             f'  <div class="week-card" style="border-left-color:{color}">\n'
