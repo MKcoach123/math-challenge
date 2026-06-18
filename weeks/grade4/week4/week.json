@@ -4,7 +4,7 @@
   "due": "Sunday night",
   "image_max_width": "360px",
   "solutions": "solutions_week4.html",
-  "solutions_available": true,
+  "solutions_available": false,
   "problems": [
     {
       "type": "number",

@@ -4,12 +4,36 @@
   "due": "Sunday night",
   "image_max_width": "260px",
   "solutions": "solutions_week3.html",
-  "solutions_available": true,
+  "solutions_available": false,
   "problems": [
-    { "type": "number", "text": "How many squares are in the picture?", "image": "p1_squares_count.png", "unit": "squares" },
-    { "type": "number", "text": "How many triangles are in the picture?", "image": "p2_triangles_count.png", "unit": "triangles" },
-    { "type": "number", "text": "How many rectangles are in the picture?", "image": "p3_rectangles_count.png", "unit": "rectangles" },
-    { "type": "number", "text": "How many cubes are there in the object? (cubes are stacked, not glued together)", "image": "p4_cubes_count.png", "unit": "cubes" },
-    { "type": "number", "text": "John placed pebbles on a table 2 cm apart. How many pebbles did he place over a distance of 20 cm?", "unit": "pebbles" }
+    {
+      "type": "number",
+      "text": "How many squares are in the picture?",
+      "image": "p1_squares_count.png",
+      "unit": "squares"
+    },
+    {
+      "type": "number",
+      "text": "How many triangles are in the picture?",
+      "image": "p2_triangles_count.png",
+      "unit": "triangles"
+    },
+    {
+      "type": "number",
+      "text": "How many rectangles are in the picture?",
+      "image": "p3_rectangles_count.png",
+      "unit": "rectangles"
+    },
+    {
+      "type": "number",
+      "text": "How many cubes are there in the object? (cubes are stacked, not glued together)",
+      "image": "p4_cubes_count.png",
+      "unit": "cubes"
+    },
+    {
+      "type": "number",
+      "text": "John placed pebbles on a table 2 cm apart. How many pebbles did he place over a distance of 20 cm?",
+      "unit": "pebbles"
+    }
   ]
 }
