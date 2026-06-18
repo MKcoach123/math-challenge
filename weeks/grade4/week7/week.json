@@ -1,0 +1,72 @@
+{
+  "number": 7,
+  "week_label": "Grade 4 — Week 7",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "text",
+      "text": "The clock below is an image in the mirror. What is the correct time on it? (Write it in the format 4:30 or 12:10.)",
+      "image": "p1_clock.png",
+      "image_width": "220px",
+      "print_width": "180px",
+      "label": "Correct time:",
+      "maxlength": 6
+    },
+    {
+      "type": "number",
+      "text": "The pet shop has cats and parrots. Olivia counted 34 legs and 12 tails. How many cats are there in the pet shop?",
+      "image": "p2_petshop.png",
+      "image_width": "200px",
+      "print_width": "160px",
+      "unit": "cats"
+    },
+    {
+      "type": "number",
+      "text": "What number can replace the question mark?",
+      "image": "p3_scales.png",
+      "image_width": "240px",
+      "print_width": "200px",
+      "label": "? ="
+    },
+    {
+      "type": "choice",
+      "text": "A cat knocked one block off Tore's construction (shown on the left). What could the construction have looked like before the cat knocked the piece off?",
+      "images": [
+        {
+          "file": "p4_construction.png",
+          "width": "240px",
+          "print_width": "200px"
+        },
+        {
+          "file": "p4_options.png",
+          "width": "480px",
+          "print_width": "380px"
+        }
+      ],
+      "choices": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ]
+    },
+    {
+      "type": "number",
+      "text": "How many dots are there altogether from the 1st to the 6th pattern?",
+      "image": "p5_dots.png",
+      "image_width": "360px",
+      "print_width": "300px",
+      "unit": "dots"
+    },
+    {
+      "type": "number",
+      "text": "A hallway has the dimensions shown in the picture. A cat walks on the dashed line along the middle of the hallway. How many metres does the cat walk?",
+      "image": "p6_hallway.png",
+      "image_width": "360px",
+      "print_width": "300px",
+      "unit": "metres"
+    }
+  ]
+}
