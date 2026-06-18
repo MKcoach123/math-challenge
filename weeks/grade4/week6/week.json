@@ -1,0 +1,51 @@
+{
+  "number": 6,
+  "week_label": "Grade 4 — Week 6",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "If you turn gear 2 in a clockwise direction, which of the following gears will also be turning clockwise? (Hint: when one gear turns clockwise, the gear that is touching it will turn counter-clockwise.)",
+      "image": "p1_gears.png",
+      "image_width": "220px",
+      "print_width": "180px",
+      "label": "Gear:",
+      "maxlength": 2
+    },
+    {
+      "type": "number",
+      "text": "Charlotte buys 2 scrunchies and one headband at the hair accessory store. Each of the scrunchies costs $2. If Charlotte spends $10 in total (with no tax), how much does the headband cost?",
+      "unit": "dollars"
+    },
+    {
+      "type": "number",
+      "text": "Ellie has started to write some numbers in the table below. She decided that each row and each column will contain the numbers 1, 2 and 3 only once (like in Sudoku). What is the sum of the numbers in squares A and B?",
+      "image": "p3_sudoku.png",
+      "image_width": "200px",
+      "print_width": "170px"
+    },
+    {
+      "type": "number",
+      "text": "First Akira scores 12 points in total with three arrows. On her second turn she scores 15. How many points does she score on her third turn?",
+      "image": "p4_archery.png",
+      "image_width": "400px",
+      "print_width": "320px",
+      "unit": "points"
+    },
+    {
+      "type": "number",
+      "text": "The space farmer has 30 space chickens and space rabbits altogether. There are 100 legs in total. How many space chickens does he have?",
+      "image": "p5_space.png",
+      "image_width": "440px",
+      "print_width": "340px",
+      "unit": "chickens"
+    },
+    {
+      "type": "text",
+      "html": "There are five students playing ball: Audrey, Mike, Esper, Rayan, and Athena. Here is some information about them:<br>&bull; Audrey is older than Mike.<br>&bull; Esper is younger than Athena, but older than Rayan.<br>&bull; Rayan is older than Mike.<br>&bull; Athena is younger than Audrey.<br>Who is the youngest?",
+      "label": "Youngest:",
+      "maxlength": 10
+    }
+  ]
+}
