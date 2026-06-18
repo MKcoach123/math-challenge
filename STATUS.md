@@ -94,6 +94,8 @@ All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (co
 | **Grade 4 — Week 2** | 5 | Anna's father (num), Nancy (num), star value (num, img), Tom's house (A–E), 8-cube view (A–E) | `36, 9, 6, E, C` |
 | **Grade 4 — Week 3** | 5 | squares (num,img), triangles (num,img), rectangles (num,img), cubes (num,img), pebbles (num) | `10, 8, 16, 9, 11` |
 | **Grade 4 — Week 4** | 5 | Kenga jumps (num,img), half glass (num,img), Albert's cards right-end (num,img), squares balance 3 triangles (num,img), hens&eggs (num,img) | `8, 250, 8, 6, 12` |
+| **Grade 4 — Week 5** | 6 | house floor logic (num,img), divided square area (num,img), Amelia cookies (num,img), socks pigeonhole (num,img), heaviest ball (num,img), children in line (num,img) | `4, 16, 16, 4, 4, 17` |
+| **Grade 4 — Week 6** | 6 | gears clockwise (num,img), scrunchies/headband (num), sudoku table A+B (num,img), archery 3rd turn (num,img), space chickens (num,img), youngest student (**text** = Mike) | `4, 6, 4, 21, 10, Mike` |
 
 All three verified scoring 5/5 (or 3/3) on all-correct test submissions.
 
