@@ -35,7 +35,7 @@
     },
     {
       "type": "number",
-      "text": "The space farmer has 30 space chickens and space rabbits altogether. There are 100 legs in total. How many space chickens does he have?",
+      "text": "The space farmer has 30 space chickens and space rabbits altogether. There are 100 legs in total. How many space chickens does he have? (Space chickens have 2 legs and space rabbits have 4 legs, just like on Earth.)",
       "image": "p5_space.png",
       "image_width": "440px",
       "print_width": "340px",
