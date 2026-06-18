@@ -500,7 +500,7 @@ def rebuild_index():
             if cfg.get("solutions_available"):
                 sol_btn = f'\n    <a class="sol-btn" href="{href}">📖 Solutions</a>'
             else:
-                sol_btn = '\n    <span class="sol-btn disabled" title="Available after the deadline">🔒 Solutions</span>'
+                sol_btn = '\n    <span class="sol-btn disabled" title="Locked — opens after the deadline">🔒 Solutions (locked)</span>'
 
         cards.append(
             f'  <div class="week-card" style="border-left-color:{color}">\n'

@@ -6,7 +6,6 @@ __pycache__/
 **/_extract/
 **/_tiff/
 **/_sol/
-# Locked solutions: keep plaintext sources and source docs OUT of the public repo
-**/solutions_*.src.html
+# Answer source docs stay local (not needed in the repo)
 **/solutions_week*.pages
 **/week*_solutions.pages

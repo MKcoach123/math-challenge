@@ -3,12 +3,49 @@
   "week_label": "Grade 4 — Week 2",
   "due": "Sunday night",
   "solutions": "solutions_week2.html",
-  "solutions_available": true,
+  "solutions_available": false,
   "problems": [
-    { "type": "number", "text": "Anna is 6 years old. Her father will be 40 years old when Anna reaches the age of 10. How old is Anna's father?", "unit": "years old" },
-    { "type": "number", "text": "Nancy is 3 years older than Mary. Clark is 2 years younger than Nancy. Ben is 14 years old and twice as old as Clark. How old is Nancy?", "unit": "years old" },
-    { "type": "number", "text": "What is the value of the star?", "image": "star_value.png", "image_width": "240px" },
-    { "type": "choice", "text": "The picture shows the front of Tom's house. The back of his house has 3 windows and no door. What does Tom see when he looks at the back of his house?", "image": "tom_house.png", "image_width": "480px", "choices": ["A","B","C","D","E"] },
-    { "type": "choice", "text": "The solid in the picture is made of 8 cubes. How does the solid look from above?", "image": "cube_solid.png", "image_width": "340px", "choices": ["A","B","C","D","E"] }
+    {
+      "type": "number",
+      "text": "Anna is 6 years old. Her father will be 40 years old when Anna reaches the age of 10. How old is Anna's father?",
+      "unit": "years old"
+    },
+    {
+      "type": "number",
+      "text": "Nancy is 3 years older than Mary. Clark is 2 years younger than Nancy. Ben is 14 years old and twice as old as Clark. How old is Nancy?",
+      "unit": "years old"
+    },
+    {
+      "type": "number",
+      "text": "What is the value of the star?",
+      "image": "star_value.png",
+      "image_width": "240px"
+    },
+    {
+      "type": "choice",
+      "text": "The picture shows the front of Tom's house. The back of his house has 3 windows and no door. What does Tom see when he looks at the back of his house?",
+      "image": "tom_house.png",
+      "image_width": "480px",
+      "choices": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ]
+    },
+    {
+      "type": "choice",
+      "text": "The solid in the picture is made of 8 cubes. How does the solid look from above?",
+      "image": "cube_solid.png",
+      "image_width": "340px",
+      "choices": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E"
+      ]
+    }
   ]
 }
