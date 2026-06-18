@@ -6,7 +6,7 @@
   "problems": [
     {
       "type": "number",
-      "text": "If you turn gear 2 in a clockwise direction, which of the following gears will also be turning clockwise? (Hint: when one gear turns clockwise, the gear that is touching it will turn counter-clockwise.)",
+      "html": "If you turn gear 2 in a clockwise direction, which of the following gears will also be turning clockwise? <span class=\"hint-toggle\" onclick=\"this.nextElementSibling.style.display='inline'; this.style.display='none';\">💡 Hint</span><span class=\"hint-text\" style=\"display:none\"> When one gear turns clockwise, the gear that is touching it turns counter-clockwise.</span>",
       "image": "p1_gears.png",
       "image_width": "220px",
       "print_width": "180px",
