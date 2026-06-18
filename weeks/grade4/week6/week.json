@@ -47,5 +47,7 @@
       "label": "Youngest:",
       "maxlength": 10
     }
-  ]
+  ],
+  "solutions": "solutions_week6.html",
+  "solutions_available": false
 }
