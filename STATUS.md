@@ -93,7 +93,7 @@ All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (co
 | **Grade 4 — Week 4** | 5 | Kenga jumps (num,img), half glass (num,img), Albert's cards right-end (num,img), squares balance 3 triangles (num,img), hens&eggs (num,img) | `8, 250, 8, 6, 12` |
 | **Grade 4 — Week 5** | 6 | house floor logic (num,img), divided square area (num,img), Amelia cookies (num,img), socks pigeonhole (num,img), heaviest ball (num,img), children in line (num,img) | `4, 16, 16, 4, 4, 17` |
 | **Grade 4 — Week 6** | 6 | gears clockwise (num,img), scrunchies/headband (num), sudoku table A+B (num,img), archery 3rd turn (num,img), space chickens (num,img), youngest student (**text** = Mike) | `4, 6, 4, 21, 10, Mike` |
-| **Grade 4 — Week 7** | 6 | mirror clock (**text time**), pet shop cats (num,img), star/circle scales (num,img), cube construction before (**A–E**,img), dot patterns sum (num,img), hallway centre-line metres (num,img) | `8:15, 5, 10, E, 56, 84` |
+| **Grade 4 — Week 7** | 6 | mirror clock (**text time**), pet shop cats (num,img), star/circle scales (num,img), cube construction before (**A–E**,img), dot patterns sum (num,img), hallway centre-line metres (num,img) | `8:15, 5, 10, E, 56, 83` |
 
 Note: Week 7 P1 time "8:15" is stored by Sheets as a *time value* in both key & submissions, so they match — works as long as students type the "8:15" format.
 
