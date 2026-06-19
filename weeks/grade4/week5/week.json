@@ -47,7 +47,7 @@
     },
     {
       "type": "number",
-      "text": "Aarav is 6th in an ice cream line. Ivaan is 8th in the same line but counted from the end of the line. If there are 3 children between Aarav and Ivaan, how many children are in the line?",
+      "text": "Aarav is 6th in an ice cream line. Ivaan is 8th in the same line but counted from the end of the line. If there are 3 children between Aarav and Ivaan (and Aarav is in front of Ivaan in the line), how many children are in the line?",
       "unit": "children"
     }
   ],
