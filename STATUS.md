@@ -1,6 +1,6 @@
 # Math Challenge — Project Status & Resume Guide
 
-Last updated: 2026-06-17
+Last updated: 2026-06-18
 
 > **Read this first if starting a new session.** It captures the whole project state, how it's
 > deployed, and exactly how to make changes. Companion: `planning/project_analysis.md` (concept).
@@ -12,7 +12,7 @@ Last updated: 2026-06-17
 A classroom math-challenge website. Each week, students solve a set of Math Kangaroo problems
 (5–6 per week), submit answers online (or print on paper), and compete on a leaderboard.
 After the weekly deadline the answers + solutions are revealed. Planned run: **8 weeks**, Grade 4 —
-**Weeks 1–6 are built and live**; Weeks 7–8 still to come.
+**Weeks 1–7 are built and live** (problems + locked solutions); only **Week 8** is still to come.
 
 **It is fully live and working** — pages hosted, submissions saving, scoring + leaderboard running.
 Problem pages have a built-in **scribble/highlighter scratchpad**. Solution pages are **passcode-locked**
@@ -179,9 +179,9 @@ solutions for that one visit and re-locks when you leave. (Not strong crypto —
 
 - [ ] **Clean test rows** from the `Submissions` tab (e.g. `ZZ_*`, `DELETE_ME_W1`, `Probe*`, `Test Bot T`,
       `Lalala`, `YoYoYo`) before the real run.
-- [x] Solutions pages for all 6 weeks — built and **passcode-locked** (`solutions_available: false`).
+- [x] Solutions pages for all 7 weeks — built and **passcode-locked** (`solutions_available: false`).
 - [ ] **Reveal solutions per deadline:** flip each week's `solutions_available` to `true` + re-gate + rebuild.
-- [ ] **Weeks 7–8 problems** (drop `.pages` into `weekN/`, run the generator).
+- [ ] **Week 8 problems** (drop `.pages` into `week8/`, run the generator) — the last of the planned 8.
 - [ ] Per-week **due date** in `week.json` (`"due"`) — currently "Sunday night" placeholder everywhere.
 - [ ] (Optional) one-submission-per-student enforcement; per-grade leaderboards; score-reset policy;
       git-history scrub if the earlier plaintext solutions in old commits ever matter.
