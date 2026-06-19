@@ -62,11 +62,13 @@
     },
     {
       "type": "number",
-      "text": "A hallway has the dimensions shown in the picture. A cat walks on the dashed line along the middle of the hallway. How many metres does the cat walk?",
+      "text": "A hallway has the dimensions shown in the picture. A cat walks on the dashed line along the middle of the hallway. How many meters does the cat walk?",
       "image": "p6_hallway.png",
       "image_width": "360px",
       "print_width": "300px",
-      "unit": "metres"
+      "unit": "meters"
     }
-  ]
+  ],
+  "solutions": "solutions_week7.html",
+  "solutions_available": false
 }
