@@ -1,0 +1,53 @@
+{
+  "number": 8,
+  "week_label": "Grade 4 — Week 8",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "text",
+      "text": "Lindy, Cindy, Mindy, and Bob are having a race. Lindy finishes before Cindy. Mindy finishes before Lindy. Bob finishes second. Who won the race?",
+      "label": "Winner:",
+      "maxlength": 12
+    },
+    {
+      "type": "number",
+      "text": "Amelia has 6 weights: 1, 2, 3, 4, 5, and 6 kg. She puts five of them on the scale and puts one aside, as shown. The scales balance. Which weight did she set aside?",
+      "image": "p2_scale.png",
+      "image_width": "320px",
+      "print_width": "260px",
+      "unit": "kg"
+    },
+    {
+      "type": "number",
+      "text": "In how many ways can you form the word “WATER” from the network shown below?",
+      "image": "p3_water.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "unit": "ways"
+    },
+    {
+      "type": "number",
+      "text": "Meera is walking her dog. She walks to a nearby park, and then goes back home after realizing she left her dog at home. Meera then walks 2 miles with her dog. She walked 6 miles in total. How far is the park from her house?",
+      "image": "p4_walk.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "unit": "miles"
+    },
+    {
+      "type": "number",
+      "text": "Torey does 13 pushups every morning. How many pushups does Torey do in 7 mornings?",
+      "unit": "pushups"
+    },
+    {
+      "type": "choice",
+      "text": "In four of the five pictures, the white area is equal to the grey area. In which picture are the white area and the grey area different?",
+      "image": "p6_squares.png",
+      "image_width": "460px",
+      "print_width": "380px",
+      "choices": ["A", "B", "C", "D", "E"]
+    }
+  ],
+  "solutions": "solutions_week8.html",
+  "solutions_available": false
+}
