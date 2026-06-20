@@ -50,5 +50,6 @@
       "choices": ["1", "2", "3", "4", "5"]
     }
   ],
+  "solutions": "solutions_week9.html",
   "solutions_available": false
 }
