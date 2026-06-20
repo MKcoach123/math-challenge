@@ -1,0 +1,55 @@
+{
+  "number": 9,
+  "week_label": "Grade 4 — Week 9",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "In how many ways can an ant return home to point B from point A? The ant can only move vertically and horizontally.",
+      "image": "p1_grid.png",
+      "image_width": "150px",
+      "print_width": "130px",
+      "unit": "ways"
+    },
+    {
+      "type": "text",
+      "html": "There are five gift boxes of different sizes. Here is what we know:<br>• The red box is bigger than the white box.<br>• The yellow box is bigger than the white box.<br>• The black box is smaller than the red box.<br>• The blue box is bigger than the yellow box but smaller than the black box.<br><br>Which box is the biggest?",
+      "image": "p2_boxes.png",
+      "image_width": "440px",
+      "print_width": "340px",
+      "label": "Biggest box (color):",
+      "maxlength": 8
+    },
+    {
+      "type": "number",
+      "text": "In how many ways can you form a 3-digit number using 1, 2 and 3, using each digit once?",
+      "unit": "ways"
+    },
+    {
+      "type": "text",
+      "text": "Is the sum of the first 5 even numbers odd or even?",
+      "_note": "SOURCE WORDING WAS: 'Is the number of first 5 even numbers odd or even?' — reworded to 'sum'; confirm this is the intended question.",
+      "label": "Odd or even:",
+      "maxlength": 4
+    },
+    {
+      "type": "number",
+      "text": "Torey makes designs using only tiles like the one shown (a green-star square joined to a pink square). How many of the following designs can he make?",
+      "images": [
+        { "file": "p5_tile.png", "width": "90px", "print_width": "70px" },
+        { "file": "p5_designs.png", "width": "460px", "print_width": "360px" }
+      ],
+      "unit": "designs"
+    },
+    {
+      "type": "choice",
+      "text": "Study the pattern. Which element should be in place of the question mark?",
+      "image": "p6_pattern.png",
+      "image_width": "420px",
+      "print_width": "340px",
+      "choices": ["1", "2", "3", "4", "5"]
+    }
+  ],
+  "solutions_available": false
+}
