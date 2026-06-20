@@ -11,8 +11,11 @@ Last updated: 2026-06-18
 
 A classroom math-challenge website. Each week, students solve a set of Math Kangaroo problems
 (5–6 per week), submit answers online (or print on paper), and compete on a leaderboard.
-After the weekly deadline the answers + solutions are revealed. Planned run: **8 weeks**, Grade 4 —
-**Weeks 1–7 are built and live** (problems + locked solutions); only **Week 8** is still to come.
+After the weekly deadline the answers + solutions are revealed. Grade 4 —
+**Weeks 1–10 are built and live** (problems + locked solutions). The build is not capped at any
+week count: the generator, leaderboard, and backend all handle as many weeks as exist, so the run
+can be extended (e.g. to 12 weeks) by just adding `week11/`, `week12/`, … the same way as the others.
+The home-page week badges use number keycaps 1️⃣–🔟, then ⭐ (wk 11) and 🏁 (wk 12).
 
 **It is fully live and working** — pages hosted, submissions saving, scoring + leaderboard running.
 Problem pages have a built-in **scribble/highlighter scratchpad**. Solution pages are **passcode-locked**
@@ -179,9 +182,9 @@ solutions for that one visit and re-locks when you leave. (Not strong crypto —
 
 - [ ] **Clean test rows** from the `Submissions` tab (e.g. `ZZ_*`, `DELETE_ME_W1`, `Probe*`, `Test Bot T`,
       `Lalala`, `YoYoYo`) before the real run.
-- [x] Solutions pages for all 7 weeks — built and **passcode-locked** (`solutions_available: false`).
+- [x] Problems + **passcode-locked** solution pages built for **Weeks 1–10** (`solutions_available: false`).
 - [ ] **Reveal solutions per deadline:** flip each week's `solutions_available` to `true` + re-gate + rebuild.
-- [ ] **Week 8 problems** (drop `.pages` into `week8/`, run the generator) — the last of the planned 8.
+- [ ] (Optional) **Weeks 11–12** to extend the run — same process as the others; badges ⭐/🏁 are ready.
 - [ ] Per-week **due date** in `week.json` (`"due"`) — currently "Sunday night" placeholder everywhere.
 - [ ] (Optional) one-submission-per-student enforcement; per-grade leaderboards; score-reset policy;
       git-history scrub if the earlier plaintext solutions in old commits ever matter.
@@ -192,7 +195,7 @@ solutions for that one visit and re-locks when you leave. (Not strong crypto —
 
 - Backend: Google Apps Script + Sheet (no server to host).
 - Hosting: GitHub Pages, updated via `git push`.
-- Leaderboard: Overall **and** per-week; up to 8 weeks; backend supports 3–6 problems/week.
+- Leaderboard: Overall **and** per-week; no fixed week cap (auto-syncs to the weeks that exist); backend supports 3–6 problems/week.
 - Privacy: per-student Public/Private, defaults Private; private = hidden + self-lookup.
 - Identity: first name + last initial, no email (COPPA-conscious).
 - Manual "reveal" of solutions (flag flip) rather than time-based automation.
