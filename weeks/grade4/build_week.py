@@ -230,6 +230,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 .choice {{ display: inline-flex; cursor: pointer; }}
 .choice input {{ position: absolute; opacity: 0; width: 0; height: 0; }}
 .choice span {{ display: inline-flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 50%; border: 2.5px solid #c7d2fe; font-size: 19px; font-weight: 800; color: #475569; user-select: none; transition: background .15s, border-color .15s, color .15s, box-shadow .15s; }}
+.choice.pill span {{ width: auto; height: auto; border-radius: 999px; padding: 11px 26px; font-size: 17px; }}
 .choice:hover span {{ border-color: #94a3b8; }}
 .choice input:checked + span {{ background: #4f46e5; border-color: #4f46e5; color: #fff; box-shadow: 0 3px 10px rgba(79,70,229,.4); }}
 .choice input:focus-visible + span {{ outline: 2px solid #4f46e5; outline-offset: 2px; }}
@@ -285,6 +286,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
   .unit {{ font-size: 10.5pt !important; }}
   .choices {{ gap: 14pt !important; }}
   .choice span {{ width: 22pt !important; height: 22pt !important; border: 1.25pt solid #333 !important; background: none !important; color: #000 !important; font-size: 12pt !important; box-shadow: none !important; }}
+  .choice.pill span {{ width: auto !important; height: auto !important; border-radius: 4pt !important; padding: 4pt 12pt !important; }}
   .choice input:checked + span {{ background: none !important; color: #000 !important; border-color: #000 !important; }}
   .visibility-box {{ display: none !important; }}
   .submit-row {{ display: none !important; }}
@@ -317,8 +319,10 @@ def render_problem(i, p, week_dir, img_max_width=None):
     ptype = p.get("type", "number")
     if ptype == "choice":
         choices = p.get("choices", ["A", "B", "C", "D", "E"])
+        # Word choices (e.g. "Turns"/"Jammed") render as pills; single chars stay circles.
+        cls = "choice pill" if any(len(str(c)) > 2 for c in choices) else "choice"
         chips = "\n".join(
-            f'        <label class="choice"><input type="radio" name="a{n}" value="{esc(c)}"><span>{esc(c)}</span></label>'
+            f'        <label class="{cls}"><input type="radio" name="a{n}" value="{esc(c)}"><span>{esc(c)}</span></label>'
             for c in choices
         )
         parts.append('      <div class="answer-area choices">')
