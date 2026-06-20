@@ -107,6 +107,8 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
   .problem-num { font-size: 10pt !important; margin-bottom: 4pt !important; }
   .problem-text { font-size: 11pt !important; line-height: 1.35 !important; margin: 2pt 0 4pt !important; }
   .hint-toggle { display: none !important; }
+  .hint-text { display: inline !important; font-style: italic !important; color: #333 !important; }
+  .hint-text::before { content: "💡 Hint:"; font-style: normal; font-weight: 700; color: #000; }
   .problem img { width: auto; max-width: var(--pw, var(--sw, 100%)) !important; max-height: 230pt !important; height: auto !important; margin: 4pt 0 6pt !important; border: none !important; display: block; }
   .answer-area { margin-top: 6pt !important; gap: 12pt !important; }
   .answer-label { font-size: 11pt !important; }
