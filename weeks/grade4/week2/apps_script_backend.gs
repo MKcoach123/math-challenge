@@ -100,9 +100,9 @@ function leaderboard(weekLabel) {
 
 /** A single student's standing — works whether they are public or private. */
 function findRank(name, weekLabel) {
-  if (!name || !norm(name)) return { ok: true, found: false };
+  if (!name || !nameKey(name)) return { ok: true, found: false };
   var s = computeStandings(weekLabel);
-  var key = norm(name);
+  var key = nameKey(name);
   for (var i = 0; i < s.standings.length; i++) {
     if (s.standings[i].key === key) {
       var x = s.standings[i];
@@ -131,10 +131,10 @@ function computeStandings(weekLabel) {
   var weeksSet = {};
   subs.forEach(function (r) {
     var wk = norm(r['Week']);
-    if (!wk || !norm(r['Name'])) return;
+    if (!wk || !nameKey(r['Name'])) return;
     weeksSet[r['Week']] = true;          // record every week, independent of the filter
     if (wf && wk !== wf) return;
-    var k = norm(r['Name']) + '|' + wk;
+    var k = nameKey(r['Name']) + '|' + wk;
     var ts = new Date(r['Timestamp']).getTime() || 0;
     if (!latest[k] || ts >= latest[k]._ts) { r._ts = ts; r._wk = wk; latest[k] = r; }
   });
@@ -143,7 +143,7 @@ function computeStandings(weekLabel) {
   var byStudent = {};
   Object.keys(latest).forEach(function (k) {
     var r = latest[k];
-    var sk = norm(r['Name']);
+    var sk = nameKey(r['Name']);
     var rec = byStudent[sk] || (byStudent[sk] = {
       key: sk, name: r['Name'], points: 0, weeksPlayed: 0, display: 'Private', _ts: -1
     });
@@ -226,6 +226,16 @@ function norm(v) {
   return String(v == null ? '' : v)
     .replace(/[‒-―−]/g, '-')   // en/em dashes & minus → plain hyphen
     .trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+/**
+ * Identity key for a student NAME (used only to group submissions into one person).
+ * On top of norm() it drops periods/commas, so "John S", "john s." and "John S."
+ * all collapse to the same student. Display still uses the raw, latest-typed name.
+ * (Kept separate from norm() so answer matching is unaffected — e.g. a "2.5" answer.)
+ */
+function nameKey(v) {
+  return norm(v).replace(/[.,]/g, '').replace(/\s+/g, ' ').trim();
 }
 
 function json(obj) {
