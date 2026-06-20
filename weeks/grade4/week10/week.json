@@ -15,7 +15,7 @@
     },
     {
       "type": "text",
-      "text": "Look at the gears below. Will this system of gears be able to turn, or is it jammed? (Hint: when a gear turns clockwise, its neighbor turns counter-clockwise.)",
+      "html": "Look at the gears below. Will this system of gears be able to turn, or is it jammed? <span class=\"hint-toggle\" onclick=\"this.nextElementSibling.style.display='inline'; this.style.display='none';\">💡 Hint</span><span class=\"hint-text\" style=\"display:none\"> When one gear turns clockwise, the gear touching it turns counter-clockwise.</span>",
       "image": "p2_gears.png",
       "image_width": "320px",
       "print_width": "260px",
@@ -29,7 +29,7 @@
     },
     {
       "type": "number",
-      "text": "Ellie starts reading on page 62 and reads exactly 50 pages. What page does she stop on? (Hint: if she read only 3 pages, what page would she stop on? What if she read 10 pages?)",
+      "html": "Ellie starts reading on page 62 and reads exactly 50 pages. What page does she stop on? <span class=\"hint-toggle\" onclick=\"this.nextElementSibling.style.display='inline'; this.style.display='none';\">💡 Hint</span><span class=\"hint-text\" style=\"display:none\"> If she read only 3 pages, what page would she stop on? What if she read 10 pages?</span>",
       "label": "Page:"
     },
     {
