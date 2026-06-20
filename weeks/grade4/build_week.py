@@ -308,6 +308,8 @@ def render_problem(i, p, week_dir, img_max_width=None):
         if w: sty += [f"--sw:{esc(w)}", "max-width:var(--sw)"]
         if pw: sty.append(f"--pw:{esc(pw)}")
         style = f' style="{";".join(sty)}"' if sty else ""
+        if fig.get("caption"):                # text rendered just before this figure
+            parts.append(f'      <p class="problem-text">{esc(fig["caption"])}</p>')
         parts.append(f'      <img src="{b64_img(week_dir, fig["file"])}"{style} alt="Problem {n} figure">')
 
     ptype = p.get("type", "number")

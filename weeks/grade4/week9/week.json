@@ -35,10 +35,10 @@
     },
     {
       "type": "number",
-      "text": "Torey makes designs using only tiles like the one shown (a green-star square joined to a pink square). How many of the following designs can he make?",
+      "text": "Torey makes designs using only tiles like this:",
       "images": [
         { "file": "p5_tile.png", "width": "90px", "print_width": "70px" },
-        { "file": "p5_designs.png", "width": "460px", "print_width": "360px" }
+        { "file": "p5_designs.png", "width": "460px", "print_width": "360px", "caption": "How many of the following designs can he make?" }
       ],
       "unit": "designs"
     },
