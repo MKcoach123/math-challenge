@@ -29,7 +29,6 @@
     {
       "type": "text",
       "text": "Is the sum of the first 5 even numbers odd or even?",
-      "_note": "SOURCE WORDING WAS: 'Is the number of first 5 even numbers odd or even?' — reworded to 'sum'; confirm this is the intended question.",
       "label": "Odd or even:",
       "maxlength": 4
     },
@@ -46,8 +45,8 @@
       "type": "choice",
       "text": "Study the pattern. Which element should be in place of the question mark?",
       "image": "p6_pattern.png",
-      "image_width": "420px",
-      "print_width": "340px",
+      "image_width": "210px",
+      "print_width": "170px",
       "choices": ["1", "2", "3", "4", "5"]
     }
   ],
