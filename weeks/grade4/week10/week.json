@@ -14,13 +14,12 @@
       "unit": "jars"
     },
     {
-      "type": "text",
+      "type": "choice",
       "html": "Look at the gears below. Will this system of gears be able to turn, or is it jammed? <span class=\"hint-toggle\" onclick=\"this.nextElementSibling.style.display='inline'; this.style.display='none';\">💡 Hint</span><span class=\"hint-text\" style=\"display:none\"> When one gear turns clockwise, the gear touching it turns counter-clockwise.</span>",
       "image": "p2_gears.png",
       "image_width": "320px",
       "print_width": "260px",
-      "label": "Turns or jammed:",
-      "maxlength": 10
+      "choices": ["Turns", "Jammed"]
     },
     {
       "type": "number",
