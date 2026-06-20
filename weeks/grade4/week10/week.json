@@ -1,0 +1,54 @@
+{
+  "number": 10,
+  "week_label": "Grade 4 — Week 10",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "Winnie the Pooh keeps 5 jars of honey, 6 jars of peanut butter, and 12 jars of jam in his dark pantry. All the jars feel exactly the same, so he cannot tell them apart in the dark. Without looking, what is the smallest number of jars he must take out to be sure he gets at least one jar of honey?",
+      "images": [
+        { "file": "p1_jars_top.png", "width": "360px", "print_width": "300px" },
+        { "file": "p1_jars_bottom.png", "width": "360px", "print_width": "300px" }
+      ],
+      "unit": "jars"
+    },
+    {
+      "type": "text",
+      "text": "Look at the gears below. Will this system of gears be able to turn, or is it jammed? (Hint: when a gear turns clockwise, its neighbor turns counter-clockwise.)",
+      "image": "p2_gears.png",
+      "image_width": "320px",
+      "print_width": "260px",
+      "label": "Turns or jammed:",
+      "maxlength": 10
+    },
+    {
+      "type": "number",
+      "text": "How many of these numbers are even?  10001, 234, 1112, 7547, 1236, 875447, 4459, 3118, 100000000002",
+      "unit": "numbers"
+    },
+    {
+      "type": "number",
+      "text": "Ellie starts reading on page 62 and reads exactly 50 pages. What page does she stop on? (Hint: if she read only 3 pages, what page would she stop on? What if she read 10 pages?)",
+      "label": "Page:"
+    },
+    {
+      "type": "number",
+      "text": "How many cubes are there in the structure? (The cubes are stacked, not glued together.)",
+      "image": "p5_cubes.png",
+      "image_width": "200px",
+      "print_width": "170px",
+      "unit": "cubes"
+    },
+    {
+      "type": "number",
+      "text": "How many more 3-gram weights does Juliana need to balance a 66-gram toy car than she needs to balance a 45-gram toy ball?",
+      "images": [
+        { "file": "p6_balance.png", "width": "240px", "print_width": "200px" },
+        { "file": "p6_weights.png", "width": "360px", "print_width": "300px", "caption": "Each weight is 3 grams:" }
+      ],
+      "unit": "weights"
+    }
+  ],
+  "solutions_available": false
+}
