@@ -15,7 +15,7 @@ After the weekly deadline the answers + solutions are revealed. Grade 4 —
 **Weeks 1–10 are built and live** (problems + locked solutions). The build is not capped at any
 week count: the generator, leaderboard, and backend all handle as many weeks as exist, so the run
 can be extended (e.g. to 12 weeks) by just adding `week11/`, `week12/`, … the same way as the others.
-The home-page week badges use number keycaps 1️⃣–🔟; weeks 11–12 use two-keycap badges (1️⃣1️⃣ / 1️⃣2️⃣) to keep the number style.
+The home-page week badges use number keycaps 1️⃣–🔟, then ⭐ (wk 11) and 🏁 (wk 12, final-week finish flag).
 
 **It is fully live and working** — pages hosted, submissions saving, scoring + leaderboard running.
 Problem pages have a built-in **scribble/highlighter scratchpad**. Solution pages are **passcode-locked**
