@@ -32,7 +32,7 @@ import base64, json, pathlib, sys, html as _html
 ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec"
 ACCENTS = ["#4f46e5", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#16a34a"]  # per-problem accents (up to 6)
 WEEK_COLORS = ["#4f46e5", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#16a34a", "#0284c7", "#9333ea"]
-EMOJI = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","⭐","🏁"]  # keycaps stop at 10; ⭐=wk11, 🏁=wk12 (finale)
+EMOJI = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","1️⃣1️⃣","1️⃣2️⃣"]  # single keycaps stop at 10; 11/12 use two keycaps to keep the number style
 
 GRADE_DIR = pathlib.Path(__file__).parent
 REPO_ROOT = GRADE_DIR.parent.parent
