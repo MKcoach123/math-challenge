@@ -1,0 +1,52 @@
+{
+  "number": 11,
+  "week_label": "Grade 4 — Week 11",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "A bag holds shapes cut out of cardboard — some are triangles and some are quadrilaterals (four-sided shapes). Altogether there are 10 shapes with 36 corners in total. How many of the shapes are triangles?",
+      "unit": "triangles"
+    },
+    {
+      "type": "number",
+      "text": "A three-digit number is odd, and its three digits add up to 3. All three digits are different. What is the number?",
+      "label": "The number:",
+      "maxlength": 3
+    },
+    {
+      "type": "choice",
+      "text": "What element of the pattern comes in place of the question mark?",
+      "image": "p3_pattern.png",
+      "image_width": "320px",
+      "print_width": "260px",
+      "choices": ["1", "2", "3", "4", "5", "6", "7", "8"]
+    },
+    {
+      "type": "choice",
+      "html": "<b>Liars and Truth-Tellers.</b> On the Island of Unambiguity live strange people: <b>truth-tellers</b> (who always tell the truth) and <b>liars</b> (who always lie). A resident named <b>Mark</b> said to his friends: <i>“Yesterday my neighbor told me that he (the neighbor) is a liar!”</i> Who is Mark — a truth-teller or a liar?",
+      "image": "p4_island.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "choices": ["Truth-teller", "Liar"]
+    },
+    {
+      "type": "number",
+      "text": "Use the balance scales to find the missing number:",
+      "image": "p5_scales.png",
+      "image_width": "320px",
+      "print_width": "260px",
+      "label": "? ="
+    },
+    {
+      "type": "choice",
+      "text": "In which of the figures is exactly one half of the area shaded?",
+      "image": "p6_figures.png",
+      "image_width": "480px",
+      "print_width": "380px",
+      "choices": ["A", "B", "C", "D", "E"]
+    }
+  ],
+  "solutions_available": false
+}
