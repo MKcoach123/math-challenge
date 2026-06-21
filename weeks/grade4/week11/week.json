@@ -48,5 +48,6 @@
       "choices": ["A", "B", "C", "D", "E"]
     }
   ],
+  "solutions": "solutions_week11.html",
   "solutions_available": false
 }
