@@ -1,0 +1,56 @@
+{
+  "number": 12,
+  "week_label": "Grade 4 — Week 12",
+  "due": "Sunday night",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "A big square is divided into smaller squares. The side of one of the smallest squares is 3 (marked on the picture). What is the length of the side of the bigger square marked by a question mark?",
+      "image": "p1_squares.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "label": "? ="
+    },
+    {
+      "type": "number",
+      "text": "Sarah picks a two-digit number. She says: “The first digit of my number is 3 times smaller than the second digit. My number is greater than 30.” What is Sarah's number?",
+      "label": "The number:",
+      "maxlength": 2
+    },
+    {
+      "type": "choice",
+      "html": "If gear number 1 is turning <b>counter-clockwise</b>, which direction will gear 6 turn? <span class=\"hint-toggle\" onclick=\"this.nextElementSibling.style.display='inline'; this.style.display='none';\">💡 Hint</span><span class=\"hint-text\" style=\"display:none\"> When one gear turns clockwise, the gear next to it turns counter-clockwise. A belt (band) makes the gears it connects turn the same way.</span>",
+      "image": "p3_gears.png",
+      "image_width": "220px",
+      "print_width": "180px",
+      "choices": ["Clockwise", "Counter-clockwise"]
+    },
+    {
+      "type": "number",
+      "text": "This is how numbers were written in cuneiform (the ancient Mesopotamian number system):",
+      "images": [
+        { "file": "p4_legend.png", "width": "340px", "print_width": "280px" },
+        { "file": "p4_example.png", "width": "300px", "print_width": "240px", "caption": "Solve the example:" }
+      ],
+      "label": "? ="
+    },
+    {
+      "type": "choice",
+      "text": "Which picture does not belong?",
+      "image": "p5_shapes.png",
+      "image_width": "480px",
+      "print_width": "380px",
+      "choices": ["1", "2", "3", "4", "5", "6"]
+    },
+    {
+      "type": "number",
+      "text": "The structure is balanced and weighs 72 in total. How much does the heart element weigh?",
+      "image": "p6_balance.png",
+      "image_width": "260px",
+      "print_width": "210px",
+      "unit": "weight"
+    }
+  ],
+  "solutions_available": false
+}
