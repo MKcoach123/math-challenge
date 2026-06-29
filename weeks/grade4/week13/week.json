@@ -1,0 +1,54 @@
+{
+  "number": 13,
+  "week_label": "Grade 4 — Extra Problems",
+  "card_title": "Extra Problems",
+  "badge": "✨",
+  "title": "Grade 4 — Extra Problems",
+  "due": "Anytime",
+  "image_max_width": "300px",
+  "problems": [
+    {
+      "type": "number",
+      "text": "If each small square is 1 square inch, what is the area of the triangle?",
+      "image": "p1_triangle.png",
+      "image_width": "260px",
+      "print_width": "210px",
+      "unit": "square inches"
+    },
+    {
+      "type": "number",
+      "text": "Mr. Cat notices that a staircase has yellow and red steps that alternate. The staircase starts with a yellow step and also ends with a yellow step. There are 11 yellow steps in all. How many steps does the staircase have in total?",
+      "image": "p2_staircase.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "unit": "steps"
+    },
+    {
+      "type": "number",
+      "text": "There were 9 sheets of paper. Some of them were each cut into 3 pieces. Now there are 15 pieces in all. How many sheets were cut?",
+      "image": "p3_sheets.png",
+      "image_width": "400px",
+      "print_width": "320px",
+      "unit": "sheets"
+    },
+    {
+      "type": "number",
+      "text": "Today all of Papa Octopus's babies are either red or green. First he counted 5 green babies. Later he counted 8 red babies. But it turned out that after the first count, 4 babies changed color from green to red. How many babies does Papa Octopus have in all?",
+      "image": "p4_octopus.png",
+      "image_width": "300px",
+      "print_width": "240px",
+      "unit": "babies"
+    },
+    {
+      "type": "number",
+      "text": "Compute the sum:  996 + 997 + 998 + 999 + 995",
+      "label": "Sum ="
+    },
+    {
+      "type": "number",
+      "text": "There are 40 tricycles and bicycles in the park, with 106 wheels in total. How many bicycles are there in the park? (A tricycle has 3 wheels and a bicycle has 2.)",
+      "unit": "bicycles"
+    }
+  ],
+  "solutions_available": false
+}
