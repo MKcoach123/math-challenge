@@ -497,7 +497,8 @@ def rebuild_index():
         html_name = cfg.get("html", f"grade4_week{n}.html")
         nprob = len(cfg.get("problems", [])) or cfg.get("num_problems", 3)
         color = WEEK_COLORS[(n - 1) % len(WEEK_COLORS)]
-        emoji = EMOJI[(n - 1) % len(EMOJI)]
+        emoji = cfg.get("badge") or EMOJI[(n - 1) % len(EMOJI)]
+        card_title = cfg.get("card_title", f"Week {n}")   # e.g. "Extra Problems" for a non-week section
 
         # Optional Solutions button. Gated: shown disabled until "solutions_available" is true
         # (flip it to true after the week's deadline, then rebuild + push).
@@ -516,7 +517,7 @@ def rebuild_index():
             f'    <a class="week-link" href="weeks/grade4/week{n}/{html_name}">\n'
             f'      <span class="emoji">{emoji}</span>\n'
             f'      <span class="text">\n'
-            f'        <span class="title">Week {n}</span>\n'
+            f'        <span class="title">{card_title}</span>\n'
             f'        <span class="desc">Grade 4 · {nprob} problems</span>\n'
             f'      </span>\n'
             f'    </a>{sol_btn}\n'
