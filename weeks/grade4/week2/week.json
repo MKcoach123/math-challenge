@@ -7,12 +7,12 @@
   "problems": [
     {
       "type": "number",
-      "text": "Anna is 6 years old. Her father will be 40 years old when Anna reaches the age of 10. How old is Anna's father?",
+      "text": "Anaya is 6 years old. Her father will be 40 years old when Anaya reaches the age of 10. How old is Anaya's father?",
       "unit": "years old"
     },
     {
       "type": "number",
-      "text": "Nancy is 3 years older than Mary. Clark is 2 years younger than Nancy. Ben is 14 years old and twice as old as Clark. How old is Nancy?",
+      "text": "Julieth is 3 years older than Abigale. Clark is 2 years younger than Julieth. Ben is 14 years old and twice as old as Clark. How old is Julieth?",
       "unit": "years old"
     },
     {
