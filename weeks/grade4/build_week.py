@@ -31,6 +31,12 @@ import base64, json, pathlib, sys, html as _html
 
 ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec"
 ACCENTS = ["#4f46e5", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#16a34a"]  # per-problem accents (up to 6)
+# Which week is running right now. Bump this by 1 each week and rebuild
+# (python3 build_week.py --index) to move the "This week" marker: earlier weeks
+# dim as past, later ones dim as "Coming soon" but stay clickable. Revealing a
+# week's solutions is still a separate, deliberate step — see gate_solutions.py.
+CURRENT_WEEK = 1
+
 WEEK_COLORS = ["#4f46e5", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#16a34a", "#0284c7", "#9333ea"]
 EMOJI = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟","⭐","🏁"]  # 1–10 keycaps; 11 = ⭐; 12 = 🏁 finish flag (final week)
 
@@ -500,6 +506,23 @@ def rebuild_index():
         emoji = cfg.get("badge") or EMOJI[(n - 1) % len(EMOJI)]
         card_title = cfg.get("card_title", f"Week {n}")   # e.g. "Extra Problems" for a non-week section
 
+        # Past / current / upcoming. A card with its own card_title is a standing
+        # section (Extra Problems), not a dated week, so it stays neutral.
+        state, pill = "", ""
+        if not cfg.get("card_title"):
+            if n < CURRENT_WEEK:
+                state = "past"
+            elif n == CURRENT_WEEK:
+                state = "current"
+                pill = '\n    <span class="status-pill current">👉 This week</span>'
+            else:
+                state = "upcoming"
+                pill = '\n    <span class="status-pill upcoming">Coming soon</span>'
+
+        desc = f"Grade 4 · {nprob} problems"
+        if state == "current":
+            desc += f" · due {cfg.get('due', 'Friday afternoon')}"
+
         # Optional Solutions button. Gated: shown disabled until "solutions_available" is true
         # (flip it to true after the week's deadline, then rebuild + push).
         sol = cfg.get("solutions")
@@ -513,14 +536,14 @@ def rebuild_index():
                 sol_btn = f'\n    <a class="sol-btn" href="{href}" title="Teacher/developer passcode required">🔒 Solutions</a>'
 
         cards.append(
-            f'  <div class="week-card" style="border-left-color:{color}">\n'
+            f'  <div class="week-card{" " + state if state else ""}" style="border-left-color:{color}">\n'
             f'    <a class="week-link" href="weeks/grade4/week{n}/{html_name}">\n'
             f'      <span class="emoji">{emoji}</span>\n'
             f'      <span class="text">\n'
             f'        <span class="title">{card_title}</span>\n'
-            f'        <span class="desc">Grade 4 · {nprob} problems</span>\n'
+            f'        <span class="desc">{desc}</span>\n'
             f'      </span>\n'
-            f'    </a>{sol_btn}\n'
+            f'    </a>{pill}{sol_btn}\n'
             f'  </div>'
         )
     text = INDEX.read_text()
