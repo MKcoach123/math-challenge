@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Math Challenge — Grade 4</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  color-scheme: light;
+  --bg:             #f0f4ff;
+  --surface-1:      #ffffff;
+  --surface-2:      #f8fafc;
+  --border:         #e2e8f0;
+  --text-primary:   #1e293b;
+  --text-secondary: #64748b;
+  --text-muted:     #94a3b8;
+  --grid:           #eef2f7;
+  --track:          #eef2f7;
+  --accent:         #4f46e5;
+  --series-1: #2a78d6;  /* LR      */
+  --series-2: #eb6834;  /* GEO     */
+  --series-3: #1baf7a;  /* CB + CO */
+  --series-4: #eda100;  /* NO      */
+  --series-5: #e87ba4;  /* WP      */
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg: #121215; --surface-1: #1a1a19; --surface-2: #232322; --border: #333331;
+    --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8a8a82;
+    --grid: #2b2b2a; --track: #2b2b2a; --accent: #9085e9;
+    --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
+    --series-4: #c98500; --series-5: #d55181;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #121215; --surface-1: #1a1a19; --surface-2: #232322; --border: #333331;
+  --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #8a8a82;
+  --grid: #2b2b2a; --track: #2b2b2a; --accent: #9085e9;
+  --series-1: #3987e5; --series-2: #d95926; --series-3: #199e70;
+  --series-4: #c98500; --series-5: #d55181;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+  background: var(--bg); color: var(--text-primary); padding: 32px 16px 64px;
+}
+.page { max-width: 820px; margin: 0 auto; }
+
+.header {
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5); color: #fff; border-radius: 18px;
+  padding: 30px 34px; margin-bottom: 22px; box-shadow: 0 6px 24px rgba(30,64,175,.3); text-align: center;
+}
+.header h1 { font-size: 30px; font-weight: 900; letter-spacing: -.5px; }
+.header p  { font-size: 15px; opacity: .9; margin-top: 8px; }
+
+.card {
+  background: var(--surface-1); border-radius: 16px; padding: 24px 26px; margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+.card h2 { font-size: 19px; font-weight: 800; margin-bottom: 14px; }
+.card .sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── how it works (summary prose) ───────────────────────────── */
+.intro p { font-size: 15px; line-height: 1.65; color: var(--text-primary); }
+.intro p + p { margin-top: 12px; }
+.intro b { font-weight: 700; }
+
+/* ── pie ────────────────────────────────────────────────────── */
+.chart-wrap { display: flex; align-items: center; justify-content: center; }
+svg.pie { width: 100%; max-width: 700px; height: auto; overflow: visible; }
+svg.pie path.slice { stroke: var(--surface-1); stroke-width: 2; transition: opacity .12s; }
+svg.pie.dim path.slice:not(.on) { opacity: .3; }
+svg.pie text.slice-label { font-size: 13px; font-weight: 700; fill: var(--text-primary); }
+svg.pie text.slice-label tspan.pct { fill: var(--text-secondary); font-weight: 600; }
+svg.pie path.leader { stroke: var(--text-muted); stroke-width: 1; fill: none; }
+
+/* ── explanation cards ──────────────────────────────────────── */
+.section-head { margin: 28px 4px 16px; }
+.section-head h2 { font-size: 21px; font-weight: 800; letter-spacing: -.2px; }
+.section-head p { font-size: 14.5px; color: var(--text-secondary); margin-top: 6px; line-height: 1.55; }
+
+.exp-list { display: grid; gap: 14px; }
+.exp {
+  background: var(--surface-1); border-radius: 14px; padding: 18px 20px 18px 22px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08); border-left: 6px solid var(--accent);
+}
+.exp .top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.exp .name { font-size: 17px; font-weight: 800; }
+.exp .code {
+  font-size: 12px; font-weight: 800; letter-spacing: .06em; color: var(--text-secondary);
+  background: var(--surface-2); border-radius: 6px; padding: 3px 7px; white-space: nowrap;
+}
+.exp .share { margin-left: auto; font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.exp .share small { font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-left: 6px; }
+.exp .plain { font-size: 15px; color: var(--text-primary); margin-top: 8px; line-height: 1.5; }
+.exp .full  { font-size: 13.5px; color: var(--text-secondary); margin-top: 8px; line-height: 1.6; }
+.exp .eg { font-size: 13.5px; color: var(--text-secondary); margin-top: 10px; line-height: 1.6; }
+.exp .eg b { color: var(--text-primary); font-weight: 700; }
+.exp .meter { height: 8px; border-radius: 4px; background: var(--track); margin-top: 12px; overflow: hidden; }
+.exp .meter i { display: block; height: 100%; border-radius: 4px; }
+.eg .lbl {
+  display: block; font-size: 11px; font-weight: 800; letter-spacing: .07em;
+  text-transform: uppercase; color: var(--text-muted); margin-bottom: 3px;
+}
+
+/* ── tooltip ────────────────────────────────────────────────── */
+.tip {
+  position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+  background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 12px; font-size: 13px; line-height: 1.45;
+  box-shadow: 0 6px 22px rgba(0,0,0,.18); z-index: 20; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+.tip b { font-weight: 800; }
+.tip .m { color: var(--text-secondary); }
+
+/* ── table ──────────────────────────────────────────────────── */
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--grid); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 800; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr:last-child td { border-bottom: none; }
+td .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.code-b { font-weight: 800; }
+
+details { margin-top: 12px; }
+details > summary {
+  cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-secondary);
+  padding: 8px 0; list-style: none;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸ "; }
+details[open] > summary::before { content: "▾ "; }
+
+@media (max-width: 560px) {
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 25px; }
+  .card { padding: 20px 18px; }
+}
+
+/* ── print ──────────────────────────────────────────────────── */
+@media print {
+  /* always print the light palette, whatever theme the screen is in */
+  :root, :root[data-theme="dark"] {
+    --bg: #fff; --surface-1: #fff; --surface-2: #f4f6fa; --border: #cbd5e1;
+    --text-primary: #111; --text-secondary: #444; --text-muted: #666;
+    --grid: #dde3ec; --track: #e6eaf1; --accent: #4f46e5;
+    --series-1: #2a78d6; --series-2: #eb6834; --series-3: #1baf7a;
+    --series-4: #eda100; --series-5: #e87ba4;
+  }
+  /* keep the slice fills — browsers drop backgrounds by default */
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: #fff; padding: 0; }
+  .page { max-width: 100%; }
+  .card, .exp { box-shadow: none; border: 1px solid var(--border); break-inside: avoid; }
+  .section-head { break-after: avoid; }   /* never orphan the heading at a page end */
+  .header { box-shadow: none; border-radius: 0; margin-bottom: 18px; }
+  .tip { display: none !important; }
+  details > summary { display: none; }        /* the table is expanded for print */
+  a { text-decoration: none; color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Weekly Math Challenge</h1>
+    <p>Ponderosa Elementary. Grade 4</p>
+  </div>
+
+  <div class="card intro">
+    <h2>How the Challenge works</h2>
+    <p>
+      Weekly Math Challenge pilot program is an <b>optional free math enrichment program</b> for
+      Ponderosa students (grade 4 and grade 1). It consists of a series of challenging and
+      interesting grade-appropriate problems that encourage critical thinking. All the problems
+      are similar in style to those found in math contests such as <b>Math Kangaroo</b> and
+      <b>Noetic Math</b>. The Weekly Math Challenge will run for <b>12 weeks</b> (with one extra
+      week of bonus problems). Each week will have <b>5 or 6 problems</b> across five cognitive
+      skills (Logical Reasoning, Geometry and Spatial Sense, Combinatorics, Number and Operations
+      and Word Problems).
+    </p>
+    <p>
+      Students can work <b>online or on a printed copy</b>, and answers are due <b>each Friday
+      afternoon</b>. Each student submits once, and each problem is worth <b>1 point</b>.
+      Appearing on the leaderboard is a student's choice. Teachers can see every solution from
+      the start; students see a week's solutions once that week has closed. <b>Teachers are not
+      expected to grade the students' work.</b> The online submissions will be graded
+      automatically while the papers will be collected every Friday and graded by an organizer.
+      At the end of the 12 weeks the students that worked hard and consistently can be rewarded
+      and acknowledged in some way (TBD).
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Cognitive skills behind all 74 questions</h2>
+    <p class="sub">Every problem in Weeks 1&ndash;13 tagged with the one skill it mainly tests.</p>
+    <div class="chart-wrap">
+      <svg class="pie" id="pie" viewBox="0 0 700 360" role="img"
+           aria-label="Pie chart of Grade 4 questions by cognitive skill"></svg>
+    </div>
+    <details>
+      <summary>Table view</summary>
+      <table>
+        <thead><tr><th>Cognitive skill</th><th class="num">Questions</th><th class="num">Share</th></tr></thead>
+        <tbody id="table"></tbody>
+      </table>
+    </details>
+  </div>
+
+  <div class="section-head">
+    <h2>Cognitive skills explained</h2>
+    <p>
+      What each of the five skills means in practice, and real problems from our weeks
+      that call for it.
+    </p>
+  </div>
+
+  <div class="exp-list" id="exp-list"></div>
+
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   DATA — cat[] is the "Cognitive" tab, Level 4 table (Weeks 1–13).
+   title[] describes each problem in plain words, written from the actual
+   problem text in weeks/grade4/weekN/week.json, so every category can show
+   real examples. title[i] and cat[i] are both the problem in slot Qi.
+   ═══════════════════════════════════════════════════════════════════ */
+const CAT = {
+  LR: {
+    name: "Logical Reasoning",
+    plain: "Think it through — reason from clues instead of calculating.",
+    full: "Truths and lies, sequencing, minimum and maximum problems, extracting conditions from complex diagrams or dialogues, process-of-elimination puzzles; chicken &amp; rabbit problems (counting legs, wheels, etc.); page problems (counting pages vs. counting digits); sports competitions (tournament brackets and round-robin logic).",
+    pick: [["11", 4], ["1", 3], ["8", 1]]
+  },
+  GEO: {
+    name: "Geometry &amp; Spatial Sense",
+    plain: "See it in your head — shapes, space, and how figures fit, fold or turn.",
+    full: "Shapes, 3D visualization, symmetry, rotations, folding/overlapping, perimeter/area of regular and irregular shapes.",
+    pick: [["7", 1], ["7", 4], ["12", 1]]
+  },
+  CB: {
+    name: "Combinatorics &amp; Counting",
+    label: "CB + CO",
+    plain: "Count every possibility without missing one — arrange them, or find them all in a picture.",
+    full: "Organized enumeration, arrangements, basic probability and permutations &mdash; together with the organized counting of the figures or cases hidden in a diagram.",
+    pick: [["9", 3], ["3", 1], ["8", 3]]
+  },
+  NO: {
+    name: "Number &amp; Operations",
+    plain: "Work the numbers — arithmetic, patterns and smart shortcuts.",
+    full: "Fundamental operations, identifying patterns for division, remainders, working with integers, using properties of addition/multiplication to simplify complex equations.",
+    pick: [["13", 5], ["12", 4], ["1", 5]]
+  },
+  WP: {
+    name: "Word &amp; Practical Problems",
+    plain: "Everyday maths — time, money, and turning a story into a calculation.",
+    full: "Elapsed time, money management, and scenarios translating text or images into basic math models.",
+    pick: [["6", 2], ["10", 4], ["8", 4]]
+  }
+};
+
+/* The sheet scores Combinatorics (CB) and Counting (CO) as two codes; the course
+   description treats them as one category. WEEKS below stays faithful to the
+   sheet — the fold happens here, in one declared place. */
+const MERGE = { CO: "CB" };
+const fold = (code) => MERGE[code] || code;
+
+const WEEKS = [
+  { week: "1",  cat: ["LR","GEO","LR","LR","NO",null],
+    title: ["how many squares are in the 5th pattern of a sequence",
+            "the fewest tiles needed to cover a bedroom floor",
+            "the total number of legs in a household",
+            "the missing number in 24, 3, 21, 6, 18, ?",
+            "which digit is hidden by the triangle in a subtraction", null] },
+  { week: "2",  cat: ["LR","LR","NO","GEO","GEO",null],
+    title: ["how old Anaya's father is now",
+            "working out Julieth's age from four people's ages",
+            "what number the star stands for",
+            "what the back of Tom's house looks like",
+            "how a solid built from 8 cubes looks from above", null] },
+  { week: "3",  cat: ["CO","CO","CO","GEO","LR",null],
+    title: ["how many squares are there",
+            "how many triangles are there",
+            "how many rectangles are there",
+            "how many cubes are in the stacked object",
+            "how many pebbles fit along 20 cm, placed 2 cm apart", null] },
+  { week: "4",  cat: ["LR","LR","CB","LR","WP",null],
+    title: ["how many jumps Kenga takes to get from 0 to 11",
+            "how much a half-full glass of water weighs",
+            "which card ends up at the right-hand end of the smallest number",
+            "how many squares balance three triangles",
+            "how many eggs 6 hens lay in 6 days", null] },
+  { week: "5",  cat: ["LR","GEO","LR","CB","LR","LR"],
+    title: ["which floor Maia lives on in a five-story house",
+            "the area of the shaded square inside a bigger square",
+            "how many cookies Amelia baked, working backwards",
+            "how many socks to draw in the dark to be sure of a pair",
+            "which ball is the heaviest",
+            "how many children are in the ice cream line"] },
+  { week: "6",  cat: ["GEO","WP","LR","LR","LR","LR"],
+    title: ["which gears also turn clockwise",
+            "what the headband costs out of a $10 total",
+            "the sum of squares A and B in a sudoku-style table",
+            "how many points are scored on the third turn of archery",
+            "how many space chickens among 30 animals with 100 legs",
+            "who is the youngest of the five students"] },
+  { week: "7",  cat: ["GEO","LR","NO","GEO","LR","GEO"],
+    title: ["the real time on a clock seen in a mirror",
+            "how many cats from 34 legs and 12 tails",
+            "what number replaces the question mark on the scales",
+            "what the cube construction looked like before it was changed",
+            "how many dots altogether from the 1st to the 6th pattern",
+            "how far the cat walks along the middle of the hallway"] },
+  { week: "8",  cat: ["LR","LR","CB","WP","WP","GEO"],
+    title: ["who won the race",
+            "which weight Amelia set aside to leave the scales balanced",
+            "how many ways there are to spell WATER in the network",
+            "how far the park is from Meera's house",
+            "how many pushups Nathan does in 7 mornings",
+            "which picture has white and grey areas that are not equal"] },
+  { week: "9",  cat: ["CB","LR","CB","NO","CB","LR"],
+    title: ["how many ways the ant can get home from A to B",
+            "which gift box is the biggest",
+            "how many 3-digit numbers can be made from the digits 1, 2 and 3",
+            "whether the sum of the first 5 even numbers is odd or even",
+            "how many designs Torey can make from one kind of tile",
+            "which element replaces the question mark in the pattern"] },
+  { week: "10", cat: ["CB","GEO","NO","WP","GEO","NO"],
+    title: ["the fewest jars to take from a dark pantry to be sure of a match",
+            "whether the system of gears can turn, or is jammed",
+            "how many of the numbers are even",
+            "which page Ellie stops on after reading 50 pages",
+            "how many cubes are in the structure",
+            "how many more 3-gram weights balance the car than the ball"] },
+  { week: "11", cat: ["LR","LR","LR","LR","LR","GEO"],
+    title: ["how many triangles among 10 shapes with 36 corners in total",
+            "the odd three-digit number whose digits add up to 3",
+            "which element comes next in the circle pattern",
+            "whether Mark and his neighbour are liars or truth-tellers",
+            "the missing number on the balance scales",
+            "which figure has exactly half of its area shaded"] },
+  { week: "12", cat: ["GEO","LR","GEO","NO","LR","LR"],
+    title: ["the side of the big square built up from smaller squares",
+            "Sarah's two-digit number, from two clues",
+            "which way gear 6 turns when a belt joins the system",
+            "reading and subtracting numbers written in cuneiform",
+            "which picture does not belong",
+            "how much the heart weighs in a balanced structure"] },
+  { week: "13", cat: ["GEO","LR","LR","LR","NO","LR"],
+    title: ["the area of the triangle in square inches",
+            "how many steps on a staircase of alternating colours",
+            "how many of the 9 sheets were cut into 3 pieces",
+            "how many babies Papa Octopus has in all",
+            "the sum 996 + 997 + 998 + 999 + 995",
+            "how many bicycles among 40 cycles with 106 wheels"] }
+];
+
+/* how many worked examples to show per category */
+const N_EG = 3;
+
+/* ═══ build the tallies ════════════════════════════════════════════ */
+const SLOTS = ["var(--series-1)","var(--series-2)","var(--series-3)",
+               "var(--series-4)","var(--series-5)"];
+
+function tally() {
+  const counts = {}, egs = {};
+  for (const code of Object.keys(CAT)) { counts[code] = 0; egs[code] = []; }
+  let total = 0;
+  for (const w of WEEKS)
+    w.cat.forEach((raw, i) => {
+      if (!raw) return;
+      const c = fold(raw);
+      counts[c]++; total++;
+      egs[c].push({ week: w.week, q: i + 1, title: w.title[i], raw });
+    });
+  const rows = Object.keys(counts)
+    .map(code => ({ code, ...CAT[code], n: counts[code], eg: egs[code] }))
+    .sort((a, b) => b.n - a.n || a.code.localeCompare(b.code));
+  rows.forEach((r, i) => { r.color = SLOTS[i % SLOTS.length]; r.pct = 100 * r.n / total; });
+  return { rows, total };
+}
+const { rows, total } = tally();
+
+const weekLabel = (w) => w === "13" ? "Extra" : "Week " + w;
+
+/* Hand-picked exemplars first (the ones that explain the skill best), falling
+   back to the earliest questions. A pick that doesn't actually carry that
+   category is dropped — the chart stays the source of truth, not the prose. */
+function examples(row) {
+  const chosen = [];
+  for (const [w, q] of (row.pick || [])) {
+    const hit = row.eg.find(e => e.week === w && e.q === q);
+    if (hit) chosen.push(hit);
+    else console.warn(`categories: ${row.code} pick Week ${w} Q${q} is not tagged ${row.code} — dropped`);
+  }
+  for (const e of row.eg) {
+    if (chosen.length >= N_EG) break;
+    if (!chosen.includes(e)) chosen.push(e);
+  }
+  return chosen.slice(0, N_EG);
+}
+const egHtml = (row) => examples(row)
+  .map(e => `<b>${weekLabel(e.week)} Q${e.q}</b> &mdash; ${e.title}`).join("<br>");
+
+/* ═══ pie ══════════════════════════════════════════════════════════ */
+const tip = document.getElementById("tip");
+
+function arc(cx, cy, r, a0, a1) {
+  const p = (a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${x0.toFixed(2)} ${y0.toFixed(2)} ` +
+         `A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
+}
+
+/* SVG text is not HTML — entities in the category names must be real characters */
+const plain = (s) => s.replace(/&amp;/g, "&").replace(/&mdash;/g, "—").replace(/&nbsp;/g, " ");
+
+function drawPie(svgId) {
+  const svg = document.getElementById(svgId);
+  const NS = "http://www.w3.org/2000/svg";
+  const cx = 360, cy = 170, r = 125;
+  const leftX = cx - r - 30, rightX = cx + r + 30;   // label gutters
+
+  let a = -90;
+  const slices = rows.map(row => {
+    const sweep = 360 * row.n / total;
+    const s = { row, a0: a, a1: a + sweep, mid: a + sweep / 2 };
+    a += sweep;
+    s.rad = s.mid * Math.PI / 180;
+    s.side = Math.cos(s.rad) < 0 ? -1 : 1;
+    s.ax = cx + (r + 6) * Math.cos(s.rad);
+    s.ay = cy + (r + 6) * Math.sin(s.rad);
+    s.ly = cy + (r + 24) * Math.sin(s.rad);
+    return s;
+  });
+
+  // push labels apart so they never overlap, per side
+  const GAP = 34;   // each label is two lines tall
+  [-1, 1].forEach(side => {
+    const col = slices.filter(s => s.side === side).sort((p, q) => p.ly - q.ly);
+    for (let i = 1; i < col.length; i++)
+      if (col[i].ly - col[i - 1].ly < GAP) col[i].ly = col[i - 1].ly + GAP;
+    const over = col.length ? col[col.length - 1].ly - (cy + r + 40) : 0;
+    if (over > 0) col.forEach(s => s.ly -= over);
+  });
+
+  const paths = [];
+  slices.forEach(s => {
+    const row = s.row;
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("class", "slice");
+    path.setAttribute("d", arc(cx, cy, r, s.a0, s.a1));
+    path.setAttribute("fill", row.color);
+    paths.push(path);
+    svg.appendChild(path);
+
+    // Direct label in a fixed gutter, so the full category names line up and
+    // can never run off the canvas. Identity is never colour-alone, and the
+    // labels are the relief for the low-contrast light-mode slots.
+    const lx = s.side < 0 ? leftX : rightX;
+    const elbowX = cx + s.side * (r + 16);
+    const leader = document.createElementNS(NS, "path");
+    leader.setAttribute("class", "leader");
+    leader.setAttribute("d", `M ${s.ax.toFixed(1)} ${s.ay.toFixed(1)} ` +
+                             `L ${elbowX.toFixed(1)} ${s.ly.toFixed(1)} ` +
+                             `L ${(lx + s.side * 6).toFixed(1)} ${s.ly.toFixed(1)}`);
+    svg.appendChild(leader);
+
+    // two lines: the name, then the same counts the hover tooltip gives
+    const t = document.createElementNS(NS, "text");
+    t.setAttribute("class", "slice-label");
+    t.setAttribute("text-anchor", s.side < 0 ? "end" : "start");
+    const l1 = document.createElementNS(NS, "tspan");
+    l1.setAttribute("x", lx.toFixed(1));
+    l1.setAttribute("y", (s.ly - 1).toFixed(1));
+    l1.textContent = plain(row.name);
+    t.appendChild(l1);
+    const l2 = document.createElementNS(NS, "tspan");
+    l2.setAttribute("class", "pct");
+    l2.setAttribute("x", lx.toFixed(1));
+    l2.setAttribute("dy", "15");
+    l2.textContent = `${row.n} of ${total} · ${row.pct.toFixed(1)}%`;
+    t.appendChild(l2);
+    svg.appendChild(t);
+
+    const show = (e) => {
+      svg.classList.add("dim");
+      paths.forEach(p => p.classList.remove("on"));
+      path.classList.add("on");
+      tip.innerHTML = `<b>${row.name}</b> <span class="m">(${row.label || row.code})</span><br>` +
+                      `<span class="m">${row.n} of ${total} questions &middot; ${row.pct.toFixed(1)}%</span>`;
+      tip.classList.add("on");
+      tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";
+      tip.style.top  = (e.clientY + 16) + "px";
+    };
+    const hide = () => { svg.classList.remove("dim"); tip.classList.remove("on"); };
+    path.addEventListener("pointerenter", show);
+    path.addEventListener("pointermove", show);
+    path.addEventListener("pointerleave", hide);
+  });
+}
+
+drawPie("pie");
+
+/* Collapsed <details> stay collapsed on paper, so open them before printing
+   (CSS alone can't reveal them) and restore afterwards. */
+if (document.querySelectorAll) {
+  let reopened = [];
+  addEventListener("beforeprint", () => {
+    reopened = [...document.querySelectorAll("details:not([open])")];
+    reopened.forEach(d => { d.open = true; });
+  });
+  addEventListener("afterprint", () => {
+    reopened.forEach(d => { d.open = false; });
+    reopened = [];
+  });
+}
+
+/* ═══ table and explanation cards ══════════════════════════════════ */
+document.getElementById("table").innerHTML = rows.map(row =>
+  `<tr><td><span class="swatch" style="background:${row.color}"></span>` +
+  `<span class="code-b">${row.label || row.code}</span> &middot; ${row.name}</td>` +
+  `<td class="num">${row.n}</td><td class="num">${row.pct.toFixed(1)}%</td></tr>`).join("") +
+  `<tr><td><b>Total</b></td><td class="num"><b>${total}</b></td><td class="num"><b>100%</b></td></tr>`;
+
+document.getElementById("exp-list").innerHTML = rows.map(row => `
+  <div class="exp" style="border-left-color:${row.color}">
+    <div class="top">
+      <span class="name">${row.name}</span>
+      <span class="code">${row.label || row.code}</span>
+      <span class="share">${row.pct.toFixed(1)}%<small>${row.n} of ${total}</small></span>
+    </div>
+    <div class="meter"><i style="width:${row.pct.toFixed(1)}%;background:${row.color}"></i></div>
+    <p class="plain">${row.plain}</p>
+    <p class="full">${row.full}</p>
+    <p class="eg"><span class="lbl">From our weeks</span>${egHtml(row)}</p>
+  </div>`).join("");
+
+</script>
+</body>
+</html>
