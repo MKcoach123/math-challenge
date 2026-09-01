@@ -1,0 +1,7 @@
+	•	Number and Operations: Fundamental operations, Identifying patterns for division, remainders, working with integers, using properties of addition/multiplication to simplify complex equations.
+	•	Logical Reasoning: Truths and lies, sequencing, minimum and maximum problems, extracting conditions from complex diagrams or dialogues, process-of-elimination puzzles; Chicken & Rabbit Problems (counting legs, wheels, etc); Page Problems (distinguishing between counting pages vs. counting digits); Sports Competitions (tournament brackets and round-robin logic)
+	•	Geometry & Spatial Sense: Shapes, 3D visualization, symmetry, rotations, folding/overlapping, perimeter/area of regular and irregular shapes
+	•	Combinatorics & Counting: Organized enumeration, arrangements, basic probability, and permutations.
+	•	Word & Practical Problems: Elapsed time, money management, and scenarios translating text or images into basic math models.
+
+

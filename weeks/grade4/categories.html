@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 4 — Question Categories</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  color-scheme: light;
+  --bg:             #f0f4ff;
+  --surface-1:      #ffffff;
+  --surface-2:      #f8fafc;
+  --border:         #e2e8f0;
+  --text-primary:   #1e293b;
+  --text-secondary: #64748b;
+  --text-muted:     #94a3b8;
+  --grid:           #eef2f7;
+  /* categorical slots, assigned in fixed order to the categories by size */
+  --series-1: #2a78d6;  /* LR      */
+  --series-2: #eb6834;  /* GEO     */
+  --series-3: #1baf7a;  /* CB + CO */
+  --series-4: #eda100;  /* NO      */
+  --series-5: #e87ba4;  /* WP      */
+  --series-6: #008300;  /* spare   */
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --bg:             #121215;
+    --surface-1:      #1a1a19;
+    --surface-2:      #232322;
+    --border:         #333331;
+    --text-primary:   #ffffff;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8a8a82;
+    --grid:           #2b2b2a;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg:             #121215;
+  --surface-1:      #1a1a19;
+  --surface-2:      #232322;
+  --border:         #333331;
+  --text-primary:   #ffffff;
+  --text-secondary: #c3c2b7;
+  --text-muted:     #8a8a82;
+  --grid:           #2b2b2a;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
+  background: var(--bg); color: var(--text-primary);
+  padding: 32px 16px 64px;
+}
+.page { max-width: 760px; margin: 0 auto; }
+
+.header {
+  background: linear-gradient(135deg, #1d4ed8, #4f46e5); color: #fff; border-radius: 18px;
+  padding: 30px 34px; margin-bottom: 26px; box-shadow: 0 6px 24px rgba(30,64,175,.3); text-align: center;
+}
+.header h1 { font-size: 30px; font-weight: 900; letter-spacing: -.5px; }
+.header p  { font-size: 15px; opacity: .9; margin-top: 8px; }
+
+.section-label {
+  font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-muted); margin: 30px 4px 12px;
+}
+
+.card {
+  background: var(--surface-1); border-radius: 16px; padding: 24px 26px; margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+.card h2 { font-size: 19px; font-weight: 800; }
+.card .sub { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── hero stats ─────────────────────────────────────────────── */
+.stats { display: flex; gap: 14px; flex-wrap: wrap; }
+.stat { flex: 1 1 150px; background: var(--surface-1); border-radius: 14px; padding: 18px 20px; box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+.stat .n { font-size: 32px; font-weight: 900; letter-spacing: -1px; line-height: 1.1; }
+.stat .l { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── chart ──────────────────────────────────────────────────── */
+.chart-wrap { display: flex; align-items: center; justify-content: center; margin: 4px 0 2px; }
+svg.pie { width: 100%; max-width: 460px; height: auto; overflow: visible; }
+svg.pie path { stroke: var(--surface-1); stroke-width: 2; cursor: default; transition: opacity .12s; }
+svg.pie.dim path:not(.on) { opacity: .35; }
+svg.pie text.slice-label { font-size: 13px; font-weight: 700; fill: var(--text-primary); }
+svg.pie text.slice-label tspan.pct { fill: var(--text-secondary); font-weight: 600; }
+svg.pie line.leader { stroke: var(--text-muted); stroke-width: 1; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; margin-top: 14px; }
+.legend .item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-primary); }
+.legend .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.legend .item .cnt { color: var(--text-secondary); }
+
+/* ── tooltip ────────────────────────────────────────────────── */
+.tip {
+  position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+  background: var(--surface-1); color: var(--text-primary); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 12px; font-size: 13px; line-height: 1.45;
+  box-shadow: 0 6px 22px rgba(0,0,0,.18); z-index: 20; white-space: nowrap;
+}
+.tip.on { opacity: 1; }
+.tip b { font-weight: 800; }
+.tip .m { color: var(--text-secondary); }
+
+/* ── tables ─────────────────────────────────────────────────── */
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--grid); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 800; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tbody tr:last-child td { border-bottom: none; }
+td .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+.code { font-weight: 800; }
+
+details { margin-top: 10px; }
+details > summary {
+  cursor: pointer; font-size: 14px; font-weight: 700; color: var(--text-secondary);
+  padding: 8px 0; list-style: none;
+}
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before { content: "▸ "; }
+details[open] > summary::before { content: "▾ "; }
+
+.grid-table { font-size: 13px; }
+.grid-table th, .grid-table td { padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--grid); }
+.grid-table th:first-child, .grid-table td:first-child { text-align: left; }
+.grid-table td.c { font-weight: 700; white-space: nowrap; }
+.grid-table td.c .swatch { width: 8px; height: 8px; margin-right: 5px; }
+.grid-table td.empty { color: var(--text-muted); font-weight: 400; }
+
+.defs dt { font-weight: 800; font-size: 14px; margin-top: 12px; }
+.defs dt:first-child { margin-top: 0; }
+.defs dd { font-size: 14px; color: var(--text-secondary); line-height: 1.55; margin-top: 2px; }
+.defs .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+
+.pending {
+  border: 1px dashed var(--border); background: var(--surface-2); border-radius: 12px;
+  padding: 18px 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.55;
+}
+
+.foot { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 28px; line-height: 1.6; }
+.foot a { color: inherit; }
+
+@media (max-width: 560px) {
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 25px; }
+  .card { padding: 20px 18px; }
+  .grid-table { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Grade 4 — Question Categories</h1>
+    <p>WMC 2026&ndash;2027 Ponderosa &middot; what skills the 13 weeks actually test</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="n" id="stat-q">—</div><div class="l">questions</div></div>
+    <div class="stat"><div class="n">13</div><div class="l">weeks (incl. Extra Problems)</div></div>
+    <div class="stat"><div class="n" id="stat-top">—</div><div class="l">most-tested skill</div></div>
+  </div>
+
+  <!-- ═══ TAB 1 — COGNITIVE ═══════════════════════════════════ -->
+  <div class="section-label">Tab 1 &middot; Cognitive skill</div>
+
+  <div class="card">
+    <h2>Share of questions by cognitive skill</h2>
+    <p class="sub">All 74 Grade&nbsp;4 questions, Weeks 1&ndash;13.</p>
+
+    <div class="chart-wrap">
+      <svg class="pie" id="pie-cog" viewBox="0 0 460 320" role="img"
+           aria-label="Pie chart of Grade 4 questions by cognitive skill"></svg>
+    </div>
+    <div class="legend" id="legend-cog"></div>
+
+    <details>
+      <summary>Table view</summary>
+      <table>
+        <thead>
+          <tr><th>Cognitive skill</th><th class="num">Questions</th><th class="num">Share</th></tr>
+        </thead>
+        <tbody id="table-cog"></tbody>
+      </table>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>What each code means</h2>
+    <dl class="defs" id="defs-cog"></dl>
+  </div>
+
+  <div class="card">
+    <h2>Source data</h2>
+    <p class="sub">The categorization behind the chart, week by week.</p>
+    <details>
+      <summary>Week &times; question grid</summary>
+      <div style="overflow-x:auto">
+        <table class="grid-table">
+          <thead>
+            <tr><th>Week</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th></tr>
+          </thead>
+          <tbody id="grid-cog"></tbody>
+        </table>
+      </div>
+    </details>
+  </div>
+
+  <!-- ═══ TAB 2 — SUBJECT ═════════════════════════════════════ -->
+  <div class="section-label">Tab 2 &middot; Subject</div>
+
+  <div class="card">
+    <h2>Share of questions by subject</h2>
+    <div class="pending">
+      Waiting on the <b>Subject</b> tab of the categorization sheet — the screenshot only
+      captured the <b>Cognitive</b> tab. Once its legend and its Level&nbsp;4 week&times;question
+      grid are added to <code>DATA.subject</code> in this file, this chart renders exactly like
+      the one above.
+    </div>
+  </div>
+
+  <p class="foot">
+    Grade 4 Weekly Math Challenge &middot; teacher reference<br>
+    Source: <em>WMC 2026&ndash;2027 Ponderosa: Question Categorization</em>
+  </p>
+
+</div>
+
+<div class="tip" id="tip"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   DATA — transcribed from the categorization sheet, "Cognitive" tab,
+   "Level 4 Questions" table (Weeks 1–13). "-" = week has only 5 problems.
+   Categories are listed largest-first; the palette assigns slots 1..6 in
+   that fixed order, so slices adjacent on the circle are adjacent slots.
+   ═══════════════════════════════════════════════════════════════════ */
+const DATA = {
+  cognitive: {
+    legend: {
+      LR:  "Logical Reasoning",
+      GEO: "Geometry & Spatial Sense",
+      NO:  "Number & Operations",
+      CB:  "Combinatorics & Counting",
+      WP:  "Word & Practical Problems"
+    },
+    /* the sheet's own codes, folded into the legend above: the sheet scores
+       Combinatorics (CB) and Counting (CO) separately, the course description
+       treats them as one skill. weeks[] below stays faithful to the sheet. */
+    merge: { CO: "CB" },
+    labels: { CB: "CB + CO" },
+    /* longer definitions, from the course's category descriptions */
+    defs: {
+      NO:  "Fundamental operations, identifying patterns for division, remainders, working with integers, using properties of addition/multiplication to simplify complex equations.",
+      LR:  "Truths and lies, sequencing, minimum and maximum problems, extracting conditions from complex diagrams or dialogues, process-of-elimination puzzles; chicken &amp; rabbit problems (counting legs, wheels, etc.); page problems (counting pages vs. counting digits); sports competitions (tournament brackets and round-robin logic).",
+      GEO: "Shapes, 3D visualization, symmetry, rotations, folding/overlapping, perimeter/area of regular and irregular shapes.",
+      CB:  "Organized enumeration, arrangements, basic probability and permutations &mdash; together with the organized counting of the figures or cases hidden in a diagram.",
+      WP:  "Elapsed time, money management, and scenarios translating text or images into basic math models."
+    },
+    weeks: [
+      { week: "1",  q: ["LR",  "GEO", "LR",  "LR",  "NO",  null ] },
+      { week: "2",  q: ["LR",  "LR",  "NO",  "GEO", "GEO", null ] },
+      { week: "3",  q: ["CO",  "CO",  "CO",  "GEO", "LR",  null ] },
+      { week: "4",  q: ["LR",  "LR",  "CB",  "LR",  "WP",  null ] },
+      { week: "5",  q: ["LR",  "GEO", "LR",  "CB",  "LR",  "LR" ] },
+      { week: "6",  q: ["GEO", "WP",  "LR",  "LR",  "LR",  "LR" ] },
+      { week: "7",  q: ["GEO", "LR",  "NO",  "GEO", "LR",  "GEO"] },
+      { week: "8",  q: ["LR",  "LR",  "CB",  "WP",  "WP",  "GEO"] },
+      { week: "9",  q: ["CB",  "LR",  "CB",  "NO",  "CB",  "LR" ] },
+      { week: "10", q: ["CB",  "GEO", "NO",  "WP",  "GEO", "NO" ] },
+      { week: "11", q: ["LR",  "LR",  "LR",  "LR",  "LR",  "GEO"] },
+      { week: "12", q: ["GEO", "LR",  "GEO", "NO",  "LR",  "LR" ] },
+      { week: "13", q: ["GEO", "LR",  "LR",  "LR",  "NO",  "LR" ] }
+    ]
+  }
+
+  /* , subject: { legend: {...}, defs: {...}, weeks: [...] }   ← add Tab 2 here */
+};
+
+/* ═══ rendering ════════════════════════════════════════════════════ */
+const SLOTS = ["var(--series-1)","var(--series-2)","var(--series-3)",
+               "var(--series-4)","var(--series-5)","var(--series-6)"];
+const tip = document.getElementById("tip");
+
+function tally(set) {
+  const counts = {};
+  for (const code of Object.keys(set.legend)) counts[code] = 0;
+  let total = 0;
+  const fold = (c) => (set.merge && set.merge[c]) || c;
+  for (const row of set.weeks)
+    for (const raw of row.q)
+      if (raw) { const c = fold(raw); counts[c] = (counts[c] || 0) + 1; total++; }
+  // largest first — this order is also the palette-slot order
+  const rows = Object.keys(counts)
+    .map(code => ({ code, name: set.legend[code],
+                    label: (set.labels && set.labels[code]) || code, n: counts[code] }))
+    .sort((a, b) => b.n - a.n || a.code.localeCompare(b.code));
+  rows.forEach((r, i) => { r.color = SLOTS[i % SLOTS.length]; r.pct = 100 * r.n / total; });
+  return { rows, total };
+}
+
+function arc(cx, cy, r, a0, a1) {
+  const p = (a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)];
+  const [x0, y0] = p(a0), [x1, y1] = p(a1);
+  const large = (a1 - a0) > 180 ? 1 : 0;
+  return `M ${cx} ${cy} L ${x0.toFixed(2)} ${y0.toFixed(2)} ` +
+         `A ${r} ${r} 0 ${large} 1 ${x1.toFixed(2)} ${y1.toFixed(2)} Z`;
+}
+
+function drawPie(svgId, legendId, tableId, gridId, defsId, set) {
+  const { rows, total } = tally(set);
+  const svg = document.getElementById(svgId);
+  const NS = "http://www.w3.org/2000/svg";
+  const cx = 230, cy = 160, r = 118;
+
+  // 1st pass — geometry for every slice
+  let a = -90;
+  const slices = rows.map(row => {
+    const sweep = 360 * row.n / total;
+    const s = { row, a0: a, a1: a + sweep, mid: a + sweep / 2 };
+    a += sweep;
+    s.rad = s.mid * Math.PI / 180;
+    s.side = Math.cos(s.rad) < 0 ? -1 : 1;         // left / right of the pie
+    s.ax = cx + (r + 6) * Math.cos(s.rad);         // leader start, on the arc
+    s.ay = cy + (r + 6) * Math.sin(s.rad);
+    s.ly = cy + (r + 24) * Math.sin(s.rad);        // preferred label y
+    return s;
+  });
+
+  // 2nd pass — push labels apart so they never overlap, per side
+  const GAP = 17;
+  [-1, 1].forEach(side => {
+    const col = slices.filter(s => s.side === side).sort((p, q) => p.ly - q.ly);
+    for (let i = 1; i < col.length; i++)
+      if (col[i].ly - col[i - 1].ly < GAP) col[i].ly = col[i - 1].ly + GAP;
+    // if the stack ran past the bottom, shift the whole column back up
+    const over = col.length ? col[col.length - 1].ly - (cy + r + 42) : 0;
+    if (over > 0) col.forEach(s => s.ly -= over);
+  });
+
+  const paths = [];
+  slices.forEach(s => {
+    const row = s.row;
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", arc(cx, cy, r, s.a0, s.a1));
+    path.setAttribute("fill", row.color);
+    paths.push(path);
+    svg.appendChild(path);
+
+    // direct label outside the slice — identity is never colour-alone,
+    // and it doubles as the relief for the low-contrast light-mode slots
+    const lx = s.side < 0 ? cx - (r + 26) * Math.abs(Math.cos(s.rad)) - 6
+                          : cx + (r + 26) * Math.abs(Math.cos(s.rad)) + 6;
+    const line = document.createElementNS(NS, "line");
+    line.setAttribute("class", "leader");
+    line.setAttribute("x1", s.ax.toFixed(1));
+    line.setAttribute("y1", s.ay.toFixed(1));
+    line.setAttribute("x2", (lx + s.side * 5).toFixed(1));
+    line.setAttribute("y2", s.ly.toFixed(1));
+    svg.appendChild(line);
+
+    const t = document.createElementNS(NS, "text");
+    t.setAttribute("class", "slice-label");
+    t.setAttribute("x", lx.toFixed(1));
+    t.setAttribute("y", (s.ly + 4).toFixed(1));
+    t.setAttribute("text-anchor", s.side < 0 ? "end" : "start");
+    t.textContent = row.label + " ";
+    const sp = document.createElementNS(NS, "tspan");
+    sp.setAttribute("class", "pct");
+    sp.textContent = row.pct.toFixed(1) + "%";
+    t.appendChild(sp);
+    svg.appendChild(t);
+
+    // hover
+    const show = (e) => {
+      svg.classList.add("dim");
+      paths.forEach(p => p.classList.remove("on"));
+      path.classList.add("on");
+      tip.innerHTML = `<b>${row.name}</b> <span class="m">(${row.label})</span><br>` +
+                      `<span class="m">${row.n} of ${total} questions &middot; ${row.pct.toFixed(1)}%</span>`;
+      tip.classList.add("on");
+      tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 8) + "px";
+      tip.style.top  = (e.clientY + 16) + "px";
+    };
+    const hide = () => { svg.classList.remove("dim"); tip.classList.remove("on"); };
+    path.addEventListener("pointerenter", show);
+    path.addEventListener("pointermove", show);
+    path.addEventListener("pointerleave", hide);
+  });
+
+  // legend
+  document.getElementById(legendId).innerHTML = rows.map(row =>
+    `<span class="item"><span class="swatch" style="background:${row.color}"></span>` +
+    `${row.name} <span class="cnt">${row.n}</span></span>`).join("");
+
+  // table view
+  document.getElementById(tableId).innerHTML = rows.map(row =>
+    `<tr><td><span class="swatch" style="background:${row.color}"></span>` +
+    `<span class="code">${row.label}</span> &middot; ${row.name}</td>` +
+    `<td class="num">${row.n}</td><td class="num">${row.pct.toFixed(1)}%</td></tr>`).join("") +
+    `<tr><td><b>Total</b></td><td class="num"><b>${total}</b></td><td class="num"><b>100%</b></td></tr>`;
+
+  // definitions
+  const byCode = Object.fromEntries(rows.map(r => [r.code, r]));
+  document.getElementById(defsId).innerHTML = rows.map(row =>
+    `<dt><span class="swatch" style="background:${row.color}"></span>` +
+    `${row.label} &mdash; ${row.name}</dt><dd>${set.defs[row.code] || ""}</dd>`).join("");
+
+  // week × question grid — shows the sheet's own codes (CO stays CO),
+  // coloured by the category each one is counted under
+  const fold = (c) => (set.merge && set.merge[c]) || c;
+  document.getElementById(gridId).innerHTML = set.weeks.map(w =>
+    `<tr><td><b>${w.week === "13" ? "Extra" : "Week " + w.week}</b></td>` +
+    w.q.map(c => c
+      ? `<td class="c"><span class="swatch" style="background:${byCode[fold(c)].color}"></span>${c}</td>`
+      : `<td class="empty">&ndash;</td>`).join("") + `</tr>`).join("");
+
+  return { rows, total };
+}
+
+const cog = drawPie("pie-cog", "legend-cog", "table-cog", "grid-cog", "defs-cog", DATA.cognitive);
+document.getElementById("stat-q").textContent = cog.total;
+document.getElementById("stat-top").textContent = cog.rows[0].code + " " + cog.rows[0].pct.toFixed(0) + "%";
+</script>
+</body>
+</html>
