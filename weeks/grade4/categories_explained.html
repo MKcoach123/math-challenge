@@ -156,9 +156,37 @@ details[open] > summary::before { content: "▾ "; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   body { background: #fff; padding: 0; }
   .page { max-width: 100%; }
-  .card, .exp { box-shadow: none; border: 1px solid var(--border); break-inside: avoid; }
-  .section-head { break-after: avoid; }   /* never orphan the heading at a page end */
-  .header { box-shadow: none; border-radius: 0; margin-bottom: 18px; }
+  .card, .exp { box-shadow: none; border: 1px solid var(--border); }
+
+  /* Page breaks. The chart card is ~700px tall — taller than what is usually
+     left on page 1 — so making it unbreakable pushed the WHOLE card to page 2
+     and left ~3.5in of white space. Long cards may now flow across a break;
+     only the things that look broken when split are held together. */
+  .card  { break-inside: auto; }
+  .exp   { break-inside: avoid; }         /* skill cards are short — keep whole */
+  .chart-wrap { break-inside: avoid; }    /* never split the pie itself */
+  .card h2, .card .sub { break-after: avoid; }   /* a heading stays with its content */
+  .section-head { break-after: avoid; }
+  tr { break-inside: avoid; }
+
+  /* Pack tighter on paper so the intro and the chart share page 1. */
+  .header { box-shadow: none; border-radius: 0; margin-bottom: 14px; padding: 18px 24px; }
+  .header h1 { font-size: 24px; }
+  .header p { font-size: 13.5px; margin-top: 5px; }
+  .card { padding: 16px 20px; margin-bottom: 12px; }
+  .card h2 { font-size: 17px; margin-bottom: 10px; }
+  .intro p { font-size: 13.5px; line-height: 1.5; }
+  .intro p + p { margin-top: 9px; }
+  /* The pie is the only block that must never be split, so its height sets the
+     worst-case gap. Keeping it modest on paper means the heading + pie almost
+     always fit in whatever is left of the page. */
+  svg.pie { max-width: 450px; }
+  .chart-wrap { margin-bottom: 4px; }
+  .exp { padding: 14px 16px 14px 18px; }
+  .exp .full { margin-top: 6px; }
+  .exp .eg { margin-top: 8px; }
+  .section-head { margin: 18px 4px 12px; }
+
   .tip { display: none !important; }
   details > summary { display: none; }        /* the table is expanded for print */
   a { text-decoration: none; color: inherit; }
