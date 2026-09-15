@@ -1,9 +1,36 @@
 # Grade 4 Weekly Math Challenge — Project Status & Resume Guide
 
-Last updated: 2026-08-27
+Last updated: 2026-09-15
 
 > **Read this first if starting a new session.** It captures the whole project state, how it's
 > deployed, and exactly how to make changes. Companion: `planning/project_analysis.md` (concept).
+
+### ⏯️ Resuming — where things stand (2026-09-15)
+
+**Everything committed and pushed is live.** Uncommitted work sits in the tree:
+
+| Uncommitted | What it is |
+|---|---|
+| `weeks/grade4/class_progress.html` | the collective class board (§5b) — written + verified, untracked |
+| `weeks/grade4/week2/apps_script_backend.gs` | adds `getRoster()`, `classProgress()`, `?view=classes` |
+| `weeks/grade4/week2/SHEET_SETUP.md` | §1b documenting the `Roster` tab |
+| `STATUS.md` | this update |
+
+**The three things blocking the class board from being real** (none are code):
+1. Apps Script → **Deploy → Manage deployments → Edit ✏ → New version** (§6). The live script still
+   ignores `?view=classes` and falls through to the leaderboard.
+2. Add the **`Roster`** tab (`Name | Class`) to the Sheet.
+3. Then link it from `index.html` / `leaderboard.html` — deliberately unlinked until it shows real data.
+
+**The one thing that outranks all of it:** the site is 🔴 **blocked on district Chromebooks** (§7).
+
+A clickable preview with made-up numbers is at `~/Downloads/class_progress_PREVIEW.html`
+(outside the repo, so it is not committed).
+
+⚠️ **Push, don't just commit — and don't just edit.** Twice this month a fix "didn't work" only
+because it was never pushed: the live site and the published artifact both served the old file
+while the corrected version sat locally. After any fix a user will *look at*, push and then poll
+the live URL before saying it is done.
 
 ⚠️ **This file is committed to a PUBLIC repo — never put answer keys or solutions in it.**
 Keys live in the Sheet's `AnswerKey` tab, with a local gitignored copy in `ANSWER_KEYS.md`.
@@ -78,6 +105,7 @@ MathChallenge/
     ├── build_week.py                  ← THE generator (build a week page + rebuild index + leaderboard week list)
     ├── gate_solutions.py              ← passcode-locks the solution pages (see §6)
     ├── leaderboard.html               ← Overall + per-week + Find-my-rank + caching; ALL_WEEKS auto-synced
+    ├── class_progress.html            ← COLLECTIVE board: per-class progress meters (see §5b)
     ├── categories_explained.html      ← TEACHER-FACING page: scope + cognitive-skill chart (see §5)
     ├── categories.html                ← earlier working page: same chart + week×question grid + Subject placeholder
     ├── week1/ … week12/, week13/      ← one folder per week (week13 = "Extra Problems"), each with:
@@ -144,6 +172,17 @@ past answers wrong. Leave them, or accept both spellings in the key.
 **A rename touches two files:** `week.json` *and* `solutions_weekN.html`. Match on word boundaries
 (`\bAnna\b`) so substrings like *H**anna*** survive, then rebuild and re-gate.
 
+### Recent fixes (2026-09)
+
+- **Week 2, Problem 1 figure** (2026-09-13): the Anna→Anaya rename had updated `week.json` and the
+  solution *text*, but the age diagram in the solution was a **screenshot** still reading "Anna's
+  future age". Replaced from the updated `solutions_week2.pages`, resized 726→510px to match the
+  page's 2× convention for a 240px display. ⚠️ **A rename touches three things, not two: the
+  `week.json`, the solution text, AND any figure with the name baked in.**
+  ⚠️ `solutions_week2.pages` still says "Nancy"/"Mary" in Problem 2 where the site correctly says
+  Julieth/Abigale — fix the source doc before any future re-import.
+- **Print gap on the teacher page** (2026-09-09): see §6 "Printing".
+
 ### Question categorization & the teacher-facing page (added 2026-08-27)
 
 **Source material** (repo root, all three currently untracked):
@@ -201,6 +240,70 @@ labelled, so identity never depends on colour alone.
 
 ---
 
+## 5b. Class-progress board (collective, added 2026-09-02)
+
+A **second, non-competitive board**: `weeks/grade4/class_progress.html`. Instead of ranking
+individuals it shows how much of the points available to a *whole class* that class collected —
+so a student is pulling for their classroom, not against their classmates. (It answers the
+"leaderboards demotivate the kids who fall behind" risk raised in `planning/project_analysis.md`.)
+
+**Three metrics, and they multiply.** Each class card shows two levers and their product:
+
+```
+TOOK PART  (blue)   partPct = participants / class size
+GOT RIGHT  (amber)  acc     = points / problems actually attempted
+                    ────────────────────────────────────────────
+COLLECTED  (teal)   pct     = points / (class size × problems)
+
+             took part  ×  got right  =  collected      (exact — verified)
+```
+
+Why all three:
+
+- **`pct` (collected)** is the headline. Its denominator is the **roster count, not the number who
+  submitted** — so persuading one more classmate to take part raises it exactly as much as getting
+  one more answer right. Dividing by submitters only would *punish* a class for including a
+  struggling classmate, the opposite of the goal.
+- **`acc` (got right)** was added because `pct` alone lands at 25–55% in realistic data and reads
+  as failure. Accuracy lands at 70–76% on the same numbers — same children, framed as an
+  achievement.
+- **`partPct` (took part)** was added last, and it closed a real hole: before it, a student who
+  took part and scored 0 added nothing to `pct` **and dragged `acc` down** — trying was actively
+  punished. The blue bar is the one number that rises for anyone who shows up, whatever they score.
+
+The on-page "×  ≈" line is rounded to **whole numbers** on purpose: each figure is stored to 1dp,
+so the exact product can sit 0.1pp off the total (measured across 200k random class/week
+combinations — worst case exactly 0.1pp). Whole numbers plus "≈" keeps it honest against a
+calculator. A week where nobody took part yields `acc: null`, and the amber bar is omitted rather
+than showing 0% or NaN.
+
+Weeks with no `AnswerKey` row yet are **skipped entirely**, not counted as 0%.
+
+Two views: **whole challenge** (cumulative, with a week-by-week strip per class) and **by week**.
+In the cumulative view participation is *chances taken* — `participants / (class size × weeks)` —
+so consistent turnout beats one big week. Sorted by progress but with **no ranks, medals or
+podium**.
+
+**How a student's class is known: the `Roster` tab** (`Name | Class`) in the same Sheet — chosen
+over a class picker on the form because it needs no page rebuilds and works retroactively on
+submissions already made. Backend: `getRoster()` + `classProgress()`, served at `?view=classes`.
+A student listed twice counts once. Names that submit but aren't on the roster are reported in
+`unmatched` and shown in a yellow banner on the page — their points count for nobody.
+
+⚠️ **The whole board depends on typed names matching the roster, and the pilot data says that is
+the weak point.** The 13 names currently in `Submissions` include `Amelia the moon hamster who
+likes cats`, `Amelia the happy kitty cat`, `Amelia :)`, `Амелия Радченко`, `Harry Potter`,
+`Tam Family` and `Test` — very likely one Amelia across five aliases. Before the real run either
+tell students to enter their real name, or expect to curate the roster from what they actually
+type. The unmatched banner is the tool for spotting this.
+
+⚠️ **Not live yet.** The page is written and its logic is verified, but `?view=classes` needs an
+Apps Script **New version** redeploy (§6), and the `Roster` tab has to exist. Until both are done
+the page shows setup instructions rather than data. It is also **not linked** from `index.html` or
+`leaderboard.html` — link it only once it shows real numbers.
+
+---
+
 ## 6. How to do common tasks
 
 ### Update / add a week's problems
@@ -254,6 +357,19 @@ the solutions for that one visit and re-locks when you leave. (Not strong crypto
 don't rewrite the prose. (No spell-checker is installed on this machine: no `aspell`, `hunspell` or
 pyobjc. `brew install aspell` would give one.)
 
+### Printing (the teacher page especially)
+
+`@media print` sets `break-inside: avoid` only on things that look broken when split — the pie
+graphic, the small skill cards, table rows. ⚠️ **Do NOT put `break-inside: avoid` on `.card`.**
+Doing so was a real bug: the chart card is ~700px tall, only ~334px was left on page 1, so the
+browser moved the whole card to page 2 and left **~3.5 inches of white space**. Long cards must be
+allowed to flow across a break. The pie is the one unbreakable block, so it is capped at 450px on
+paper — its height bounds the worst-case gap.
+
+⚠️ **Safari's "Print backgrounds" checkbox is OFF by default.** With it off, card backgrounds and
+the share meters print as empty outlines. `print-color-adjust: exact` does not override it — the
+user has to tick the box.
+
 ### Change the backend script
 1. Edit `weeks/grade4/week2/apps_script_backend.gs`, commit/push.
 2. Copy the new code from the raw GitHub URL (guaranteed current):
@@ -293,6 +409,39 @@ pyobjc. `brew install aspell` would give one.)
     colour palettes can still be checked here.
 - None of the above replaces a real browser — still open the page in Safari before showing anyone.
 
+### ⚠️ BLOCKED on district Chromebooks (found 2026-09-09) — biggest open risk
+
+Opening the site on a **Santa Clara Unified issued Chromebook was blocked by the district web
+filter**. This is the single thing most likely to stop the program running as designed.
+
+Almost certainly a **category-level block on `*.github.io`**, not a review of this site: GitHub
+Pages hosts arbitrary user content, so K–12 filters routinely class the whole domain as
+"personal websites / uncategorized".
+
+The site needs exactly **two domains** — verified by grepping every external reference across all
+pages (all problem images are base64-embedded; there are no CDNs, fonts, trackers or ad scripts):
+
+| Domain | Why |
+|---|---|
+| `MKcoach123.github.io` | the pages themselves |
+| `script.google.com` | saving answers + the leaderboard |
+
+**Ask the district to allowlist BOTH.** If only the first is allowed, pages load but submissions
+and the leaderboard fail silently — a confusing failure mid-lesson. Some districts block
+`script.google.com` separately because Apps Script can proxy around filters.
+
+Selling points for the request: no accounts or logins, first name + last initial only (no email,
+no last names), no ads, no third-party tracking, no student-to-student messaging, no uploads.
+A draft email to the technology coordinator was written on 2026-09-09 — reuse it.
+
+⚠️ **Embedding does NOT work around this.** Putting the page in an iframe on Google Sites still
+makes the Chromebook fetch the blocked domain. Only allowlisting or rehosting on a permitted
+domain will do.
+
+Fallbacks if allowlisting stalls: rehost on a domain the district already permits (the school's
+own web server is best), or lean on **paper** — the print view works and the scope doc already
+says papers are collected Fridays and graded by an organizer.
+
 ### Chromebook readiness (audited 2026-08-10)
 Students use school Chromebooks. The audit found nothing that breaks:
 - The scratchpad uses **Pointer Events** + `touch-action: none`, so finger and stylus drawing work,
@@ -321,6 +470,14 @@ Students use school Chromebooks. The audit found nothing that breaks:
 - [ ] **Clean test rows** from the `Submissions` tab (e.g. `ZZ_*`, `DELETE_ME_W1`, `Probe*`, `Test Bot T`,
       `Lalala`, `YoYoYo`) before the real run.
 - [ ] **Reveal solutions per deadline:** flip each week's `solutions_available` to `true` + re-gate + rebuild.
+- [ ] 🔴 **Get the site unblocked on district Chromebooks** (§7) — allowlist request to SCUSD for
+      `MKcoach123.github.io` AND `script.google.com`. Nothing else matters if students can't open it.
+- [ ] **Commit the class-progress board** — `class_progress.html`, the backend's `?view=classes`
+      addition and the `Roster` docs are written and verified but still UNCOMMITTED.
+- [ ] **Turn on the class board** (§5b): redeploy Apps Script as a **New version**, add the `Roster`
+      tab, check the unmatched-names banner, then link it from `index.html` / `leaderboard.html`.
+- [ ] **Student names are unusable for roster matching right now** (§5b) — decide whether to ask
+      for real names on the form before the run starts.
 - [ ] **Capture the `Subject` tab** of the categorization sheet — only the Cognitive tab was
       screenshotted, and `categories.html` has a chart placeholder waiting for it.
 - [ ] **Naming mismatch on the teacher page**: the scope text says *Combinatorics* and *Word
@@ -355,6 +512,13 @@ Students use school Chromebooks. The audit found nothing that breaks:
 - Student names come from the class lists, to motivate students by seeing classmates (§5).
 - Week status marked with a **text pill**, not colour alone — the week cards already cycle a 6-colour
   palette, and text works for colourblind students.
+- The class board shows **three numbers that multiply** (took part × got right = collected) rather
+  than one. Participation is its own visible bar so that trying is rewarded even when the score is
+  zero — with only the combined figure, taking part and scoring 0 looked identical to not taking
+  part at all.
+- Two boards, two purposes: the **individual leaderboard** stays as it is, and the **class board**
+  (§5b) is collective — measured against the whole class roster so participation counts as much as
+  accuracy, with no ranks or medals.
 - The categorization pages are **teacher-facing, standalone and unlinked** from the student site —
   they describe the program rather than serve it, and nothing on the student path should point at them.
 - **Combinatorics and Counting are shown as one category** (per the course description) even though
