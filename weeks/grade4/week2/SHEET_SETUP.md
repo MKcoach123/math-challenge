@@ -15,6 +15,29 @@ the scored leaderboard. The answer key lives in the Sheet and never reaches a br
   - Fill answers as students submit them: numbers for free-text, the letter for multiple choice.
   - The `Submissions` tab is created automatically on the first submission — don't make it by hand.
 
+## 1b. (Optional) Add a `Roster` tab — only needed for the **class-progress board**
+
+`class_progress.html` shows how much of the points available to a *whole class* that class
+collected. To do that the backend has to know who is in which class. Add a tab named
+**`Roster`** with exactly this header row:
+
+| Name | Class |
+|------|-------|
+| Jaylee B | Ms. Hood |
+| Anaya K | Ms. Hood |
+| Julieth M | Mr. Diaz |
+
+- List **every student in the class**, not only the ones who take part — the class size is the
+  denominator each week is measured against, and that is deliberate: persuading one more
+  classmate to join raises the class's number just as much as one more right answer does.
+- `Name` must match what the student **types into the answer page**. Matching ignores case,
+  spacing and periods (`anaya k.` = `Anaya K`), but not different names.
+- A student listed twice counts once (first listing wins), so a stray duplicate can't inflate
+  a class.
+- Names that submit but aren't on the roster are **listed on the page in a yellow banner** —
+  their points count for nobody until you add them or fix the spelling.
+- No `Roster` tab? The class board just shows setup instructions. Nothing else breaks.
+
 ## 2. Add the script
 - In the Sheet: **Extensions → Apps Script**.
 - Delete the starter code, paste **all** of `apps_script_backend.gs` (this folder), **Save** 💾.
@@ -49,3 +72,7 @@ A brand-new deployment makes a *new* URL (and you'd have to re-paste it everywhe
   `AnswerKey` row just scores 0 until you fill it in.
 - **One submission per student:** not enforced — re-submits add rows; the leaderboard uses each
   student's **latest** submission per week.
+- **Class board (`?view=classes`):** a week only counts once its `AnswerKey` row is filled in —
+  unscoreable weeks are skipped entirely rather than dragging every class down to 0%.
+  ⚠️ The whole board rests on students typing a name that matches the `Roster`. Check the
+  yellow "not on the class list" banner after the first week.
