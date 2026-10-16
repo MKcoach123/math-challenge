@@ -138,8 +138,8 @@ must match the page label (dash/spacing tolerant).
 | **Grade 4 — Week 4** | 5 | Kenga jumps (num,img), half glass (num,img), Albert's cards right-end (num,img), squares balance 3 triangles (num,img), hens&eggs (num,img) |
 | **Grade 4 — Week 5** | 6 | house floor logic (num,img), divided square area (num,img), Amelia cookies (num,img), socks pigeonhole (num,img), heaviest ball (num,img), children in line (num,img) |
 | **Grade 4 — Week 6** | 6 | gears clockwise (num,img), scrunchies/headband (num), sudoku table A+B (num,img), archery 3rd turn (num,img), space chickens (num,img), youngest student (**text**) |
-| **Grade 4 — Week 7** | 6 | mirror clock (**text time**), pet shop cats (num,img), star/circle scales (num,img), cube construction before (**A–E**,img), dot patterns sum (num,img), hallway centre-line metres (num,img) |
-| **Grade 4 — Week 8** | 6 | race winner (**text**), Amelia weight aside (num,img), spell WATER paths (num,img), park distance (num,img), Nathan pushups 13×7 (num), grey≠white (**A–E**,img) |
+| **Grade 4 — Week 7** | 6 | mirror clock (**text time**), pet shop cats (num,img), star/circle scales (num,img), cube construction before (**A–E**,img), dot patterns sum (num,img), hallway center-line meters (num,img) |
+| **Grade 4 — Week 8** | 6 | race winner (**text**), Amelia weight aside (num,img), spell WATER paths (num,img), park distance (num,img), Nathan pushups 13×7 (num), gray≠white (**A–E**,img) |
 | **Grade 4 — Week 9** | 6 | ant paths A→B (num,img), biggest gift box (**text**,img), 3-digit perms of 1,2,3 (num), sum of first 5 evens odd/even (**text**), Torey tile designs (num,img), wheel pattern 1–5 (**choice**,img) |
 | **Grade 4 — Week 10** | 6 | honey jars pigeonhole (num,img), gears turn/jam (**Turns/Jammed buttons**,img), how many even (num), Ellie page 62+50 (num), cubes layer count (num,img), 3-g weights diff (num,img) |
 | **Grade 4 — Week 11** | 6 | triangles in bag (num), 3-digit odd digits-sum-3 (num), circle pattern 1–8 (**choice**,img), liars/truth-tellers (**Truth-teller/Liar buttons**,img), balance scales (num,img), half-shaded A–E (**A–E**,img) |
@@ -235,8 +235,8 @@ each page's `<script>` — `CAT` + `WEEKS` in `categories_explained.html`, `DATA
 2. The scope card is the **author's own wording** from the `.rtf`; only typos were fixed
    (`1point` → `1 point`, an unclosed parenthesis, a missing article).
 
-The pie palette is colourblind-validated in both light and dark mode, and each slice is directly
-labelled, so identity never depends on colour alone.
+The pie palette is colorblind-validated in both light and dark mode, and each slice is directly
+labeled, so identity never depends on color alone.
 
 ---
 
@@ -354,8 +354,29 @@ the solutions for that one visit and re-locks when you leave. (Not strong crypto
 (button becomes **📖 Solutions**), then push.
 
 **Author's wording is preserved** on solution pages — fix typos and genuine arithmetic errors only,
-don't rewrite the prose. (No spell-checker is installed on this machine: no `aspell`, `hunspell` or
-pyobjc. `brew install aspell` would give one.)
+don't rewrite the prose. **US spelling throughout** (standardized 2026-10-16: grey→gray,
+centre→center, colours→colors) — these are US classroom worksheets and Grade 1 students are
+learning to spell from them.
+
+**There IS a spell-checker here** — no `aspell`/`hunspell`/pyobjc, but macOS's own text checker
+runs through `osascript`, no install needed:
+
+```js
+// osascript -l JavaScript check.js file.txt
+ObjC.import("AppKit");
+var ch = $.NSSpellChecker.sharedSpellChecker;
+var res = ch.checkStringRangeTypesOptionsInSpellDocumentWithTagOrthographyWordCount(
+  $(line), $.NSMakeRange(0, line.length), (1<<1)|(1<<2), $(), 0, null, null);
+// resultType 2 = spelling, 4 = grammar
+```
+
+⚠️ Two traps, both hit on 2026-10-16:
+- Use `checkString…`, **not** `checkSpellingOfStringStartingAt` — the latter returns only the
+  first error and silently reports a whole file as clean.
+- It accepts common autocorrect entries like `teh` and `Micheal` as correctly spelled. Cross-check
+  against `/usr/share/dict/words`, which catches those — but that list is a 1934 Webster's and
+  *contains* `Micheal` and `candys`, so it is noisy the other way. **Neither tool is sufficient
+  alone; read the text too.** Feed it rendered text, not HTML (strip tags and base64 first).
 
 ### Printing (the teacher page especially)
 
@@ -386,7 +407,7 @@ Three changes, all in `build_week.py`'s print block:
    — page 1 of Week 6 now ends at 662pt instead of 695pt, so slack went from 28pt to ~74pt.
 
 Verified by measuring the real WebKit layout (`qlmanage` on a copy with the print CSS promoted to
-screen CSS — the §7 trick) and modelling pagination at several usable page heights.
+screen CSS — the §7 trick) and modeling pagination at several usable page heights.
 ⚠️ **Grade 1 has its own copy of `build_week.py` and still has this bug.**
 
 ⚠️ **Safari's "Print backgrounds" checkbox is OFF by default.** With it off, card backgrounds and
@@ -429,7 +450,7 @@ user has to tick the box.
     errors and letting you assert on the generated markup. This caught two real bugs in
     `categories_explained.html` that eyeballing would have missed.
   - Anthropic's data-viz palette validator ships a **Python twin** alongside the Node script, so
-    colour palettes can still be checked here.
+    color palettes can still be checked here.
 - None of the above replaces a real browser — still open the page in Safari before showing anyone.
 
 ### ⚠️ BLOCKED on district Chromebooks (found 2026-09-09) — biggest open risk
@@ -472,7 +493,7 @@ Students use school Chromebooks. The audit found nothing that breaks:
 - Layout is a 640px centred column — comfortable on a 1366×768 Chromebook. The 520px breakpoint
   (which stacks the status pill) only triggers on phones.
 - Three modern CSS features, all **cosmetic** if unsupported: `:has(input:checked)` (Chrome 105+,
-  loses the selected-option highlight), `accent-color` (93+, radio colour), `inset:0` on the
+  loses the selected-option highlight), `accent-color` (93+, radio color), `inset:0` on the
   solutions gate (87+ — the overlay isn't full-screen, but solutions **stay hidden**, since a
   separate `display:none` rule does the hiding). Any auto-updating Chromebook is well past these.
 - ⚠️ **Untested risk: the school network.** The whole backend is on `script.google.com`. If the
@@ -533,8 +554,8 @@ Students use school Chromebooks. The audit found nothing that breaks:
 - Deadline is **Friday afternoon** (was Sunday night until 2026-08-08); set per week via `"due"` in
   `week.json`, plus the home-page footer. Extra Problems is `"Anytime"`.
 - Student names come from the class lists, to motivate students by seeing classmates (§5).
-- Week status marked with a **text pill**, not colour alone — the week cards already cycle a 6-colour
-  palette, and text works for colourblind students.
+- Week status marked with a **text pill**, not color alone — the week cards already cycle a 6-color
+  palette, and text works for colorblind students.
 - The class board shows **three numbers that multiply** (took part × got right = collected) rather
   than one. Participation is its own visible bar so that trying is rewarded even when the score is
   zero — with only the combined figure, taking part and scoring 0 looked identical to not taking

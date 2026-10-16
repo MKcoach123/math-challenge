@@ -41,7 +41,7 @@
     },
     {
       "type": "choice",
-      "text": "In four of the five pictures, the white area is equal to the grey area. In which picture are the white area and the grey area different?",
+      "text": "In four of the five pictures, the white area is equal to the gray area. In which picture are the white area and the gray area different?",
       "image": "p6_squares.png",
       "image_width": "460px",
       "print_width": "380px",
