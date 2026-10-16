@@ -366,6 +366,29 @@ browser moved the whole card to page 2 and left **~3.5 inches of white space**. 
 allowed to flow across a break. The pie is the one unbreakable block, so it is capped at 450px on
 paper — its height bounds the worst-case gap.
 
+⚠️ **A whole problem can vanish from the printout — fixed 2026-10-16, don't undo it.**
+Grade 4 Week 6 printed (and saved to PDF) with **Problem 6 missing entirely** — not pushed to a
+third page, simply gone; page 1 held 2 problems instead of 3. Cause: every `.problem` has
+`break-inside: avoid`, so a problem that doesn't fit is pushed whole to the next page. WebKit fixes
+the **page count up front from the unbroken document height** (1263pt ÷ 2 pages here), so once those
+pushes accumulate past the last page, the overflow has no page to land on and is **dropped, not
+moved**. The trigger is anything that shrinks the usable page height — Safari's **"Print headers and
+footers" is on by default and costs ~70pt on its own**, and Week 6 had only 28pt of slack on page 1.
+
+Three changes, all in `build_week.py`'s print block:
+1. **`.problem.page-start { break-before: page }`**, applied by default to every 3rd problem
+   (`page_starts` in `render_week`; override per week with `"page_starts": [4]` in `week.json`,
+   or `[]` to let the flow run free). A *forced* break makes WebKit allocate a real page, so content
+   can no longer be pushed past the end. Worst case the sheet spills to a 3rd page — nothing is lost.
+2. **`@page { size: auto }`** instead of `size: A4 portrait` — the pages are printed on US Letter;
+   forcing A4 made the browser rescale onto the real sheet for no reason.
+3. Tightened print spacing (header/name-box margins, `.problem` 16→11pt, image and answer margins)
+   — page 1 of Week 6 now ends at 662pt instead of 695pt, so slack went from 28pt to ~74pt.
+
+Verified by measuring the real WebKit layout (`qlmanage` on a copy with the print CSS promoted to
+screen CSS — the §7 trick) and modelling pagination at several usable page heights.
+⚠️ **Grade 1 has its own copy of `build_week.py` and still has this bug.**
+
 ⚠️ **Safari's "Print backgrounds" checkbox is OFF by default.** With it off, card backgrounds and
 the share meters print as empty outlines. `print-color-adjust: exact` does not override it — the
 user has to tick the box.
