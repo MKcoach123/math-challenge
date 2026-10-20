@@ -1,31 +1,32 @@
 # Grade 4 Weekly Math Challenge — Project Status & Resume Guide
 
-Last updated: 2026-09-15
+Last updated: 2026-10-20
 
 > **Read this first if starting a new session.** It captures the whole project state, how it's
 > deployed, and exactly how to make changes. Companion: `planning/project_analysis.md` (concept).
 
-### ⏯️ Resuming — where things stand (2026-09-15)
+### ⏯️ Resuming — where things stand (2026-10-20)
 
-**Everything committed and pushed is live.** Uncommitted work sits in the tree:
+**Working tree is clean; everything is committed, pushed and verified live.**
 
-| Uncommitted | What it is |
-|---|---|
-| `weeks/grade4/class_progress.html` | the collective class board (§5b) — written + verified, untracked |
-| `weeks/grade4/week2/apps_script_backend.gs` | adds `getRoster()`, `classProgress()`, `?view=classes` |
-| `weeks/grade4/week2/SHEET_SETUP.md` | §1b documenting the `Roster` tab |
-| `STATUS.md` | this update |
+**The site now presents as "Sets", not weeks** — see **§1a**. Teachers are using it as supplemental
+material rather than a timed 12-week run, so pages read "Grade 4 — Set N", and the due-date and
+points pills are hidden. It is a display layer: every `week_label`, folder and file name still says
+*Week*, so scoring and the leaderboard are untouched. Flip four flags in `build_week.py` to put the
+weekly framing back (round-trip tested).
 
-**The three things blocking the class board from being real** (none are code):
-1. Apps Script → **Deploy → Manage deployments → Edit ✏ → New version** (§6). The live script still
-   ignores `?view=classes` and falls through to the leaderboard.
+**The class-progress board (§5b) is still not real.** Re-checked 2026-10-20 — `?view=classes` still
+returns the leaderboard payload, so the two non-code steps remain:
+1. Apps Script → **Deploy → Manage deployments → Edit ✏ → New version** (§6).
 2. Add the **`Roster`** tab (`Name | Class`) to the Sheet.
-3. Then link it from `index.html` / `leaderboard.html` — deliberately unlinked until it shows real data.
+Then link it from `index.html` / `leaderboard.html` — deliberately unlinked until it shows real
+data. A clickable preview with made-up numbers is at `~/Downloads/class_progress_PREVIEW.html`.
 
 **The one thing that outranks all of it:** the site is 🔴 **blocked on district Chromebooks** (§7).
 
-A clickable preview with made-up numbers is at `~/Downloads/class_progress_PREVIEW.html`
-(outside the repo, so it is not committed).
+⚠️ **GitHub Pages sometimes reports a build as `errored`** when a second push lands while the first
+is still building; the next build carries everything. Don't judge "is it live?" by the clock —
+check `gh api repos/MKcoach123/math-challenge/pages/builds` and then poll the URL.
 
 ⚠️ **Push, don't just commit — and don't just edit.** Twice this month a fix "didn't work" only
 because it was never pushed: the live site and the published artifact both served the old file
@@ -39,8 +40,9 @@ Keys live in the Sheet's `AnswerKey` tab, with a local gitignored copy in `ANSWE
 
 ## 1. What this is
 
-A classroom math-challenge website. Each week, students solve a set of Math Kangaroo problems
-(5–6 per week), submit answers online (or print on paper), and compete on a leaderboard.
+A classroom math-challenge website. Students solve a set of Math Kangaroo problems (5–6 per set),
+submit answers online (or print on paper), and compete on a leaderboard. The pages call these
+**Sets** (§1a); internally every label, folder and file name is still "week".
 After the weekly deadline the answers + solutions are revealed. Grade 4 —
 **all 12 weeks plus an Extra Problems section are built and live** (problems + passcode-locked
 solutions). The build is not capped at any week count: the generator, leaderboard, and backend all
@@ -562,7 +564,9 @@ Students use school Chromebooks. The audit found nothing that breaks:
 
 ## 8. Open items / next steps
 
-- [ ] **Set `CURRENT_WEEK`** in `build_week.py` to the real current week (placeholder `1` today).
+- [ ] **`CURRENT_WEEK` is a placeholder (`1`) — but currently inert**, because `SHOW_STATUS = False`
+      hides the run markers entirely (§1a). Only matters if a timed run starts: set it, set
+      `SHOW_STATUS = True`, rebuild.
 - [ ] **`?view=debug` returns every answer key** to anyone who calls it, and the endpoint URL is in
       each problem page's source — a student who opens View Source can read all answers. Gate the
       debug view behind a query token, or remove it once scoring is verified. **Same issue in Grade 1.**
@@ -571,11 +575,12 @@ Students use school Chromebooks. The audit found nothing that breaks:
       to purge old commits.
 - [ ] **Clean test rows** from the `Submissions` tab (e.g. `ZZ_*`, `DELETE_ME_W1`, `Probe*`, `Test Bot T`,
       `Lalala`, `YoYoYo`) before the real run.
-- [ ] **Reveal solutions per deadline:** flip each week's `solutions_available` to `true` + re-gate + rebuild.
+- [ ] **Reveal solutions when ready:** flip a set's `solutions_available` to `true` + re-gate +
+      rebuild. With no deadlines on the pages any more (§1a), this is now a judgement call per set
+      rather than something the schedule decides.
 - [ ] 🔴 **Get the site unblocked on district Chromebooks** (§7) — allowlist request to SCUSD for
       `MKcoach123.github.io` AND `script.google.com`. Nothing else matters if students can't open it.
-- [ ] **Commit the class-progress board** — `class_progress.html`, the backend's `?view=classes`
-      addition and the `Roster` docs are written and verified but still UNCOMMITTED.
+- [x] ~~Commit the class-progress board~~ — committed in `e009d6c` (2026-09-15).
 - [ ] **Turn on the class board** (§5b): redeploy Apps Script as a **New version**, add the `Roster`
       tab, check the unmatched-names banner, then link it from `index.html` / `leaderboard.html`.
 - [ ] **Student names are unusable for roster matching right now** (§5b) — decide whether to ask
@@ -587,12 +592,17 @@ Students use school Chromebooks. The audit found nothing that breaks:
       the sheet). A teacher reading both will notice. Decide which naming wins.
 - [ ] **"Each student submits once" is asserted as fact** on the teacher page, but one-submission
       enforcement is still listed as optional below — either confirm it's enforced or soften the wording.
-- [ ] **Decide whether to commit and link the categorization pages.** Both are untracked and unlinked;
-      pushing them makes them public at `…/weeks/grade4/categories_explained.html`. They contain no
-      answers — only category labels and problem descriptions.
+- [x] ~~Decide whether to commit the categorization pages~~ — both committed and public at
+      `…/weeks/grade4/categories_explained.html`. **Still deliberately unlinked** from the student
+      path; decide separately whether to link them.
 - [ ] **Grade 1 categorization not built** — the `Level 1 Questions` table is in the same sheet.
 - [ ] **Continue classmate renames** (§5) — Clark, Ben, Tom, John, Albert and the wk5–12 names.
-- [ ] **Mirror the `CURRENT_WEEK` status feature to Grade 1** (it has its own `build_week.py`/`index.html`).
+- [ ] **Mirror the `CURRENT_WEEK` status feature to Grade 1** — low priority now: it is switched
+      off here too (`SHOW_STATUS = False`). If it is ever mirrored, carry the flag across with it.
+- [ ] **Decide on the programme name.** Pages now list *Sets*, but the site is still called
+      "Grade 4 **Weekly** Math Challenge" (`index.html` `<title>`/`<h1>`, and the teacher page).
+      Left unchanged deliberately — it is the programme's own name from the scope doc — but it
+      reads oddly above a list of Sets. Renaming it is a one-line change in each place.
 - [ ] (Optional) one-submission-per-student enforcement; per-grade leaderboards; score-reset policy.
 
 ---
