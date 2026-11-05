@@ -68,7 +68,7 @@ function doGet(e) {
     var view = p.view || 'leaderboard';
 
     if (view === 'findme') {
-      return json(findRank(p.name, p.week));        // private students look themselves up
+      return json(findRank(p.name, p.week));        // public students only — see findRank
     }
     if (view === 'debug') {
       return json(debugInfo());                     // inspect what the sheet parsing sees
@@ -103,13 +103,17 @@ function leaderboard(weekLabel) {
   };
 }
 
-/** A single student's standing — works whether they are public or private. */
+/**
+ * A single student's standing, for students who chose Public only. This endpoint
+ * is open to anyone, so a name alone must never reveal a Private student's score;
+ * they get the same "not found" as a name that never submitted.
+ */
 function findRank(name, weekLabel) {
   if (!name || !nameKey(name)) return { ok: true, found: false };
   var s = computeStandings(weekLabel);
   var key = nameKey(name);
   for (var i = 0; i < s.standings.length; i++) {
-    if (s.standings[i].key === key) {
+    if (s.standings[i].key === key && s.standings[i].display === 'Public') {
       var x = s.standings[i];
       return {
         ok: true, found: true, name: x.name, rank: x.rank,
@@ -220,7 +224,7 @@ function debugInfo() {
 function classProgress() {
   var roster = getRoster();
   if (!roster.classes.length) {
-    return { ok: true, rosterMissing: true, classes: [], weeks: [], byClass: {}, unmatched: [],
+    return { ok: true, rosterMissing: true, classes: [], weeks: [], byClass: {}, unmatchedCount: 0,
              note: 'Add a "Roster" tab with columns: Name | Class' };
   }
 
@@ -302,9 +306,9 @@ function classProgress() {
     weeks: weeks,
     problems: problems,
     byClass: byClass,
-    // Names that submitted but aren't on the roster — their points count for nobody.
-    // Surfaced so a typo doesn't silently cost a class its score.
-    unmatched: Object.keys(unmatched).sort()
+    // How many names submitted but aren't on the roster — their points count for nobody.
+    // A count, not the names: this endpoint is public and those may be Private students.
+    unmatchedCount: Object.keys(unmatched).length
   };
 }
 

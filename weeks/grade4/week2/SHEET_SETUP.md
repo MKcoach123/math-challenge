@@ -23,19 +23,20 @@ collected. To do that the backend has to know who is in which class. Add a tab n
 
 | Name | Class |
 |------|-------|
-| Jaylee B | Ms. Hood |
-| Anaya K | Ms. Hood |
-| Julieth M | Mr. Diaz |
+| Student A | Class 1 |
+| Student B | Class 1 |
+| Student C | Class 2 |
 
 - List **every student in the class**, not only the ones who take part — the class size is the
   denominator each week is measured against, and that is deliberate: persuading one more
   classmate to join raises the class's number just as much as one more right answer does.
 - `Name` must match what the student **types into the answer page**. Matching ignores case,
-  spacing and periods (`anaya k.` = `Anaya K`), but not different names.
+  spacing and periods (`student a.` = `Student A`), but not different names.
 - A student listed twice counts once (first listing wins), so a stray duplicate can't inflate
   a class.
-- Names that submit but aren't on the roster are **listed on the page in a yellow banner** —
-  their points count for nobody until you add them or fix the spelling.
+- Names that submit but aren't on the roster are **counted in a yellow banner** on the page —
+  their points count for nobody until you add them or fix the spelling. It shows only the count,
+  because the page is public; compare the `Submissions` and `Roster` tabs to find which names.
 - No `Roster` tab? The class board just shows setup instructions. Nothing else breaks.
 
 ## 2. Add the script
@@ -58,7 +59,7 @@ Paste the `/exec` URL into the `ENDPOINT_URL = ""` line in **all three** places:
 ## 5. Test
 - Open `grade4_week2.html`, submit a name + answers → a row appears in `Submissions`.
 - Open `leaderboard.html` → your score shows (if you chose "show my name"); private names
-  appear only via **Find my rank**.
+  do not appear anywhere on the site, including **Find my rank**.
 
 ## Updating the script later
 **Deploy → Manage deployments → Edit ✏ → Version: New version** keeps the **same URL**.
@@ -66,8 +67,8 @@ A brand-new deployment makes a *new* URL (and you'd have to re-paste it everywhe
 
 ## Notes
 - **One URL for all weeks & the leaderboard.** Reuse it; the `Week` column separates weeks.
-- **Privacy:** the form defaults to **Private**; private students are hidden from the public
-  board but can self-check via "Find my rank". Latest submission sets a student's name + choice.
+- **Privacy:** the form defaults to **Private**; private students' names and
+  scores appear nowhere on the site, including "Find my rank". Latest submission sets a student's name + choice.
 - **Scoring:** 1 point per correct answer, compared case/space-insensitively. A week with no
   `AnswerKey` row just scores 0 until you fill it in.
 - **One submission per student:** not enforced — re-submits add rows; the leaderboard uses each
@@ -75,4 +76,4 @@ A brand-new deployment makes a *new* URL (and you'd have to re-paste it everywhe
 - **Class board (`?view=classes`):** a week only counts once its `AnswerKey` row is filled in —
   unscoreable weeks are skipped entirely rather than dragging every class down to 0%.
   ⚠️ The whole board rests on students typing a name that matches the `Roster`. Check the
-  yellow "not on the class list" banner after the first week.
+  yellow "not on the class list" count after the first week.

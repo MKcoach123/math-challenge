@@ -266,8 +266,8 @@ function render() {
       'This board needs to know which class each student is in. In the Google Sheet, add a tab named ' +
       '<code>Roster</code> with exactly two columns:' +
       '<table><tr><th>Name</th><th>Class</th></tr>' +
-      '<tr><td>Jaylee B</td><td>Ms. Hood</td></tr>' +
-      '<tr><td>Anaya K</td><td>Ms. Hood</td></tr></table>' +
+      '<tr><td>Student A</td><td>Class 1</td></tr>' +
+      '<tr><td>Student B</td><td>Class 1</td></tr></table>' +
       'List <b>every</b> student in each class, not only the ones who have taken part — the class size is ' +
       'what each week is measured against. Then reload this page.</div>';
     return;
@@ -278,10 +278,10 @@ function render() {
   if (mode === 'week') selectedWeek = sel.value || selectedWeek;
 
   // ── names that submitted but aren't on the roster ──────────
-  warn.innerHTML = (DATA.unmatched && DATA.unmatched.length)
-    ? '<div class="warn"><b>' + DATA.unmatched.length + ' name' + (DATA.unmatched.length > 1 ? 's' : '') +
-      ' not on the class list:</b> ' + DATA.unmatched.map(esc).join(', ') +
-      '. Their points are not counted for any class — add them to the <code>Roster</code> tab, or fix the spelling there.</div>'
+  warn.innerHTML = DATA.unmatchedCount
+    ? '<div class="warn"><b>' + DATA.unmatchedCount + ' name' + (DATA.unmatchedCount > 1 ? 's' : '') +
+      ' not on the class list.</b> Their points are not counted for any class — compare the Sheet\'s ' +
+      '<code>Submissions</code> tab with the <code>Roster</code> tab and fix the spelling there.</div>'
     : '';
 
   if (!DATA.classes.length || !DATA.weeks.length) {

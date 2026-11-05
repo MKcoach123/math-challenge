@@ -15,3 +15,8 @@ __pycache__/
 
 # Answer keys NEVER go in this public repo — see ANSWER_KEYS.md
 ANSWER_KEYS.md
+
+# Source docs and drafts stay local: they carry names and aren't needed by the site.
+**/*.pages
+*.pdf
+draft_problems/
