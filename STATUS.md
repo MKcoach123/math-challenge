@@ -1,0 +1,661 @@
+# Grade 4 Weekly Math Challenge — Project Status & Resume Guide
+
+Last updated: 2026-11-06
+
+> Git history was rewritten on 2026-11-06 to remove old notes and source docs. Older commit hashes
+> no longer apply; re-clone rather than pulling into an old copy.
+
+> **Read this first if starting a new session.** It captures the whole project state, how it's
+> deployed, and exactly how to make changes. Companion: `planning/project_analysis.md` (concept).
+
+### ⏯️ Resuming — where things stand (2026-11-06)
+
+**Backend redeployed 2026-11-06** with deadlines, held-back sets and the debug fix (§5c). Keys are
+confirmed gone from the live endpoint; rejection of late entries has not been tested live.
+
+The private-lookup fix (2026-11-04) is live for both grades.
+
+**Everything else is committed and pushed.**
+
+**The site now presents as "Sets", not weeks** — see **§1a**. Teachers are using it as supplemental
+material rather than a timed 12-week run, so pages read "Grade 4 — Set N", and the due-date and
+points pills are hidden. It is a display layer: every `week_label`, folder and file name still says
+*Week*, so scoring and the leaderboard are untouched. Flip four flags in `build_week.py` to put the
+weekly framing back (round-trip tested).
+
+**The class-progress board (§5b) is still not real.** Re-checked 2026-10-20 — `?view=classes` still
+returns the leaderboard payload, so the two non-code steps remain:
+1. Apps Script → **Deploy → Manage deployments → Edit ✏ → New version** (§6).
+2. Add the **`Roster`** tab (`Name | Class`) to the Sheet.
+Then link it from `index.html` / `leaderboard.html` — deliberately unlinked until it shows real
+data. A clickable preview with made-up numbers is at `~/Downloads/class_progress_PREVIEW.html`.
+
+**The one thing that outranks all of it:** the site is 🔴 **blocked on district Chromebooks** (§7).
+
+⚠️ **GitHub Pages sometimes reports a build as `errored`** when a second push lands while the first
+is still building; the next build carries everything. Don't judge "is it live?" by the clock —
+check `gh api repos/MKcoach123/math-challenge/pages/builds` and then poll the URL.
+
+⚠️ **Push, don't just commit — and don't just edit.** Twice this month a fix "didn't work" only
+because it was never pushed: the live site and the published artifact both served the old file
+while the corrected version sat locally. After any fix a user will *look at*, push and then poll
+the live URL before saying it is done.
+
+⚠️ **This file is committed to a PUBLIC repo — never put answer keys or solutions in it.**
+Keys live in the Sheet's `AnswerKey` tab, with a local gitignored copy in `ANSWER_KEYS.md`.
+
+---
+
+## 1. What this is
+
+A classroom math-challenge website. Students solve a set of Math Kangaroo problems (5–6 per set),
+submit answers online (or print on paper), and compete on a leaderboard. The pages call these
+**Sets** (§1a); internally every label, folder and file name is still "week".
+After the weekly deadline the answers + solutions are revealed. Grade 4 —
+**all 12 weeks plus an Extra Problems section are built and live** (problems + passcode-locked
+solutions). The build is not capped at any week count: the generator, leaderboard, and backend all
+handle as many weeks as exist.
+
+Home-page week badges use number keycaps 1️⃣–🔟, then ⭐ (wk 11), 🏁 (wk 12, final week) and ✨
+(Extra Problems).
+
+**It is fully live and working** — pages hosted, submissions saving, scoring + leaderboard running.
+Problem pages have a built-in **scribble/highlighter scratchpad**. Solution pages are **passcode-locked**
+during the run (see §6).
+
+**Sister project:** Grade 1 lives in a separate repo and folder,
+`/Users/natalia/FunWithAI/MathChallenge-Grade1` — its own site, Sheet and Apps Script endpoint, so
+the two grades never mix. See its own `STATUS.md`.
+
+---
+
+## 1a. "Set" vs "Week" — presentation toggles (added 2026-10-20)
+
+Teachers are using this as **supplemental material**, not a timed 12-week run, so the pages now say
+**Set** and the deadline / points pills are hidden. This is a **display layer only** — flip it back
+any time.
+
+In `weeks/grade4/build_week.py`, just under `ACCENTS`:
+
+| Flag | Now | Controls |
+|---|---|---|
+| `UNIT_NAME` | `"Set"` | the word on page headers, home-page cards, the leaderboard dropdown and its "By set" tab |
+| `SHOW_DUE` | `True` | the "📅 Due: …" pill, and the due date on each dated home-page card |
+| `SHOW_POINTS` | `False` | the "🏆 N problems · 1 point each" pill |
+| `SHOW_STATUS` | `False` | the "👉 This week" / "Coming soon" run markers |
+
+To restore the original framing: set them back (`"Week"`, `True`, `True`, `True`) and run `python3 build_week.py --all`. Verified round-trip on 2026-10-20 — every string returns.
+
+⚠️ **`SHOW_STATUS` is off deliberately.** With no run in progress, `CURRENT_WEEK` marks one card
+"This week" and dims **every later card as "Coming soon"** — which reads as *not ready yet* to a
+teacher browsing for material. Turn it back on only when a real timed run starts.
+
+### What deliberately did NOT change — this is the whole trick
+`week.json`'s **`week_label` stays `"Grade 4 — Week N"`**, and so do the folder names (`week1/…`),
+the page file names (`grade4_weekN.html`) and the solution file names. That label is posted with
+every submission and matched against the Sheet's **`AnswerKey`** tab, so **scoring, the leaderboard
+and every answer already submitted keep working** across the rename. The Sheet needs no edit.
+
+The leaderboard keeps the two apart explicitly: each `<option>`'s **value** is the real
+`… — Week N` label it queries with, while its **text** is relabelled through `unitLabel()`.
+`WEEK_UNIT` in `leaderboard.html` sits between `/* UNIT:START */ … /* UNIT:END */` and is rewritten
+from `UNIT_NAME` by `build_week.py`, so there is one source of truth.
+
+### The two bits that are NOT toggle-driven
+1. **Solution page headings** (`<title>` and `<h1>`) are hand-built HTML, relabelled in place.
+   To flip them back, from the grade folder:
+   ```
+   python3 - <<'EOF'
+   import pathlib, re
+   for f in pathlib.Path('.').glob('week*/solutions_week*.html'):
+       t = f.read_text()
+       t = re.sub(r'(<title>[^<]*?)\bSet\b', lambda m: m.group(1)+'Week', t, count=1)
+       t = re.sub(r'(<h1>)\s*Set\b',          lambda m: m.group(1)+'Week', t, count=1)
+       f.write_text(t)
+   EOF
+   python3 gate_solutions.py <dev> <teacher>
+   ```
+2. **Home-page taglines** were reworded to be framing-neutral rather than toggled, so they read
+   correctly either way: "Solve problems · climb the leaderboard", "See the latest scores and
+   overall rankings", and the footnote "Solve online, or print the problems and work on paper."
+   (was "New problems every week. Submit before Friday afternoon!").
+
+⚠️ **Still says "Weekly":** the program name — `<title>` and `<h1>` on `index.html`, and the
+teacher page — remains "Grade 4 **Weekly** Math Challenge". That is the programme's own name from
+the scope doc, so renaming it was left as a deliberate decision rather than assumed.
+
+---
+
+## 2. Live URLs
+
+- **Site (share this):** https://MKcoach123.github.io/math-challenge/
+  - Leaderboard: `…/weeks/grade4/leaderboard.html`
+  - Week N problems: `…/weeks/grade4/weekN/grade4_weekN.html`
+  - Week N solutions (passcode-locked): `…/weeks/grade4/weekN/solutions_weekN.html`
+- **GitHub repo:** `MKcoach123/math-challenge` (public; GitHub Pages from `main` / root)
+- **Backend endpoint (Apps Script Web App):**
+  `https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec`
+
+---
+
+## 3. How it's built (architecture)
+
+- **Static HTML pages**, fully self-contained (problem images base64-embedded). Hosted on GitHub Pages.
+- **One Google Apps Script Web App + one Google Sheet** is the entire backend:
+  - `doPost` → appends a row to the **`Submissions`** tab.
+  - `doGet` → grades submissions against the **`AnswerKey`** tab (server-side; the key never
+    reaches the browser) and returns ranked JSON for the leaderboard.
+- **`leaderboard.html`** fetches that JSON: Overall (cumulative) + per-week views, top-3 medals,
+  "Find my rank" lookup (Public students only), and instant-load `localStorage` caching (Apps Script is ~2–3 s/call).
+- **`build_week.py`** is a reusable generator: reads a per-week `week.json` + images, emits the
+  week's HTML, and auto-rebuilds the home-page cards.
+
+### Privacy model
+Submission form has a Public/Private choice, **defaults to Private**. Private students' names and
+scores appear nowhere on the site. "Find my rank" works for Public students only — the endpoint is
+open to anyone, so a name alone must never reveal a Private student's score (changed 2026-11-04).
+Public names and scores are visible to anyone on the internet, not just classmates.
+
+---
+
+## 4. File structure
+
+```
+MathChallenge/
+├── index.html                         ← home page (hub): leaderboard + week cards (auto-generated)
+├── STATUS.md                          ← this file
+├── ANSWER_KEYS.md                     ← answer keys, GITIGNORED (local only)
+├── .gitignore
+├── planning/project_analysis.md       ← concept analysis, pros/cons, open questions
+├── WMC 2026-2027 Ponderosa: Question Categorization.png   ← source: the categorization Sheet (untracked)
+├── classification_2.txt               ← source: prose definitions of each category (untracked)
+├── Weekly Math Challenge scope.rtf    ← source: program description, used verbatim on the teacher page (untracked)
+└── weeks/grade4/
+    ├── build_week.py                  ← THE generator (build a week page + rebuild index + leaderboard week list)
+    ├── gate_solutions.py              ← passcode-locks the solution pages (see §6)
+    ├── leaderboard.html               ← Overall + per-week + Find-my-rank + caching; ALL_WEEKS auto-synced
+    ├── class_progress.html            ← COLLECTIVE board: per-class progress meters (see §5b)
+    ├── categories_explained.html      ← TEACHER-FACING page: scope + cognitive-skill chart (see §5)
+    ├── categories.html                ← earlier working page: same chart + week×question grid + Subject placeholder
+    ├── week1/ … week12/, week13/      ← one folder per week (week13 = "Extra Problems"), each with:
+    │   ├── grade4_weekN.html          ← the problem page (ALL weeks generated by build_week.py)
+    │   ├── week.json                  ← full config: problems[], image widths, "solutions"+"solutions_available"
+    │   ├── solutions_weekN.html       ← answers+solutions page (passcode-gated)
+    │   └── source_images/ (*.png)
+    └── week2/                          ← also holds the shared backend files:
+        ├── apps_script_backend.gs     ← THE backend script — GLOBAL for all weeks (paste into Apps Script)
+        └── SHEET_SETUP.md             ← one-time Sheet/Apps-Script setup notes
+```
+
+Gitignored (LOCAL ONLY, not in the public repo — they contain answers or are temp):
+`ANSWER_KEYS.md`, `solutions_*.pages` / `*_solution.pages` / `*_solutions.pages` (Apple Pages answer
+docs, all three spellings), all other `*.pages` source docs and draft PDFs (2026-11-04),
+`solutions_*.src.html`, `_extract/ _sol/ _tiff/ __pycache__/ .DS_Store .claude/`.
+
+---
+
+## 5. Weeks
+
+All weeks are live and scoring. Keys live in the Sheet's **`AnswerKey`** tab (columns:
+`Week | Answer 1 … Answer 6`) — **not in this file**; see `ANSWER_KEYS.md` locally. The `Week` cell
+must match the page label (dash/spacing tolerant).
+
+| Week | # | Problems (type) |
+|------|---|-----------------|
+| **Grade 4 — Week 1** | 5 | squares sequence-5th (num,img), Sarah's tiles on 6×6 (num,img), Clare's legs (num), missing number 24,3,21,6,18,? (num), △5−48=4□ triangle digit (num,img) |
+| **Grade 4 — Week 2** | 5 | Anna's father (num), Nancy/Mary ages (num), star value (num,img), Tom's house (A–E), 8-cube view (A–E) |
+| **Grade 4 — Week 3** | 5 | squares (num,img), triangles (num,img), rectangles (num,img), cubes (num,img), pebbles (num) |
+| **Grade 4 — Week 4** | 5 | Kenga jumps (num,img), half glass (num,img), Albert's cards right-end (num,img), squares balance 3 triangles (num,img), hens&eggs (num,img) |
+| **Grade 4 — Week 5** | 6 | house floor logic (num,img), divided square area (num,img), Amelia cookies (num,img), socks pigeonhole (num,img), heaviest ball (num,img), children in line (num,img) |
+| **Grade 4 — Week 6** | 6 | gears clockwise (num,img), scrunchies/headband (num), sudoku table A+B (num,img), archery 3rd turn (num,img), space chickens (num,img), youngest student (**text**) |
+| **Grade 4 — Week 7** | 6 | mirror clock (**text time**), pet shop cats (num,img), star/circle scales (num,img), cube construction before (**A–E**,img), dot patterns sum (num,img), hallway center-line meters (num,img) |
+| **Grade 4 — Week 8** | 6 | race winner (**text**), Amelia weight aside (num,img), spell WATER paths (num,img), park distance (num,img), Nathan pushups 13×7 (num), gray≠white (**A–E**,img) |
+| **Grade 4 — Week 9** | 6 | ant paths A→B (num,img), biggest gift box (**text**,img), 3-digit perms of 1,2,3 (num), sum of first 5 evens odd/even (**text**), Torey tile designs (num,img), wheel pattern 1–5 (**choice**,img) |
+| **Grade 4 — Week 10** | 6 | honey jars pigeonhole (num,img), gears turn/jam (**Turns/Jammed buttons**,img), how many even (num), Ellie page 62+50 (num), cubes layer count (num,img), 3-g weights diff (num,img) |
+| **Grade 4 — Week 11** | 6 | triangles in bag (num), 3-digit odd digits-sum-3 (num), circle pattern 1–8 (**choice**,img), liars/truth-tellers (**Truth-teller/Liar buttons**,img), balance scales (num,img), half-shaded A–E (**A–E**,img) |
+| **Grade 4 — Week 12** | 6 | squared-square side (num,img), Sarah's number (num), gears+belt direction (**Clockwise/Counter-clockwise buttons**,img), cuneiform subtract (num,img), odd-one-out 1–6 (**choice**,img), balance mobile heart (num,img) |
+| **Grade 4 — Extra Problems** (week13) | 6 | triangle area (num,img), alternating staircase (num,img), cut sheets (num,img), octopus babies (num,img), 996+997+998+999+995 (num), tricycles/bicycles (num) |
+
+Several answers are **text/word** (Weeks 6, 8, 9, 10, 11, 12) — the backend compares
+case/space-insensitively, so word buttons like `Liar`/`Jammed`/`Clockwise` match lowercase keys.
+
+⚠️ **Reorder gotcha:** if you insert/reorder problems, the answer-key columns shift. Always re-check
+the `AnswerKey` row order after editing a week (this bit us on Weeks 1, 2 & 3).
+
+All 13 solution pages exist, each **passcode-locked** via `gate_solutions.py` (see §6).
+`build_week.py` supports per-figure `caption`, a `pill` style for word choices (Turns/Jammed), and
+revealing 💡 hints in the print view.
+
+### Character names in problems
+**Do not use real students' names in problems, examples or notes** — this repo and the site are
+public. On 2026-11-04 the characters that had been renamed after students went back to the names in
+the original problems, and this rule replaced the old practice of using classmates' names.
+⚠️ Two problems in the table above are answered with a name. Renaming either means editing the
+Sheet's `AnswerKey` too, which re-grades past submissions.
+
+**A rename touches three things:** `week.json`, the solution text, and any figure with the name
+baked in. Match on word boundaries so substrings survive, then rebuild and re-gate.
+
+### Recent fixes (2026-09)
+
+- **Week 2, Problem 1 figure:** the age diagram in the solution is a screenshot with the character's
+  name baked in. ⚠️ `solutions_week2.pages` (local) may not match the site's names — check before any
+  future re-import.
+- **Print gap on the teacher page** (2026-09-09): see §6 "Printing".
+
+### Question categorization & the teacher-facing page (added 2026-08-27)
+
+**Source material** (repo root, all three currently untracked):
+- `WMC 2026-2027 Ponderosa: Question Categorization.png` — screenshot of the categorization Google
+  Sheet. Two tabs: **Cognitive** and **Subject**. The Cognitive tab holds a `Level 4 Questions` table
+  (Grade 4, weeks 1–13) and a `Level 1 Questions` table (Grade 1). **Only the Cognitive tab has been
+  captured so far.**
+- `classification_2.txt` — the course's prose definition of each category.
+- `Weekly Math Challenge scope.rtf` — the program description, used near-verbatim on the teacher page.
+
+**Grade 4 cognitive tally — all 74 questions, weeks 1–13:**
+
+| Skill | Questions | Share |
+|-------|-----------|-------|
+| Logical Reasoning (LR) | 35 | 47.3% |
+| Geometry & Spatial Sense (GEO) | 16 | 21.6% |
+| Combinatorics & Counting (CB + CO) | 10 | 13.5% |
+| Number & Operations (NO) | 8 | 10.8% |
+| Word & Practical Problems (WP) | 5 | 6.8% |
+
+74 checks out: 4 weeks × 5 + 9 weeks × 6. **Logical Reasoning is nearly half the course**, and all
+three CO questions are Week 3 alone.
+
+⚠️ The sheet scores **Combinatorics (CB)** and **Counting (CO)** as two codes; the course description
+treats them as one skill. The pages fold `CO → CB` in a single declared place
+(`const MERGE = { CO: "CB" }`) while the week data keeps the sheet's raw codes — so the merge is
+reversible by deleting one line, and the sheet stays the source of truth.
+
+**Two pages, both standalone and NOT linked from `index.html`:**
+
+- **`weeks/grade4/categories_explained.html`** — the one to show teachers. Header "Weekly Math
+  Challenge / Ponderosa Elementary. Grade 4"; a "How the Challenge works" card carrying the scope
+  text; the pie chart (full category names + counts, e.g. "Logical Reasoning / 35 of 74 · 47.3%");
+  then "Cognitive skills explained" — one card per skill with a plain-English line, the formal
+  definition, a share meter and three real example problems. Also published as a **private Claude
+  artifact**: <https://claude.ai/code/artifact/1736ee97-4d82-4692-9887-dd1c52ea7968>
+- **`weeks/grade4/categories.html`** — the earlier working page: same pie, plus a week × question
+  grid (which deliberately still shows the sheet's raw CO/CB codes) and a **placeholder awaiting the
+  Subject tab**.
+
+Both are fully self-contained — inline CSS/JS, no images, no external requests — so they open
+anywhere and print. Chart, table, cards and percentages are **all derived from one data object** in
+each page's `<script>` — `CAT` + `WEEKS` in `categories_explained.html`, `DATA.cognitive` in
+`categories.html`. Edit those, not the markup.
+
+**Two things worth preserving if these are ever regenerated:**
+1. The problem descriptions on the teacher page were written from the **actual problem text in each
+   `weekN/week.json`**, not from the shorthand in the §5 week table — that's why they read like
+   "the total number of legs in a household" rather than the §5 shorthand.
+2. The scope card is the **author's own wording** from the `.rtf`; only typos were fixed
+   (`1point` → `1 point`, an unclosed parenthesis, a missing article).
+
+The pie palette is colorblind-validated in both light and dark mode, and each slice is directly
+labeled, so identity never depends on color alone.
+
+---
+
+## 5c. Weekly deadlines (added 2026-11-06)
+
+Every set stays open and visible. Sets 1–12 each close on a Friday at 7:00 PM Pacific, one week
+apart: Set 1 on 2026-11-13, Set 12 on 2027-02-19. The holiday Fridays (Nov 27, Dec 25, Jan 1) are
+skipped, so no deadline lands on them. Extra Problems (week13) closes with Set 12, and its solutions
+open then: if it stayed open after that, students could copy from its solutions and still score.
+
+- **Source of truth:** `"deadline"` (an ISO time with offset) and `"due"` (the text shown) in each
+  `week.json`. `build_week.py` copies the deadlines into `DEADLINES` in the backend.
+- **Before a deadline:** students can resubmit; the newest entry for a set counts.
+- **After it:** `doPost` rejects the entry and saves nothing. The page also disables Submit and
+  shows a closed note, but the backend is what enforces it, so a page left open can't get past it.
+- **Home cards** show each opening date under the Solutions button.
+- **Solutions open by themselves** at the deadline: the page and home button compare the browser's
+  clock with the deadline. No weekly step. `"solutions_available": true` still opens one early.
+
+**Held-back sets:** `"available_from"` in `week.json` keeps a set closed until that time, so students
+can't rush ahead. Sets 10–12 and Extra Problems open 2026-11-20 at 7:00 PM Pacific, when Set 2 closes.
+Until then the home card can't be opened and counts down ("Will be available in 2 weeks"), the set's
+own page shows only that message, and the backend rejects entries. It opens by itself. Remove the
+field, rebuild and redeploy to open one sooner.
+
+**To change a date:** edit `due` and `deadline` in that `week.json`, run `python3 build_week.py --all`
+and `python3 gate_solutions.py <dev> <teacher>`, push, then redeploy the backend as a **New version** (§6).
+⚠️ The offset is `-08:00` (Pacific Standard Time). A deadline after 2027-03-14 needs `-07:00`.
+
+⚠️ Solutions are hidden, not encrypted, so a determined student can still read them before a deadline.
+
+---
+
+## 5b. Class-progress board (collective, added 2026-09-02)
+
+A **second, non-competitive board**: `weeks/grade4/class_progress.html`. Instead of ranking
+individuals it shows how much of the points available to a *whole class* that class collected —
+so a student is pulling for their classroom, not against their classmates. (It answers the
+"leaderboards demotivate the kids who fall behind" risk raised in `planning/project_analysis.md`.)
+
+**Three metrics, and they multiply.** Each class card shows two levers and their product:
+
+```
+TOOK PART  (blue)   partPct = participants / class size
+GOT RIGHT  (amber)  acc     = points / problems actually attempted
+                    ────────────────────────────────────────────
+COLLECTED  (teal)   pct     = points / (class size × problems)
+
+             took part  ×  got right  =  collected      (exact — verified)
+```
+
+Why all three:
+
+- **`pct` (collected)** is the headline. Its denominator is the **roster count, not the number who
+  submitted** — so persuading one more classmate to take part raises it exactly as much as getting
+  one more answer right. Dividing by submitters only would *punish* a class for including a
+  struggling classmate, the opposite of the goal.
+- **`acc` (got right)** was added because `pct` alone lands at 25–55% in realistic data and reads
+  as failure. Accuracy lands at 70–76% on the same numbers — same children, framed as an
+  achievement.
+- **`partPct` (took part)** was added last, and it closed a real hole: before it, a student who
+  took part and scored 0 added nothing to `pct` **and dragged `acc` down** — trying was actively
+  punished. The blue bar is the one number that rises for anyone who shows up, whatever they score.
+
+The on-page "×  ≈" line is rounded to **whole numbers** on purpose: each figure is stored to 1dp,
+so the exact product can sit 0.1pp off the total (measured across 200k random class/week
+combinations — worst case exactly 0.1pp). Whole numbers plus "≈" keeps it honest against a
+calculator. A week where nobody took part yields `acc: null`, and the amber bar is omitted rather
+than showing 0% or NaN.
+
+Weeks with no `AnswerKey` row yet are **skipped entirely**, not counted as 0%.
+
+Two views: **whole challenge** (cumulative, with a week-by-week strip per class) and **by week**.
+In the cumulative view participation is *chances taken* — `participants / (class size × weeks)` —
+so consistent turnout beats one big week. Sorted by progress but with **no ranks, medals or
+podium**.
+
+**How a student's class is known: the `Roster` tab** (`Name | Class`) in the same Sheet — chosen
+over a class picker on the form because it needs no page rebuilds and works retroactively on
+submissions already made. Backend: `getRoster()` + `classProgress()`, served at `?view=classes`.
+A student listed twice counts once. Names that submit but aren't on the roster are returned only
+as `unmatchedCount` and shown as a number in a yellow banner — their points count for nobody. The
+names stay out of the response because the endpoint is public (changed 2026-11-04).
+
+⚠️ **The whole board depends on typed names matching the roster.** Pilot data included nicknames,
+multiple aliases for one child and test entries. Before the real run either tell students what to
+enter, or expect to curate the roster. The unmatched count is the tool for spotting this. Never
+quote submitted names in this file.
+
+⚠️ **Not live yet.** The page is written and its logic is verified, but `?view=classes` needs an
+Apps Script **New version** redeploy (§6), and the `Roster` tab has to exist. Until both are done
+the page shows setup instructions rather than data. It is also **not linked** from `index.html` or
+`leaderboard.html` — link it only once it shows real numbers.
+
+---
+
+## 6. How to do common tasks
+
+### Update / add a week's problems
+1. Drop the updated `.pages` (or images) into `weeks/grade4/weekN/`.
+2. Extract: unzip the `.pages` (it's a zip) → `Data/*.png` are the figures; `preview.jpg` is page 1.
+   For text on later pages, decompress `Index/Document.iwa` (pure-Python Snappy decoder; IWA chunks =
+   `00` + 3-byte LE length + snappy block).
+3. Save chosen images into `weekN/source_images/` and write/update `weekN/week.json`.
+4. Build: `cd weeks/grade4 && python3 build_week.py weekN`  (also rebuilds `index.html` + leaderboard week list).
+5. Update the `AnswerKey` tab row (add `Answer N` columns as needed) — backend supports up to 6.
+   Mirror it into local `ANSWER_KEYS.md`.
+6. **Deploy:** `git add -A && git commit -m "…" && git push`  (Pages updates in ~1 min).
+
+⚠️ **Committing is not deploying.** Nothing reaches the site until `git push`. After pushing, the
+Pages CDN lags ~20–60 s — poll the live URL rather than assuming a refresh will show it.
+
+#### `week.json` problem options (build_week.py features)
+- `type`: `"number"`/`"text"` → free-text box; `"choice"` → A–E radio chips.
+- `"image"` (one figure) **or** `"images": [{file,width,print_width}, …]` (multiple figures on one problem).
+- `"image_width"` per problem; week-level `"image_max_width"`; `"print_width"` (smaller size in print preview only).
+- `"label"`, `"maxlength"`, `"unit"`, `"due"`, `"card_title"` + `"badge"` (for a non-week section).
+- `"html"`: raw HTML for the problem text (not escaped) — used for inline SVG and **click-to-reveal hints**.
+- Every problem page also gets the **scribble/highlighter scratchpad** automatically.
+
+### Week status on the home page (this week / past / coming soon)
+`CURRENT_WEEK` at the top of `build_week.py` drives three card states: earlier weeks dim as past
+(the 📖 vs 🔒 button already signals solutions are open), the current week gets a tinted card, a
+"👉 This week" pill and its due date in the subtitle, and later weeks dim with "Coming soon" but
+stay clickable. A card with its own `card_title` (Extra Problems) stays neutral.
+
+**To advance the run:** bump `CURRENT_WEEK`, run `python3 build_week.py --index`, push.
+It is deliberately *not* wired to solution reveals, so advancing the marker can never publish
+answers by accident. **Currently set to 1** — a placeholder, not a real position in the run.
+
+### Solutions: build + passcode-lock
+1. Build `solutions_weekN.html` (one-off Python script, base64 figures — copy a recent week's as a model).
+2. In `weekN/week.json`: `"solutions": "solutions_weekN.html"`, `"solutions_available": false`.
+3. **Lock it:** `cd weeks/grade4 && python3 gate_solutions.py <dev> <teacher>`
+   (re-run after ANY edit to a solution page — it strips & re-injects its gate).
+4. `python3 build_week.py --index` then push.
+
+**Passcodes** are in the local gitignored `ANSWER_KEYS.md`. Only their SHA-256 hashes are written into the pages.
+The home **🔒 Solutions** button is clickable → opens the page's passcode screen; either code reveals
+the solutions for that one visit and re-locks when you leave. (Not strong crypto — a classroom deterrent.)
+
+**Revealing a week** is automatic at its deadline (§5c). To open one early, set that week's `"solutions_available": true`, re-run `gate_solutions.py <dev> <teacher>` and `build_week.py --index`, then push.
+
+**Author's wording is preserved** on solution pages — fix typos and genuine arithmetic errors only,
+don't rewrite the prose. **US spelling throughout** (standardized 2026-10-16: grey→gray,
+centre→center, colours→colors) — these are US classroom worksheets and Grade 1 students are
+learning to spell from them.
+
+**There IS a spell-checker here** — no `aspell`/`hunspell`/pyobjc, but macOS's own text checker
+runs through `osascript`, no install needed:
+
+```js
+// osascript -l JavaScript check.js file.txt
+ObjC.import("AppKit");
+var ch = $.NSSpellChecker.sharedSpellChecker;
+var res = ch.checkStringRangeTypesOptionsInSpellDocumentWithTagOrthographyWordCount(
+  $(line), $.NSMakeRange(0, line.length), (1<<1)|(1<<2), $(), 0, null, null);
+// resultType 2 = spelling, 4 = grammar
+```
+
+⚠️ Two traps, both hit on 2026-10-16:
+- Use `checkString…`, **not** `checkSpellingOfStringStartingAt` — the latter returns only the
+  first error and silently reports a whole file as clean.
+- It accepts common autocorrect entries like `teh` and `Micheal` as correctly spelled. Cross-check
+  against `/usr/share/dict/words`, which catches those — but that list is a 1934 Webster's and
+  *contains* `Micheal` and `candys`, so it is noisy the other way. **Neither tool is sufficient
+  alone; read the text too.** Feed it rendered text, not HTML (strip tags and base64 first).
+
+### Printing (the teacher page especially)
+
+`@media print` sets `break-inside: avoid` only on things that look broken when split — the pie
+graphic, the small skill cards, table rows. ⚠️ **Do NOT put `break-inside: avoid` on `.card`.**
+Doing so was a real bug: the chart card is ~700px tall, only ~334px was left on page 1, so the
+browser moved the whole card to page 2 and left **~3.5 inches of white space**. Long cards must be
+allowed to flow across a break. The pie is the one unbreakable block, so it is capped at 450px on
+paper — its height bounds the worst-case gap.
+
+⚠️ **A whole problem can vanish from the printout — fixed 2026-10-16, don't undo it.**
+Grade 4 Week 6 printed (and saved to PDF) with **Problem 6 missing entirely** — not pushed to a
+third page, simply gone; page 1 held 2 problems instead of 3. Cause: every `.problem` has
+`break-inside: avoid`, so a problem that doesn't fit is pushed whole to the next page. WebKit fixes
+the **page count up front from the unbroken document height** (1263pt ÷ 2 pages here), so once those
+pushes accumulate past the last page, the overflow has no page to land on and is **dropped, not
+moved**. The trigger is anything that shrinks the usable page height — Safari's **"Print headers and
+footers" is on by default and costs ~70pt on its own**, and Week 6 had only 28pt of slack on page 1.
+
+Three changes, all in `build_week.py`'s print block:
+1. **`.problem.page-start { break-before: page }`**, applied by default to every 3rd problem
+   (`page_starts` in `render_week`; override per week with `"page_starts": [4]` in `week.json`,
+   or `[]` to let the flow run free). A *forced* break makes WebKit allocate a real page, so content
+   can no longer be pushed past the end. Worst case the sheet spills to a 3rd page — nothing is lost.
+2. **`@page { size: auto }`** instead of `size: A4 portrait` — the pages are printed on US Letter;
+   forcing A4 made the browser rescale onto the real sheet for no reason.
+3. Tightened print spacing (header/name-box margins, `.problem` 16→11pt, image and answer margins)
+   — page 1 of Week 6 now ends at 662pt instead of 695pt, so slack went from 28pt to ~74pt.
+
+Verified by measuring the real WebKit layout (`qlmanage` on a copy with the print CSS promoted to
+screen CSS — the §7 trick) and modeling pagination at several usable page heights.
+⚠️ **Grade 1 has its own copy of `build_week.py` and still has this bug.**
+
+⚠️ **Safari's "Print backgrounds" checkbox is OFF by default.** With it off, card backgrounds and
+the share meters print as empty outlines. `print-color-adjust: exact` does not override it — the
+user has to tick the box.
+
+### Change the backend script
+1. Edit `weeks/grade4/week2/apps_script_backend.gs`, commit/push.
+2. Copy the new code from the raw GitHub URL (guaranteed current):
+   `https://raw.githubusercontent.com/MKcoach123/math-challenge/main/weeks/grade4/week2/apps_script_backend.gs`
+3. ⚠️ **Open the Sheet → Extensions → Apps Script** (the *Sheet-bound* project — NOT script.google.com,
+   which opens a different/empty project). Paste over `Code.gs`, Save.
+4. **Deploy → Manage deployments → Edit ✏ → Version: New version → Deploy** (keeps the same URL).
+5. Verify: `curl '<endpoint>?view=debug'` shows how many answers each week has.
+
+### Verify scoring / debug
+- `…/exec?view=debug` → tabs, AnswerKey headers, answer counts per week, submission weeks, week-match flags. Never the answers.
+- `…/exec?view=leaderboard[&week=Grade 4 — Week N]` → ranked public rows + hiddenCount.
+- `…/exec?view=findme&name=…[&week=…]` → one Public student's rank/points; Private students return `found: false`.
+
+---
+
+## 7. Deployment / environment notes
+
+- The local folder `/Users/natalia/FunWithAI/MathChallenge` is a **git repo** → `MKcoach123/math-challenge`.
+- Authenticated via `gh` (account MKcoach123, brew-installed at `/opt/homebrew/bin`). Updates = `git push`.
+- **Do NOT use the browser drag-upload** on GitHub — it kept dropping files in the wrong folder.
+  Always push from the local repo instead.
+- **Local preview:** `python3 -m http.server 8000` in the repo root → http://localhost:8000/.
+  Needed because Safari blocks `file://` navigation between pages ("outside the sandbox").
+- GitHub Pages CDN lags ~20–60 s after a push; `raw.githubusercontent.com/.../main/...` reflects the
+  repo immediately. Browsers cache — hard-refresh with **Cmd+Shift+R**.
+- No Chrome, **no Node**, and no SVG converter (`rsvg-convert`/`inkscape`/`cairosvg`) on this machine.
+  Three workarounds that do work, found 2026-08-27 — useful for checking a page without a browser:
+  - **`qlmanage -t -s 1000 -o . page.html`** renders HTML *or* SVG to a PNG via QuickLook, which is
+    enough to catch layout, spacing and overflow problems. ⚠️ It does **not execute JavaScript**, so a
+    JS-built chart renders blank — snapshot the generated DOM into static HTML first, then render that.
+  - **`osascript -l JavaScript file.js`** runs JavaScript in JavaScriptCore. With a small
+    `document` / `Element` shim it executes a page's whole `<script>` end-to-end, catching runtime
+    errors and letting you assert on the generated markup. This caught two real bugs in
+    `categories_explained.html` that eyeballing would have missed.
+  - Anthropic's data-viz palette validator ships a **Python twin** alongside the Node script, so
+    color palettes can still be checked here.
+- None of the above replaces a real browser — still open the page in Safari before showing anyone.
+
+### ⚠️ BLOCKED on district Chromebooks (found 2026-09-09) — biggest open risk
+
+Opening the site on a **Santa Clara Unified issued Chromebook was blocked by the district web
+filter**. This is the single thing most likely to stop the program running as designed.
+
+Almost certainly a **category-level block on `*.github.io`**, not a review of this site: GitHub
+Pages hosts arbitrary user content, so K–12 filters routinely class the whole domain as
+"personal websites / uncategorized".
+
+The site needs exactly **two domains** — verified by grepping every external reference across all
+pages (all problem images are base64-embedded; there are no CDNs, fonts, trackers or ad scripts):
+
+| Domain | Why |
+|---|---|
+| `MKcoach123.github.io` | the pages themselves |
+| `script.google.com` | saving answers + the leaderboard |
+
+**Ask the district to allowlist BOTH.** If only the first is allowed, pages load but submissions
+and the leaderboard fail silently — a confusing failure mid-lesson. Some districts block
+`script.google.com` separately because Apps Script can proxy around filters.
+
+Selling points for the request: no accounts or logins, no email requested, no ads, no third-party
+tracking, no student-to-student messaging, no uploads. ⚠️ The form *asks* for first name + last
+initial but the field is free text and nothing enforces it — don't claim it as a guarantee.
+A draft email to the technology coordinator was written on 2026-09-09 — reuse it.
+
+⚠️ **Embedding does NOT work around this.** Putting the page in an iframe on Google Sites still
+makes the Chromebook fetch the blocked domain. Only allowlisting or rehosting on a permitted
+domain will do.
+
+Fallbacks if allowlisting stalls: rehost on a domain the district already permits (the school's
+own web server is best), or lean on **paper** — the print view works and the scope doc already
+says papers are collected Fridays and graded by an organizer.
+
+### Chromebook readiness (audited 2026-08-10)
+Students use school Chromebooks. The audit found nothing that breaks:
+- The scratchpad uses **Pointer Events** + `touch-action: none`, so finger and stylus drawing work,
+  not just trackpad.
+- Layout is a 640px centred column — comfortable on a 1366×768 Chromebook. The 520px breakpoint
+  (which stacks the status pill) only triggers on phones.
+- Three modern CSS features, all **cosmetic** if unsupported: `:has(input:checked)` (Chrome 105+,
+  loses the selected-option highlight), `accent-color` (93+, radio color), `inset:0` on the
+  solutions gate (87+ — the overlay isn't full-screen, but solutions **stay hidden**, since a
+  separate `display:none` rule does the hiding). Any auto-updating Chromebook is well past these.
+- ⚠️ **Untested risk: the school network.** The whole backend is on `script.google.com`. If the
+  district filters that domain, pages load but submissions and the leaderboard fail. Test on a real
+  school Chromebook: open a week, draw on the scratchpad, submit a test answer, check the leaderboard.
+
+---
+
+## 8. Open items / next steps
+
+- [ ] **`CURRENT_WEEK` is a placeholder (`1`) — but currently inert**, because `SHOW_STATUS = False`
+      hides the run markers entirely (§1a). Only matters if a timed run starts: set it, set
+      `SHOW_STATUS = True`, rebuild.
+- [x] ~~`?view=debug` returned every answer key~~ — it returns counts only since 2026-11-06, once the New version is deployed. Same fix in Grade 1.
+- [ ] **Answer keys remain in this repo's git history** (they were in `STATUS.md` until 2026-08-10).
+      Removing them from the current file stops normal browsing; a history rewrite would be needed
+      to purge old commits.
+- [ ] **Clean test rows** from the `Submissions` tab (e.g. `ZZ_*`, `DELETE_ME_W1`, `Probe*`, `Test Bot T`,
+      `Lalala`, `YoYoYo`) before the real run.
+
+- [ ] 🔴 **Get the site unblocked on district Chromebooks** (§7) — allowlist request to SCUSD for
+      `MKcoach123.github.io` AND `script.google.com`. Nothing else matters if students can't open it.
+- [x] ~~Commit the class-progress board~~ — committed 2026-09-15.
+- [ ] **Turn on the class board** (§5b): redeploy Apps Script as a **New version**, add the `Roster`
+      tab, check the unmatched-names banner, then link it from `index.html` / `leaderboard.html`.
+- [ ] **Student names are unusable for roster matching right now** (§5b) — decide whether to ask
+      for real names on the form before the run starts.
+- [ ] **Capture the `Subject` tab** of the categorization sheet — only the Cognitive tab was
+      screenshotted, and `categories.html` has a chart placeholder waiting for it.
+- [ ] **Naming mismatch on the teacher page**: the scope text says *Combinatorics* and *Word
+      Problems*; the chart says *Combinatorics & Counting* and *Word & Practical Problems* (following
+      the sheet). A teacher reading both will notice. Decide which naming wins.
+- [ ] **"Each student submits once" is asserted as fact** on the teacher page, but one-submission
+      enforcement is still listed as optional below — either confirm it's enforced or soften the wording.
+- [x] ~~Decide whether to commit the categorization pages~~ — both committed and public at
+      `…/weeks/grade4/categories_explained.html`. **Still deliberately unlinked** from the student
+      path; decide separately whether to link them.
+- [ ] **Grade 1 categorization not built** — the `Level 1 Questions` table is in the same sheet.
+- [ ] **Confirm no remaining character is a real student** (§5), and purge old names and source files from git history if needed.
+- [ ] **Mirror the `CURRENT_WEEK` status feature to Grade 1** — low priority now: it is switched
+      off here too (`SHOW_STATUS = False`). If it is ever mirrored, carry the flag across with it.
+- [ ] **Decide on the programme name.** Pages now list *Sets*, but the site is still called
+      "Grade 4 **Weekly** Math Challenge" (`index.html` `<title>`/`<h1>`, and the teacher page).
+      Left unchanged deliberately — it is the programme's own name from the scope doc — but it
+      reads oddly above a list of Sets. Renaming it is a one-line change in each place.
+- [ ] (Optional) one-submission-per-student enforcement; per-grade leaderboards; score-reset policy.
+
+---
+
+## 9. Design decisions locked
+
+- Backend: Google Apps Script + Sheet (no server to host).
+- Hosting: GitHub Pages, updated via `git push`.
+- Leaderboard: Overall **and** per-week; no fixed week cap (auto-syncs to the weeks that exist); backend supports 3–6 problems/week.
+- Privacy: per-student Public/Private, defaults Private; private = absent from the site, including lookup.
+- Identity: first name + last initial, no email (COPPA-conscious).
+- Solutions open automatically at each set's deadline (changed 2026-11-06, was a manual flag flip). `CURRENT_WEEK` stays manual.
+- Solutions are **passcode-locked during the run** (classroom deterrent, not real security), then revealed
+  per-week after each deadline. Answer source docs (`*.pages`) and `ANSWER_KEYS.md` kept out of the repo.
+- Problem pages include a scribble/highlighter scratchpad for working out problems on screen.
+- Deadlines are Fridays at 7:00 PM Pacific, skipping holiday Fridays, enforced by the backend (§5c). Extra Problems closes with Set 12.
+- Problems use fictional character names, never real students' names (§5).
+- Week status marked with a **text pill**, not color alone — the week cards already cycle a 6-color
+  palette, and text works for colorblind students.
+- The class board shows **three numbers that multiply** (took part × got right = collected) rather
+  than one. Participation is its own visible bar so that trying is rewarded even when the score is
+  zero — with only the combined figure, taking part and scoring 0 looked identical to not taking
+  part at all.
+- Two boards, two purposes: the **individual leaderboard** stays as it is, and the **class board**
+  (§5b) is collective — measured against the whole class roster so participation counts as much as
+  accuracy, with no ranks or medals.
+- The categorization pages are **teacher-facing, standalone and unlinked** from the student site —
+  they describe the program rather than serve it, and nothing on the student path should point at them.
+- **Combinatorics and Counting are shown as one category** (per the course description) even though
+  the sheet scores them separately; the fold happens in code, not in the data.
+- On the teacher page the program description is the **author's own wording** — typos fixed, not
+  rewritten. Same rule as the solution pages.
