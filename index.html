@@ -182,7 +182,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
     </a>
     <a class="sol-btn" href="weeks/grade4/week9/solutions_week9.html" data-opens="2027-01-29T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
   </div>
-  <div class="week-card" style="border-left-color:#0891b2">
+  <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#0891b2">
     <a class="week-link" href="weeks/grade4/week10/grade4_week10.html">
       <span class="emoji">🔟</span>
       <span class="text">
@@ -192,7 +192,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
     </a>
     <a class="sol-btn" href="weeks/grade4/week10/solutions_week10.html" data-opens="2027-02-05T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
   </div>
-  <div class="week-card" style="border-left-color:#7c3aed">
+  <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#7c3aed">
     <a class="week-link" href="weeks/grade4/week11/grade4_week11.html">
       <span class="emoji">⭐</span>
       <span class="text">
@@ -202,7 +202,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
     </a>
     <a class="sol-btn" href="weeks/grade4/week11/solutions_week11.html" data-opens="2027-02-12T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
   </div>
-  <div class="week-card" style="border-left-color:#db2777">
+  <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#db2777">
     <a class="week-link" href="weeks/grade4/week12/grade4_week12.html">
       <span class="emoji">🏁</span>
       <span class="text">
@@ -212,7 +212,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
     </a>
     <a class="sol-btn" href="weeks/grade4/week12/solutions_week12.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
   </div>
-  <div class="week-card" style="border-left-color:#ea580c">
+  <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#ea580c">
     <a class="week-link" href="weeks/grade4/week13/grade4_week13.html">
       <span class="emoji">✨</span>
       <span class="text">
@@ -222,9 +222,26 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
     </a>
     <a class="sol-btn" href="weeks/grade4/week13/solutions_week13.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
   </div>
-  <script>document.querySelectorAll('.sol-btn[data-opens]').forEach(function (a) {
-    if (Date.now() >= new Date(a.dataset.opens).getTime()) { a.textContent = '📖 Solutions'; a.removeAttribute('title'); }
-  });</script>
+  <script>
+function availableIn(iso) {
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 864e5);
+  const weeks = Math.round(days / 7);
+  if (days <= 1) return 'tomorrow';
+  if (days < 7) return 'in ' + days + ' days';
+  return 'in ' + weeks + (weeks === 1 ? ' week' : ' weeks');
+}
+document.querySelectorAll('.sol-btn[data-opens]').forEach(function (a) {
+  if (Date.now() >= new Date(a.dataset.opens).getTime()) { a.textContent = '📖 Solutions'; a.removeAttribute('title'); }
+});
+document.querySelectorAll('.week-card[data-available]').forEach(function (c) {
+  if (Date.now() >= new Date(c.dataset.available).getTime()) return;
+  c.classList.add('upcoming');
+  c.querySelector('.desc').textContent = 'Will be available ' + availableIn(c.dataset.available) + ' (' + c.dataset.availableLabel + ')';
+  c.querySelector('.week-link').removeAttribute('href');
+  const sol = c.querySelector('.sol-btn');
+  if (sol) sol.remove();
+});
+  </script>
   <!-- WEEKS:END -->
 
   <p class="footnote">Solve online, or print the problems and work on paper.</p>

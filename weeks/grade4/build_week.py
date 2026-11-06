@@ -51,6 +51,21 @@ SHOW_STATUS = False    # home-page "👉 This week" / "Coming soon" run markers.
                        # later card would read "Coming soon" and look unready.
 
 
+# Shared by the home page and the set pages, for sets with an "available_from" date.
+AVAILABLE_IN_JS = """function availableIn(iso) {
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 864e5);
+  const weeks = Math.round(days / 7);
+  if (days <= 1) return 'tomorrow';
+  if (days < 7) return 'in ' + days + ' days';
+  return 'in ' + weeks + (weeks === 1 ? ' week' : ' weeks');
+}"""
+
+
+def available_label(iso):
+    d = datetime.fromisoformat(iso)
+    return f"{d.strftime('%A, %B')} {d.day}"
+
+
 def disp(label):
     """A label as shown to students. Stored/posted labels are never rewritten."""
     return label if UNIT_NAME == "Week" else re.sub(r"\bWeek\b", UNIT_NAME, label)
@@ -282,6 +297,10 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 .btn-submit:hover {{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,.5); }}
 .btn-submit:active {{ transform: translateY(0); }}
 .btn-submit:disabled {{ opacity: .6; cursor: default; transform: none; box-shadow: none; }}
+body.not-yet .page, body.not-yet #scribble-bar {{ display: none; }}
+#notYet {{ display: none; max-width: 480px; margin: 80px auto; padding: 32px; background: #fff; border-radius: 18px; text-align: center; font-size: 19px; font-weight: 700; }}
+#notYet a {{ display: block; margin-top: 14px; font-size: 14px; font-weight: 400; color: #64748b; }}
+body.not-yet #notYet {{ display: block; }}
 .closed-note {{ background: #fef3c7; color: #92400e; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }}
 
 .print-btn {{ background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.65); border-radius: 8px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; float: right; margin-top: 4px; transition: background .2s, border-color .2s; }}
@@ -383,6 +402,7 @@ def render_week(week_dir, cfg):
     num = len(problems)
     title = disp(cfg.get("title", cfg["week_label"]))
     due = cfg.get("due", "Sunday night")
+    available_from = cfg.get("available_from", "")
     week_info = ""
     pills = []
     if SHOW_DUE:
@@ -409,7 +429,8 @@ def render_week(week_dir, cfg):
 {SCRIBBLE_CSS}
 </style>
 </head>
-<body>
+<body{' class="not-yet"' if available_from else ''}>
+<div id="notYet"><span id="notYetText"></span><a href="../../../index.html">← Back to home</a></div>
 <div class="page">
 
   <div class="topnav">
@@ -462,6 +483,15 @@ const ENDPOINT_URL = "{ENDPOINT_URL}";
 const WEEK_LABEL = "{esc(cfg['week_label'])}";
 const NUM_PROBLEMS = {num};
 const DEADLINE = "{cfg.get('deadline', '')}";
+const AVAILABLE_FROM = "{available_from}";
+
+{AVAILABLE_IN_JS}
+if (AVAILABLE_FROM && Date.now() < new Date(AVAILABLE_FROM).getTime()) {{
+  document.getElementById('notYetText').textContent =
+    'This {UNIT_NAME.lower()} will be available ' + availableIn(AVAILABLE_FROM) + ' ({available_label(available_from) if available_from else ""}).';
+}} else {{
+  document.body.classList.remove('not-yet');
+}}
 
 function showClosed() {{
   document.getElementById('closedNote').hidden = false;
@@ -589,8 +619,12 @@ def rebuild_index():
                 opens = f' data-opens="{cfg["deadline"]}"' if cfg.get("deadline") else ""
                 sol_btn = f'\n    <a class="sol-btn" href="{href}"{opens} title="Teacher/developer passcode required">🔒 Solutions</a>'
 
+        available = ""
+        if cfg.get("available_from"):
+            available = f' data-available="{cfg["available_from"]}" data-available-label="{available_label(cfg["available_from"])}"'
+
         cards.append(
-            f'  <div class="week-card{" " + state if state else ""}" style="border-left-color:{color}">\n'
+            f'  <div class="week-card{" " + state if state else ""}"{available} style="border-left-color:{color}">\n'
             f'    <a class="week-link" href="weeks/grade4/week{n}/{html_name}">\n'
             f'      <span class="emoji">{emoji}</span>\n'
             f'      <span class="text">\n'
@@ -605,9 +639,19 @@ def rebuild_index():
     end = "<!-- WEEKS:END -->"
     a, b = text.index(start), text.index(end)
     open_solutions = (
-        "  <script>document.querySelectorAll('.sol-btn[data-opens]').forEach(function (a) {\n"
-        "    if (Date.now() >= new Date(a.dataset.opens).getTime()) { a.textContent = '📖 Solutions'; a.removeAttribute('title'); }\n"
-        "  });</script>"
+        "  <script>\n" + AVAILABLE_IN_JS + "\n"
+        "document.querySelectorAll('.sol-btn[data-opens]').forEach(function (a) {\n"
+        "  if (Date.now() >= new Date(a.dataset.opens).getTime()) { a.textContent = '📖 Solutions'; a.removeAttribute('title'); }\n"
+        "});\n"
+        "document.querySelectorAll('.week-card[data-available]').forEach(function (c) {\n"
+        "  if (Date.now() >= new Date(c.dataset.available).getTime()) return;\n"
+        "  c.classList.add('upcoming');\n"
+        "  c.querySelector('.desc').textContent = 'Will be available ' + availableIn(c.dataset.available) + ' (' + c.dataset.availableLabel + ')';\n"
+        "  c.querySelector('.week-link').removeAttribute('href');\n"
+        "  const sol = c.querySelector('.sol-btn');\n"
+        "  if (sol) sol.remove();\n"
+        "});\n"
+        "  </script>"
     )
     new = text[:a] + start + "\n" + "\n".join(cards) + "\n" + open_solutions + "\n  " + text[b:]
     INDEX.write_text(new)
@@ -634,20 +678,18 @@ def update_leaderboard_weeks():
 
 
 def update_backend_deadlines():
-    """Copy each week's "deadline" into the backend, so week.json stays the one source."""
+    """Copy each week's dates into the backend, so week.json stays the one source."""
     gs = GRADE_DIR / "week2" / "apps_script_backend.gs"
-    rows = []
-    for d in all_weeks():
-        cfg = json.loads((d / "week.json").read_text())
-        if cfg.get("deadline"):
-            rows.append(f"  {json.dumps(cfg['week_label'], ensure_ascii=False)}: {json.dumps(cfg['deadline'])}")
-    text = gs.read_text()
-    start, end = "/* DEADLINES:START */", "/* DEADLINES:END */"
-    a, b = text.index(start) + len(start), text.index(end)
-    new = text[:a] + "\n" + ",\n".join(rows) + "\n" + text[b:]
-    if new != text:
+    cfgs = [json.loads((d / "week.json").read_text()) for d in all_weeks()]
+    old = new = gs.read_text()
+    for field, marker in (("deadline", "DEADLINES"), ("available_from", "OPENS")):
+        rows = [f"  {json.dumps(c['week_label'], ensure_ascii=False)}: {json.dumps(c[field])}" for c in cfgs if c.get(field)]
+        start, end = f"/* {marker}:START */", f"/* {marker}:END */"
+        a, b = new.index(start) + len(start), new.index(end)
+        new = new[:a] + "\n" + ",\n".join(rows) + "\n" + new[b:]
+    if new != old:
         gs.write_text(new)
-        print("  apps_script_backend.gs: deadlines changed — redeploy as a New version")
+        print("  apps_script_backend.gs: dates changed — redeploy as a New version")
 
 
 def main(argv):

@@ -82,6 +82,10 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,.5); }
 .btn-submit:active { transform: translateY(0); }
 .btn-submit:disabled { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+body.not-yet .page, body.not-yet #scribble-bar { display: none; }
+#notYet { display: none; max-width: 480px; margin: 80px auto; padding: 32px; background: #fff; border-radius: 18px; text-align: center; font-size: 19px; font-weight: 700; }
+#notYet a { display: block; margin-top: 14px; font-size: 14px; font-weight: 400; color: #64748b; }
+body.not-yet #notYet { display: block; }
 .closed-note { background: #fef3c7; color: #92400e; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }
 
 .print-btn { background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.65); border-radius: 8px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; float: right; margin-top: 4px; transition: background .2s, border-color .2s; }
@@ -146,6 +150,7 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 </style>
 </head>
 <body>
+<div id="notYet"><span id="notYetText"></span><a href="../../../index.html">← Back to home</a></div>
 <div class="page">
 
   <div class="topnav">
@@ -277,6 +282,21 @@ const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVK
 const WEEK_LABEL = "Grade 4 — Week 5";
 const NUM_PROBLEMS = 6;
 const DEADLINE = "2026-12-18T19:00:00-08:00";
+const AVAILABLE_FROM = "";
+
+function availableIn(iso) {
+  const days = Math.ceil((new Date(iso).getTime() - Date.now()) / 864e5);
+  const weeks = Math.round(days / 7);
+  if (days <= 1) return 'tomorrow';
+  if (days < 7) return 'in ' + days + ' days';
+  return 'in ' + weeks + (weeks === 1 ? ' week' : ' weeks');
+}
+if (AVAILABLE_FROM && Date.now() < new Date(AVAILABLE_FROM).getTime()) {
+  document.getElementById('notYetText').textContent =
+    'This set will be available ' + availableIn(AVAILABLE_FROM) + ' ().';
+} else {
+  document.body.classList.remove('not-yet');
+}
 
 function showClosed() {
   document.getElementById('closedNote').hidden = false;

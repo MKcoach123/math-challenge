@@ -38,6 +38,14 @@ var DEADLINES = { /* DEADLINES:START */
   "Grade 4 — Extra Problems": "2027-02-19T19:00:00-08:00"
 /* DEADLINES:END */ };
 
+// Weeks held back until a date. Generated from week.json by build_week.py.
+var OPENS = { /* OPENS:START */
+  "Grade 4 — Week 10": "2026-11-20T19:00:00-08:00",
+  "Grade 4 — Week 11": "2026-11-20T19:00:00-08:00",
+  "Grade 4 — Week 12": "2026-11-20T19:00:00-08:00",
+  "Grade 4 — Extra Problems": "2026-11-20T19:00:00-08:00"
+/* OPENS:END */ };
+
 function answerCols() {
   var cols = [];
   for (var i = 1; i <= MAX_PROBLEMS; i++) cols.push('Answer ' + i);
@@ -53,8 +61,10 @@ function doPost(e) {
     var data = JSON.parse(e.postData.contents);
 
     // The page checks this too, but only here can it not be bypassed by a page left open.
-    var closesAt = deadlineFor(data.week);
+    var closesAt = dateFor(DEADLINES, data.week);
     if (closesAt && new Date() > closesAt) return json({ ok: false, closed: true });
+    var opensAt = dateFor(OPENS, data.week);
+    if (opensAt && new Date() < opensAt) return json({ ok: false, error: 'This set is not open yet.' });
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SUBMISSIONS) || ss.insertSheet(SUBMISSIONS);
@@ -377,11 +387,11 @@ function getRows(sheetName) {
   });
 }
 
-/** A week's deadline as a Date, or null if it has none (e.g. Extra Problems). */
-function deadlineFor(weekLabel) {
+/** A week's date from DEADLINES or OPENS as a Date, or null if it has none. */
+function dateFor(table, weekLabel) {
   var week = norm(weekLabel);
-  for (var label in DEADLINES) {
-    if (norm(label) === week) return new Date(DEADLINES[label]);
+  for (var label in table) {
+    if (norm(label) === week) return new Date(table[label]);
   }
   return null;
 }
