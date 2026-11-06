@@ -23,18 +23,19 @@ var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display']
 
 // When each week stops accepting answers. Generated from week.json by build_week.py.
 var DEADLINES = { /* DEADLINES:START */
-  "Grade 4 — Week 1": "2026-11-13T23:59:59-08:00",
-  "Grade 4 — Week 2": "2026-11-20T23:59:59-08:00",
-  "Grade 4 — Week 3": "2026-11-27T23:59:59-08:00",
-  "Grade 4 — Week 4": "2026-12-04T23:59:59-08:00",
-  "Grade 4 — Week 5": "2026-12-11T23:59:59-08:00",
-  "Grade 4 — Week 6": "2026-12-18T23:59:59-08:00",
-  "Grade 4 — Week 7": "2026-12-25T23:59:59-08:00",
-  "Grade 4 — Week 8": "2027-01-01T23:59:59-08:00",
-  "Grade 4 — Week 9": "2027-01-08T23:59:59-08:00",
-  "Grade 4 — Week 10": "2027-01-15T23:59:59-08:00",
-  "Grade 4 — Week 11": "2027-01-22T23:59:59-08:00",
-  "Grade 4 — Week 12": "2027-01-29T23:59:59-08:00"
+  "Grade 4 — Week 1": "2026-11-13T19:00:00-08:00",
+  "Grade 4 — Week 2": "2026-11-20T19:00:00-08:00",
+  "Grade 4 — Week 3": "2026-12-04T19:00:00-08:00",
+  "Grade 4 — Week 4": "2026-12-11T19:00:00-08:00",
+  "Grade 4 — Week 5": "2026-12-18T19:00:00-08:00",
+  "Grade 4 — Week 6": "2027-01-08T19:00:00-08:00",
+  "Grade 4 — Week 7": "2027-01-15T19:00:00-08:00",
+  "Grade 4 — Week 8": "2027-01-22T19:00:00-08:00",
+  "Grade 4 — Week 9": "2027-01-29T19:00:00-08:00",
+  "Grade 4 — Week 10": "2027-02-05T19:00:00-08:00",
+  "Grade 4 — Week 11": "2027-02-12T19:00:00-08:00",
+  "Grade 4 — Week 12": "2027-02-19T19:00:00-08:00",
+  "Grade 4 — Extra Problems": "2027-02-19T19:00:00-08:00"
 /* DEADLINES:END */ };
 
 function answerCols() {
