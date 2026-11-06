@@ -6,8 +6,8 @@ Usage:  python3 gate_solutions.py <PASSCODE_DEV> <PASSCODE_TEACHER>
 
 On every visit the page shows a passcode screen; entering either passcode reveals
 the solutions for that one viewing (going back + clicking again re-asks). Whether a
-week is gated is taken from its week.json "solutions_available" flag: false → gated,
-true → revealed (no passcode, e.g. after the deadline).
+week is gated is taken from its week.json: "solutions_available" true → revealed (no
+passcode), otherwise gated until the week's "deadline" passes, then open to everyone.
 
 Only the SHA-256 hashes of the passcodes are written into the pages — not the
 passcodes themselves. Re-run this after editing a solution page (it strips and
@@ -43,10 +43,11 @@ GATE_HTML = (
   '</div></div><!--/SOLGATE-->'
 )
 
-def script(revealed, hashes):
+def script(revealed, hashes, opens_at):
     return (
       '<script id="sol-gate-js">'
       'const SOL_REVEALED=' + ('true' if revealed else 'false') + ';'
+      'const SOL_OPENS_AT=' + json.dumps(opens_at) + ';'
       'const SOL_HASHES=' + json.dumps(hashes) + ';'
       'async function solSha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));'
       'return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,"0")).join("")}'
@@ -55,7 +56,7 @@ def script(revealed, hashes):
       'var h=await solSha(document.getElementById("sol-pc").value.trim());'
       'if(SOL_HASHES.indexOf(h)>=0){solReveal();}else{err.textContent="Wrong passcode — try again.";'
       'var i=document.getElementById("sol-pc");i.value="";i.focus();}return false;}'
-      'if(SOL_REVEALED){solReveal();}'
+      'if(SOL_REVEALED||(SOL_OPENS_AT&&Date.now()>=new Date(SOL_OPENS_AT).getTime())){solReveal();}'
       '</script>'
     )
 
@@ -66,11 +67,11 @@ def strip(html):
     html = html.replace('<body class="sol-locked">', '<body>')
     return html
 
-def inject(html, revealed, hashes):
+def inject(html, revealed, hashes, opens_at):
     html = strip(html)
     html = html.replace('</head>', CSS + '\n</head>', 1)
     html = html.replace('<body>', '<body class="sol-locked">\n' + GATE_HTML, 1)
-    html = html.replace('</body>', script(revealed, hashes) + '\n</body>', 1)
+    html = html.replace('</body>', script(revealed, hashes, opens_at) + '\n</body>', 1)
     return html
 
 def main():
@@ -84,7 +85,7 @@ def main():
         cfg = json.loads((wd / "week.json").read_text()) if (wd / "week.json").exists() else {}
         revealed = bool(cfg.get("solutions_available"))
         f = sols[0]
-        f.write_text(inject(f.read_text(), revealed, hashes))
+        f.write_text(inject(f.read_text(), revealed, hashes, cfg.get("deadline", "")))
         print(f"gated {wd.name}/{f.name}  (revealed={revealed})")
 
 if __name__ == "__main__":

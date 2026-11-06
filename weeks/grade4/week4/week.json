@@ -1,7 +1,8 @@
 {
   "number": 4,
   "week_label": "Grade 4 — Week 4",
-  "due": "Friday afternoon",
+  "due": "Friday, December 4 at 11:59 PM",
+  "deadline": "2026-12-04T23:59:59-08:00",
   "image_max_width": "360px",
   "solutions": "solutions_week4.html",
   "solutions_available": false,

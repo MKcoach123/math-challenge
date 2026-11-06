@@ -82,6 +82,7 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,.5); }
 .btn-submit:active { transform: translateY(0); }
 .btn-submit:disabled { opacity: .6; cursor: default; transform: none; box-shadow: none; }
+.closed-note { background: #fef3c7; color: #92400e; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }
 
 .print-btn { background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.65); border-radius: 8px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; float: right; margin-top: 4px; transition: background .2s, border-color .2s; }
 .print-btn:hover { background: rgba(255,255,255,.30); border-color: #fff; }
@@ -156,6 +157,9 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
     <button class="print-btn" onclick="window.print()">🖨 Print</button>
     <h1>Grade 4 — Extra Problems</h1>
     <div class="sub">Math Challenge Problems</div>
+    <div class="week-info">
+      <span>\U0001f4c5 Due: Anytime</span>
+    </div>
   </div>
 
   <div class="name-box">
@@ -245,7 +249,8 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
     </div>
 
     <div class="submit-row">
-      <button type="button" class="btn-submit" onclick="submitAnswers(this)">Submit Answers ✓</button>
+      <div class="closed-note" id="closedNote" hidden>This set is closed. The deadline has passed, so new answers can't be submitted.</div>
+      <button type="button" class="btn-submit" id="submitBtn" onclick="submitAnswers(this)">Submit Answers ✓</button>
     </div>
 
   </form>
@@ -271,6 +276,13 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec";
 const WEEK_LABEL = "Grade 4 — Extra Problems";
 const NUM_PROBLEMS = 6;
+const DEADLINE = "";
+
+function showClosed() {
+  document.getElementById('closedNote').hidden = false;
+  document.getElementById('submitBtn').disabled = true;
+}
+if (DEADLINE && Date.now() > new Date(DEADLINE).getTime()) showClosed();
 
 async function submitAnswers(btn) {
   const name = document.getElementById('sname').value.trim();
@@ -306,12 +318,18 @@ async function submitAnswers(btn) {
   try {
     const res = await fetch(ENDPOINT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
     const data = await res.json();
+    if (data.closed) {
+      alert('Sorry, the deadline for this set has passed, so these answers were not saved.');
+      showClosed();
+      return;
+    }
     if (!data.ok) throw new Error(data.error || 'Save failed');
     alert('Thanks ' + name + '! Your answers have been recorded. ✓');
   } catch (e) {
     alert('Sorry — something went wrong saving your answers.\nPlease tell your teacher.\n\n(' + e.message + ')');
   } finally {
-    btn.disabled = false; btn.textContent = original;
+    btn.textContent = original;
+    btn.disabled = !document.getElementById('closedNote').hidden;
   }
 }
 </script>

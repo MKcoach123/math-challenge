@@ -21,6 +21,22 @@ var MAX_PROBLEMS = 6;   // supports 3–6 problems/week; AnswerKey/Submissions u
 var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display']
   .concat(answerCols());  // -> ... 'Answer 1' .. 'Answer 6'
 
+// When each week stops accepting answers. Generated from week.json by build_week.py.
+var DEADLINES = { /* DEADLINES:START */
+  "Grade 4 — Week 1": "2026-11-13T23:59:59-08:00",
+  "Grade 4 — Week 2": "2026-11-20T23:59:59-08:00",
+  "Grade 4 — Week 3": "2026-11-27T23:59:59-08:00",
+  "Grade 4 — Week 4": "2026-12-04T23:59:59-08:00",
+  "Grade 4 — Week 5": "2026-12-11T23:59:59-08:00",
+  "Grade 4 — Week 6": "2026-12-18T23:59:59-08:00",
+  "Grade 4 — Week 7": "2026-12-25T23:59:59-08:00",
+  "Grade 4 — Week 8": "2027-01-01T23:59:59-08:00",
+  "Grade 4 — Week 9": "2027-01-08T23:59:59-08:00",
+  "Grade 4 — Week 10": "2027-01-15T23:59:59-08:00",
+  "Grade 4 — Week 11": "2027-01-22T23:59:59-08:00",
+  "Grade 4 — Week 12": "2027-01-29T23:59:59-08:00"
+/* DEADLINES:END */ };
+
 function answerCols() {
   var cols = [];
   for (var i = 1; i <= MAX_PROBLEMS; i++) cols.push('Answer ' + i);
@@ -34,6 +50,10 @@ function doPost(e) {
   lock.tryLock(10000); // serialize writes so rows don't collide
   try {
     var data = JSON.parse(e.postData.contents);
+
+    // The page checks this too, but only here can it not be bypassed by a page left open.
+    var closesAt = deadlineFor(data.week);
+    if (closesAt && new Date() > closesAt) return json({ ok: false, closed: true });
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SUBMISSIONS) || ss.insertSheet(SUBMISSIONS);
@@ -351,6 +371,15 @@ function getRows(sheetName) {
     header.forEach(function (h, i) { o[h] = row[i]; });
     return o;
   });
+}
+
+/** A week's deadline as a Date, or null if it has none (e.g. Extra Problems). */
+function deadlineFor(weekLabel) {
+  var week = norm(weekLabel);
+  for (var label in DEADLINES) {
+    if (norm(label) === week) return new Date(DEADLINES[label]);
+  }
+  return null;
 }
 
 function norm(v) {

@@ -1,7 +1,8 @@
 {
   "number": 10,
   "week_label": "Grade 4 — Week 10",
-  "due": "Friday afternoon",
+  "due": "Friday, January 15 at 11:59 PM",
+  "deadline": "2027-01-15T23:59:59-08:00",
   "image_max_width": "300px",
   "problems": [
     {

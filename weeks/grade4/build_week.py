@@ -27,6 +27,7 @@ week.json shape:
 Problem types: "number"/"text" → free-text box; "choice" → A–E radio chips.
 "image" is optional on any problem.
 """
+from datetime import datetime
 import base64, json, pathlib, re, sys, html as _html
 
 ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbx5Xl-3-NRx5vnqZVKx4_7XiJI1iKR4Wiit8beSmlm15rJX-Fs7LBZrkk6IFseDSFK3Jw/exec"
@@ -43,7 +44,7 @@ ACCENTS = ["#4f46e5", "#0891b2", "#7c3aed", "#db2777", "#ea580c", "#16a34a"]  # 
 #     UNIT_NAME = "Week";  SHOW_DUE = True;  SHOW_POINTS = True
 # then rebuild everything:  python3 build_week.py --all
 UNIT_NAME   = "Set"    # the word students see: "Set" or "Week"
-SHOW_DUE    = False    # the "📅 Due: …" pill on each page
+SHOW_DUE    = True     # the "📅 Due: …" pill on each page, and the due date on home-page cards
 SHOW_POINTS = False    # the "🏆 N problems · 1 point each" pill
 SHOW_STATUS = False    # home-page "👉 This week" / "Coming soon" run markers.
                        # Off for supplemental use: with no run in progress every
@@ -281,6 +282,7 @@ body {{ font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4
 .btn-submit:hover {{ transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79,70,229,.5); }}
 .btn-submit:active {{ transform: translateY(0); }}
 .btn-submit:disabled {{ opacity: .6; cursor: default; transform: none; box-shadow: none; }}
+.closed-note {{ background: #fef3c7; color: #92400e; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }}
 
 .print-btn {{ background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.65); border-radius: 8px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; float: right; margin-top: 4px; transition: background .2s, border-color .2s; }}
 .print-btn:hover {{ background: rgba(255,255,255,.30); border-color: #fff; }}
@@ -447,7 +449,8 @@ def render_week(week_dir, cfg):
     </div>
 
     <div class="submit-row">
-      <button type="button" class="btn-submit" onclick="submitAnswers(this)">Submit Answers ✓</button>
+      <div class="closed-note" id="closedNote" hidden>This {UNIT_NAME.lower()} is closed. The deadline has passed, so new answers can't be submitted.</div>
+      <button type="button" class="btn-submit" id="submitBtn" onclick="submitAnswers(this)">Submit Answers ✓</button>
     </div>
 
   </form>
@@ -458,6 +461,13 @@ def render_week(week_dir, cfg):
 const ENDPOINT_URL = "{ENDPOINT_URL}";
 const WEEK_LABEL = "{esc(cfg['week_label'])}";
 const NUM_PROBLEMS = {num};
+const DEADLINE = "{cfg.get('deadline', '')}";
+
+function showClosed() {{
+  document.getElementById('closedNote').hidden = false;
+  document.getElementById('submitBtn').disabled = true;
+}}
+if (DEADLINE && Date.now() > new Date(DEADLINE).getTime()) showClosed();
 
 async function submitAnswers(btn) {{
   const name = document.getElementById('sname').value.trim();
@@ -493,12 +503,18 @@ async function submitAnswers(btn) {{
   try {{
     const res = await fetch(ENDPOINT_URL, {{ method: 'POST', headers: {{ 'Content-Type': 'text/plain;charset=utf-8' }}, body: JSON.stringify(payload) }});
     const data = await res.json();
+    if (data.closed) {{
+      alert('Sorry, the deadline for this {UNIT_NAME.lower()} has passed, so these answers were not saved.');
+      showClosed();
+      return;
+    }}
     if (!data.ok) throw new Error(data.error || 'Save failed');
     alert('Thanks ' + name + '! Your answers have been recorded. ✓');
   }} catch (e) {{
     alert('Sorry — something went wrong saving your answers.\\nPlease tell your teacher.\\n\\n(' + e.message + ')');
   }} finally {{
-    btn.disabled = false; btn.textContent = original;
+    btn.textContent = original;
+    btn.disabled = !document.getElementById('closedNote').hidden;
   }}
 }}
 </script>
@@ -556,11 +572,12 @@ def rebuild_index():
                 pill = '\n    <span class="status-pill upcoming">Coming soon</span>'
 
         desc = f"Grade 4 · {nprob} problems"
-        if SHOW_DUE and state == "current":
-            desc += f" · due {cfg.get('due', 'Friday afternoon')}"
+        if SHOW_DUE and cfg.get("deadline"):
+            d = datetime.fromisoformat(cfg["deadline"])
+            desc += f" · due {d.strftime('%a, %b')} {d.day}"
 
-        # Optional Solutions button. Gated: shown disabled until "solutions_available" is true
-        # (flip it to true after the week's deadline, then rebuild + push).
+        # Optional Solutions button. Locked until the week's "deadline" passes (the script
+        # after the cards swaps the label), or until "solutions_available" is set to true.
         sol = cfg.get("solutions")
         sol_btn = ""
         if sol:
@@ -569,7 +586,8 @@ def rebuild_index():
             if cfg.get("solutions_available"):
                 sol_btn = f'\n    <a class="sol-btn" href="{href}">📖 Solutions</a>'
             else:
-                sol_btn = f'\n    <a class="sol-btn" href="{href}" title="Teacher/developer passcode required">🔒 Solutions</a>'
+                opens = f' data-opens="{cfg["deadline"]}"' if cfg.get("deadline") else ""
+                sol_btn = f'\n    <a class="sol-btn" href="{href}"{opens} title="Teacher/developer passcode required">🔒 Solutions</a>'
 
         cards.append(
             f'  <div class="week-card{" " + state if state else ""}" style="border-left-color:{color}">\n'
@@ -586,7 +604,12 @@ def rebuild_index():
     start = "<!-- WEEKS:START (auto-generated by build_week.py — do not edit between these markers) -->"
     end = "<!-- WEEKS:END -->"
     a, b = text.index(start), text.index(end)
-    new = text[:a] + start + "\n" + "\n".join(cards) + "\n  " + text[b:]
+    open_solutions = (
+        "  <script>document.querySelectorAll('.sol-btn[data-opens]').forEach(function (a) {\n"
+        "    if (Date.now() >= new Date(a.dataset.opens).getTime()) { a.textContent = '📖 Solutions'; a.removeAttribute('title'); }\n"
+        "  });</script>"
+    )
+    new = text[:a] + start + "\n" + "\n".join(cards) + "\n" + open_solutions + "\n  " + text[b:]
     INDEX.write_text(new)
     print(f"  index.html: {len(cards)} week cards")
 
@@ -610,17 +633,34 @@ def update_leaderboard_weeks():
     print(f"  leaderboard.html: {len(labels)} weeks listed")
 
 
+def update_backend_deadlines():
+    """Copy each week's "deadline" into the backend, so week.json stays the one source."""
+    gs = GRADE_DIR / "week2" / "apps_script_backend.gs"
+    rows = []
+    for d in all_weeks():
+        cfg = json.loads((d / "week.json").read_text())
+        if cfg.get("deadline"):
+            rows.append(f"  {json.dumps(cfg['week_label'], ensure_ascii=False)}: {json.dumps(cfg['deadline'])}")
+    text = gs.read_text()
+    start, end = "/* DEADLINES:START */", "/* DEADLINES:END */"
+    a, b = text.index(start) + len(start), text.index(end)
+    new = text[:a] + "\n" + ",\n".join(rows) + "\n" + text[b:]
+    if new != text:
+        gs.write_text(new)
+        print("  apps_script_backend.gs: deadlines changed — redeploy as a New version")
+
+
 def main(argv):
     if not argv or argv[0] in ("-h", "--help"):
         print(__doc__); return
     if argv[0] == "--index":
-        rebuild_index(); update_leaderboard_weeks(); return
+        rebuild_index(); update_leaderboard_weeks(); update_backend_deadlines(); return
     if argv[0] == "--all":
         for d in all_weeks():
             build_week(d)
-        rebuild_index(); update_leaderboard_weeks(); return
+        rebuild_index(); update_leaderboard_weeks(); update_backend_deadlines(); return
     build_week(argv[0])
-    rebuild_index(); update_leaderboard_weeks()
+    rebuild_index(); update_leaderboard_weeks(); update_backend_deadlines()
 
 
 if __name__ == "__main__":
