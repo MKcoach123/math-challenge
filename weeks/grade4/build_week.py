@@ -406,9 +406,9 @@ def render_week(week_dir, cfg):
     week_info = ""
     pills = []
     if SHOW_DUE:
-        pills.append(f'      <span>\\U0001f4c5 Due: {esc(due)}</span>')
+        pills.append(f'      <span>📅 Due: {esc(due)}</span>')
     if SHOW_POINTS:
-        pills.append(f'      <span>\\U0001f3c6 {num} problems \u00b7 1 point each</span>')
+        pills.append(f'      <span>🏆 {num} problems \u00b7 1 point each</span>')
     if pills:
         week_info = '    <div class="week-info">\n' + "\n".join(pills) + '\n    </div>\n'
     img_max_width = cfg.get("image_max_width")   # week-level default cap for figures, e.g. "280px"
