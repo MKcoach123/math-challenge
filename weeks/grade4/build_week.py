@@ -616,8 +616,12 @@ def rebuild_index():
             if cfg.get("solutions_available"):
                 sol_btn = f'\n    <a class="sol-btn" href="{href}">📖 Solutions</a>'
             else:
-                opens = f' data-opens="{cfg["deadline"]}"' if cfg.get("deadline") else ""
-                sol_btn = f'\n    <a class="sol-btn" href="{href}"{opens} title="Teacher/developer passcode required">🔒 Solutions</a>'
+                opens, opens_date = "", ""
+                if cfg.get("deadline"):
+                    d = datetime.fromisoformat(cfg["deadline"])
+                    opens = f' data-opens="{cfg["deadline"]}"'
+                    opens_date = f'<span class="sol-date">Opens {d.strftime("%a, %b")} {d.day}</span>'
+                sol_btn = f'\n    <a class="sol-btn" href="{href}"{opens} title="Teacher/developer passcode required"><span>🔒 Solutions</span>{opens_date}</a>'
 
         available = ""
         if cfg.get("available_from"):

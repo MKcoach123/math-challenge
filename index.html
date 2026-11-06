@@ -45,11 +45,12 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
 .week-card .week-link .title { font-size: 19px; font-weight: 800; }
 .week-card .week-link .desc { font-size: 14px; color: #64748b; margin-top: 2px; }
 .sol-btn {
-  display: flex; align-items: center; gap: 6px; padding: 0 20px; text-decoration: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 0 20px; text-decoration: none;
   font-weight: 700; font-size: 14px; color: #b45309; background: #fffbeb;
   border-left: 1px solid #fde68a; white-space: nowrap; transition: background .15s;
 }
 .sol-btn:hover { background: #fef3c7; }
+.sol-btn .sol-date { font-size: 11px; font-weight: 500; color: #92400e; }
 .sol-btn.disabled { color: #cbd5e1; background: #f8fafc; cursor: not-allowed; pointer-events: none; }
 
 /* Week state: current / past / upcoming (driven by CURRENT_WEEK in build_week.py) */
@@ -100,7 +101,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 5 problems · due Fri, Nov 13</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week1/solutions_week1.html" data-opens="2026-11-13T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week1/solutions_week1.html" data-opens="2026-11-13T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Nov 13</span></a>
   </div>
   <div class="week-card" style="border-left-color:#0891b2">
     <a class="week-link" href="weeks/grade4/week2/grade4_week2.html">
@@ -110,7 +111,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 5 problems · due Fri, Nov 20</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week2/solutions_week2.html" data-opens="2026-11-20T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week2/solutions_week2.html" data-opens="2026-11-20T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Nov 20</span></a>
   </div>
   <div class="week-card" style="border-left-color:#7c3aed">
     <a class="week-link" href="weeks/grade4/week3/grade4_week3.html">
@@ -120,7 +121,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 5 problems · due Fri, Dec 4</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week3/solutions_week3.html" data-opens="2026-12-04T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week3/solutions_week3.html" data-opens="2026-12-04T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Dec 4</span></a>
   </div>
   <div class="week-card" style="border-left-color:#db2777">
     <a class="week-link" href="weeks/grade4/week4/grade4_week4.html">
@@ -130,7 +131,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 5 problems · due Fri, Dec 11</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week4/solutions_week4.html" data-opens="2026-12-11T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week4/solutions_week4.html" data-opens="2026-12-11T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Dec 11</span></a>
   </div>
   <div class="week-card" style="border-left-color:#ea580c">
     <a class="week-link" href="weeks/grade4/week5/grade4_week5.html">
@@ -140,7 +141,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Dec 18</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week5/solutions_week5.html" data-opens="2026-12-18T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week5/solutions_week5.html" data-opens="2026-12-18T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Dec 18</span></a>
   </div>
   <div class="week-card" style="border-left-color:#16a34a">
     <a class="week-link" href="weeks/grade4/week6/grade4_week6.html">
@@ -150,7 +151,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Jan 8</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week6/solutions_week6.html" data-opens="2027-01-08T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week6/solutions_week6.html" data-opens="2027-01-08T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Jan 8</span></a>
   </div>
   <div class="week-card" style="border-left-color:#0284c7">
     <a class="week-link" href="weeks/grade4/week7/grade4_week7.html">
@@ -160,7 +161,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Jan 15</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week7/solutions_week7.html" data-opens="2027-01-15T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week7/solutions_week7.html" data-opens="2027-01-15T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Jan 15</span></a>
   </div>
   <div class="week-card" style="border-left-color:#9333ea">
     <a class="week-link" href="weeks/grade4/week8/grade4_week8.html">
@@ -170,7 +171,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Jan 22</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week8/solutions_week8.html" data-opens="2027-01-22T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week8/solutions_week8.html" data-opens="2027-01-22T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Jan 22</span></a>
   </div>
   <div class="week-card" style="border-left-color:#4f46e5">
     <a class="week-link" href="weeks/grade4/week9/grade4_week9.html">
@@ -180,7 +181,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Jan 29</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week9/solutions_week9.html" data-opens="2027-01-29T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week9/solutions_week9.html" data-opens="2027-01-29T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Jan 29</span></a>
   </div>
   <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#0891b2">
     <a class="week-link" href="weeks/grade4/week10/grade4_week10.html">
@@ -190,7 +191,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Feb 5</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week10/solutions_week10.html" data-opens="2027-02-05T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week10/solutions_week10.html" data-opens="2027-02-05T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Feb 5</span></a>
   </div>
   <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#7c3aed">
     <a class="week-link" href="weeks/grade4/week11/grade4_week11.html">
@@ -200,7 +201,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Feb 12</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week11/solutions_week11.html" data-opens="2027-02-12T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week11/solutions_week11.html" data-opens="2027-02-12T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Feb 12</span></a>
   </div>
   <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#db2777">
     <a class="week-link" href="weeks/grade4/week12/grade4_week12.html">
@@ -210,7 +211,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Feb 19</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week12/solutions_week12.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week12/solutions_week12.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Feb 19</span></a>
   </div>
   <div class="week-card" data-available="2026-11-20T19:00:00-08:00" data-available-label="Friday, November 20" style="border-left-color:#ea580c">
     <a class="week-link" href="weeks/grade4/week13/grade4_week13.html">
@@ -220,7 +221,7 @@ a.card.leaderboard { border-left-color: #f59e0b; background: linear-gradient(135
         <span class="desc">Grade 4 · 6 problems · due Fri, Feb 19</span>
       </span>
     </a>
-    <a class="sol-btn" href="weeks/grade4/week13/solutions_week13.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required">🔒 Solutions</a>
+    <a class="sol-btn" href="weeks/grade4/week13/solutions_week13.html" data-opens="2027-02-19T19:00:00-08:00" title="Teacher/developer passcode required"><span>🔒 Solutions</span><span class="sol-date">Opens Fri, Feb 19</span></a>
   </div>
   <script>
 function availableIn(iso) {
