@@ -92,6 +92,7 @@ body.not-yet .page, body.not-yet #scribble-bar { display: none; }
 #notYet { display: none; max-width: 480px; margin: 80px auto; padding: 32px; background: #fff; border-radius: 18px; text-align: center; font-size: 19px; font-weight: 700; }
 #notYet a { display: block; margin-top: 14px; font-size: 14px; font-weight: 400; color: #64748b; }
 body.not-yet #notYet { display: block; }
+.resubmit-note { font-size: 13px; color: #64748b; margin-top: 10px; }
 .closed-note { background: #fef3c7; color: #92400e; border-radius: 10px; padding: 12px 16px; font-size: 15px; font-weight: 600; margin-bottom: 12px; }
 
 .print-btn { background: rgba(255,255,255,.16); border: 1.5px solid rgba(255,255,255,.65); border-radius: 8px; padding: 8px 18px; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; float: right; margin-top: 4px; transition: background .2s, border-color .2s; }
@@ -262,6 +263,7 @@ body.not-yet #notYet { display: block; }
     <div class="submit-row">
       <div class="closed-note" id="closedNote" hidden>This set is closed. The deadline has passed, so new answers can't be submitted.</div>
       <button type="button" class="btn-submit" id="submitBtn" onclick="submitAnswers(this)">Submit Answers ✓</button>
+      <div class="resubmit-note" id="resubmitNote">You can resubmit until the deadline. Your latest answers count.</div>
     </div>
 
   </form>
@@ -307,6 +309,7 @@ if (AVAILABLE_FROM && Date.now() < new Date(AVAILABLE_FROM).getTime()) {
 function showClosed() {
   document.getElementById('closedNote').hidden = false;
   document.getElementById('submitBtn').disabled = true;
+  document.getElementById('resubmitNote').hidden = true;
 }
 if (DEADLINE && Date.now() > new Date(DEADLINE).getTime()) showClosed();
 
