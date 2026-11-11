@@ -393,6 +393,12 @@ the page shows setup instructions rather than data. It is also **not linked** fr
 
 ---
 
+**Name filter (added 2026-11-10).** `weeks/grade4/name_filter.js` blocks rude/unkind words in student names
+(word lists are rot13-encoded). `build_week.py` inlines it into every set page (instant message) and copies it
+into `apps_script_backend.gs` between `NAME_FILTER:START/END` (rejects with `{ok:false, rude:true}`, nothing
+written). To change the list: edit name_filter.js, run `build_week.py --all`, push, then **redeploy as a New version**.
+Existing leaderboard names were checked — none are flagged.
+
 ## 6. How to do common tasks
 
 ### Update / add a week's problems
