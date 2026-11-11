@@ -109,9 +109,11 @@ tr.me { background: #fff7ed; box-shadow: inset 4px 0 0 #f59e0b; }
 
   <div class="findme">
     <h2>Find my rank</h2>
-    <p>Chose to show your name? Type it exactly as you submitted it to see your position. Private scores are not shown here.</p>
+    <p>Type your name exactly as you submitted it. If you chose to stay private, also type your secret word.</p>
     <div class="row">
       <input type="text" id="meName" placeholder="First name Last initial" maxlength="75" autocomplete="off"
+             onkeydown="if(event.key==='Enter')findMe()">
+      <input type="text" id="meSecret" placeholder="Secret word (private only)" maxlength="30" autocomplete="off"
              onkeydown="if(event.key==='Enter')findMe()">
       <button onclick="findMe()">Find me</button>
     </div>
@@ -270,13 +272,15 @@ async function findMe() {
   if (!ENDPOINT_URL) { out.className = 'result miss'; out.textContent = 'Leaderboard not connected yet.'; return; }
   out.className = 'result'; out.textContent = 'Looking…';
   const week = (mode === 'week') ? document.getElementById('weekSelect').value : '';
+  const secret = document.getElementById('meSecret').value.trim();
   try {
-    const res = await fetch(apiUrl({ view: 'findme', name, week }));
+    const res = await fetch(apiUrl({ view: 'findme', name, week, secret }));
     const data = await res.json();
     if (!data.ok) throw new Error(data.error || 'Lookup failed');
     if (!data.found) {
       out.className = 'result miss';
-      out.textContent = 'No public scores found for “' + name + '”. Check the spelling matches your submission.';
+      out.textContent = 'No scores found for “' + name + '”. Check the spelling matches your submission'
+        + (secret ? ' and that your secret word is right.' : '. If you chose private, type your secret word too.');
       return;
     }
     const scope = data.scope === 'week' ? ('this ' + unitWord()) : 'overall';

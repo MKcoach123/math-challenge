@@ -77,6 +77,11 @@ body { font-family: 'Segoe UI', system-ui, Arial, sans-serif; background: #f0f4f
 .vis-opt .vo-title { font-weight: 700; font-size: 15px; }
 .vis-opt .vo-sub { font-size: 12.5px; color: #64748b; }
 .vis-opt:has(input:checked) { border-color: #f59e0b; background: #fffdf5; box-shadow: 0 2px 10px rgba(245,158,11,.3); }
+.secret-box { margin-top: 12px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px; }
+.secret-box input { border: 2px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; font-size: 15px; width: 180px; position: relative; z-index: 60; }
+.secret-box .secret-hint { font-size: 12.5px; color: #64748b; flex-basis: 100%; }
+.secret-box[hidden] { display: none; }
+@media print { .secret-box { display: none; } }
 
 .submit-row { text-align: center; margin-top: 8px; }
 .btn-submit { background: linear-gradient(135deg, #1d4ed8, #4f46e5); color: white; border: none; border-radius: 12px; padding: 16px 48px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 16px rgba(79,70,229,.4); transition: transform .15s, box-shadow .15s; }
@@ -240,15 +245,20 @@ body.not-yet #notYet { display: block; }
       <span class="vq">🏆 Show your name on the class leaderboard?</span>
       <div class="vis-options">
         <label class="vis-opt">
-          <input type="radio" name="display" value="Private" checked>
+          <input type="radio" name="display" value="Private" checked onchange="toggleSecret()">
           <span class="vo-emoji">🔒</span>
           <span><span class="vo-title">No, keep me private</span><br><span class="vo-sub">Your name and score stay off the leaderboard</span></span>
         </label>
         <label class="vis-opt">
-          <input type="radio" name="display" value="Public">
+          <input type="radio" name="display" value="Public" onchange="toggleSecret()">
           <span class="vo-emoji">✅</span>
           <span><span class="vo-title">Yes, show my name</span><br><span class="vo-sub">Anyone who opens the leaderboard can see your name &amp; score</span></span>
         </label>
+      </div>
+      <div class="secret-box" id="secretBox">
+        <label for="secret">🔑 Your secret word:</label>
+        <input type="text" id="secret" placeholder="like tiger42" maxlength="30" autocomplete="off">
+        <span class="secret-hint">Only you should know it. Use the same word every time. You'll need it to see your score in Find my rank.</span>
       </div>
     </div>
 
@@ -332,6 +342,11 @@ function isRudeName(name) {
 
 const RUDE_NAME_MSG = 'Please choose a different name.\nNames can’t include rude or unkind words.';
 
+function toggleSecret() {
+  const pub = (document.querySelector('input[name="display"]:checked') || {}).value === 'Public';
+  document.getElementById('secretBox').hidden = pub;
+}
+
 async function submitAnswers(btn) {
   const name = document.getElementById('sname').value.trim();
   if (!name) { alert('Please enter your name first!'); return; }
@@ -349,13 +364,18 @@ async function submitAnswers(btn) {
   }
 
   const display = (document.querySelector('input[name="display"]:checked') || {}).value || 'Private';
+  const secret = document.getElementById('secret').value.trim();
+  if (display === 'Private' && !secret) {
+    alert('Please type a secret word.\nYou’ll need it to see your private score.');
+    document.getElementById('secret').focus(); return;
+  }
   // Make the leaderboard-visibility choice an explicit, conscious decision before saving.
   const sure = (display === 'Public')
     ? confirm('You chose to SHOW YOUR NAME on the leaderboard.\nAnyone who opens the leaderboard can see your name and score.\n\nSubmit your answers?')
     : confirm('You chose to stay PRIVATE.\nYour name and score stay off the leaderboard.\n\nSubmit your answers?');
   if (!sure) return;
 
-  const payload = Object.assign({ week: WEEK_LABEL, name: name, display: display }, answers);
+  const payload = Object.assign({ week: WEEK_LABEL, name: name, display: display, secret: display === 'Private' ? secret : '' }, answers);
 
   if (!ENDPOINT_URL) {
     alert('Thanks ' + name + '! Your answers have been recorded.\n\n(No Sheet connected yet.)');
@@ -374,7 +394,8 @@ async function submitAnswers(btn) {
       return;
     }
     if (!data.ok) throw new Error(data.error || 'Save failed');
-    alert('Thanks ' + name + '! Your answers have been recorded. ✓');
+    alert('Thanks ' + name + '! Your answers have been recorded. ✓'
+      + (data.secretMismatch ? '\n\nNote: that is not the secret word you used before. Keep using your first one to see your score (ask your teacher if you forgot it).' : ''));
   } catch (e) {
     alert('Sorry — something went wrong saving your answers.\nPlease tell your teacher.\n\n(' + e.message + ')');
   } finally {
