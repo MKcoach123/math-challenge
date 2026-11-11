@@ -399,6 +399,12 @@ into `apps_script_backend.gs` between `NAME_FILTER:START/END` (rejects with `{ok
 written). To change the list: edit name_filter.js, run `build_week.py --all`, push, then **redeploy as a New version**.
 Existing leaderboard names were checked — none are flagged.
 
+**Secret words (added 2026-11-10).** Private students can look up their own score in Find my rank with name +
+secret word. Words live in the owner-only `SecretWords` tab (Name | Secret word, one per student; first word kept).
+Set pages ask for a word when Private is chosen; a different word later still saves the answers but shows a note.
+A wrong word and an unknown name get the same "not found" reply. For students who were Private before this,
+run `makeSecretWords` once from the Apps Script editor and pass each word to the student via the teacher.
+
 ## 6. How to do common tasks
 
 ### Update / add a week's problems

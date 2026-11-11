@@ -17,6 +17,7 @@
 var SUBMISSIONS = 'Submissions';
 var ANSWER_KEY  = 'AnswerKey';
 var ROSTER      = 'Roster';   // Name | Class — powers the class-progress board
+var SECRETS     = 'SecretWords';   // Name | Secret word — lets Private students look up their own score
 var MAX_PROBLEMS = 6;   // supports 3–6 problems/week; AnswerKey/Submissions use Answer 1..6
 var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display']
   .concat(answerCols());  // -> ... 'Answer 1' .. 'Answer 6'
@@ -115,7 +116,14 @@ function doPost(e) {
     for (var i = 1; i <= MAX_PROBLEMS; i++) row.push(data['a' + i] || '');
     sheet.appendRow(row);
 
-    return json({ ok: true });
+    // A student's first secret word is kept; a different one later doesn't replace it.
+    var mismatch = false;
+    if (display === 'Private' && secretKey(data.secret)) {
+      var saved = getSecrets()[nameKey(data.name)];
+      if (!saved) saveSecret(data.name, data.secret);
+      else mismatch = saved !== secretKey(data.secret);
+    }
+    return json({ ok: true, secretMismatch: mismatch });
   } catch (err) {
     return json({ ok: false, error: String(err) });
   } finally {
@@ -131,7 +139,7 @@ function doGet(e) {
     var view = p.view || 'leaderboard';
 
     if (view === 'findme') {
-      return json(findRank(p.name, p.week));        // public students only — see findRank
+      return json(findRank(p.name, p.week, p.secret)); // Private students need their secret word
     }
     if (view === 'debug') {
       return json(debugInfo());                     // inspect what the sheet parsing sees
@@ -171,12 +179,14 @@ function leaderboard(weekLabel) {
  * is open to anyone, so a name alone must never reveal a Private student's score;
  * they get the same "not found" as a name that never submitted.
  */
-function findRank(name, weekLabel) {
+function findRank(name, weekLabel, secret) {
   if (!name || !nameKey(name)) return { ok: true, found: false };
   var s = computeStandings(weekLabel);
   var key = nameKey(name);
+  // A wrong word looks the same as an unknown name, so the lookup never reveals who is Private.
+  var secretOk = !!secretKey(secret) && getSecrets()[key] === secretKey(secret);
   for (var i = 0; i < s.standings.length; i++) {
-    if (s.standings[i].key === key && s.standings[i].display === 'Public') {
+    if (s.standings[i].key === key && (s.standings[i].display === 'Public' || secretOk)) {
       var x = s.standings[i];
       return {
         ok: true, found: true, name: x.name, rank: x.rank,
@@ -390,6 +400,47 @@ function getRoster() {
     sizes[cls] = (sizes[cls] || 0) + 1;
   });
   return { byName: byName, sizes: sizes, classes: Object.keys(sizes).sort() };
+}
+
+/** SecretWords tab → { nameKey: secretKey } (first entry per student wins). */
+function getSecrets() {
+  var map = {};
+  getRows(SECRETS).forEach(function (r) {
+    var nk = nameKey(r['Name']), sk = secretKey(r['Secret word']);
+    if (nk && sk && !map[nk]) map[nk] = sk;
+  });
+  return map;
+}
+
+function saveSecret(name, secret) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(SECRETS) || ss.insertSheet(SECRETS);
+  if (sh.getLastRow() === 0) { sh.appendRow(['Name', 'Secret word']); sh.setFrozenRows(1); }
+  sh.appendRow([name, String(secret).trim()]);
+}
+
+/** Case, spaces and dashes don't matter: "Tiger 42" = "tiger-42" = "TIGER42". */
+function secretKey(v) {
+  return norm(v).replace(/[\s\-_.]/g, '');
+}
+
+/**
+ * Run once from the Apps Script editor (select it, then ▶ Run). Gives every student
+ * whose newest submission is Private, and who has no secret word yet, a word like
+ * "otter482" in the SecretWords tab. Share each word with its student via the teacher.
+ */
+function makeSecretWords() {
+  var animals = ['otter', 'panda', 'tiger', 'koala', 'eagle', 'zebra', 'gecko', 'llama',
+                 'whale', 'bison', 'moose', 'robin', 'shark', 'sloth', 'squid', 'lemur'];
+  var have = getSecrets(), added = 0;
+  computeStandings('').standings.forEach(function (st) {
+    if (st.display !== 'Private' || have[st.key]) return;
+    var word = animals[Math.floor(Math.random() * animals.length)] + (100 + Math.floor(Math.random() * 900));
+    saveSecret(st.name, word);
+    have[st.key] = word;
+    added++;
+  });
+  Logger.log(added + ' secret word(s) added to the ' + SECRETS + ' tab.');
 }
 
 function round1(n) { return Math.round(n * 10) / 10; }

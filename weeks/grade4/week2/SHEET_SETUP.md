@@ -77,3 +77,10 @@ A brand-new deployment makes a *new* URL (and you'd have to re-paste it everywhe
   unscoreable weeks are skipped entirely rather than dragging every class down to 0%.
   ⚠️ The whole board rests on students typing a name that matches the `Roster`. Check the
   yellow "not on the class list" count after the first week.
+
+## SecretWords tab (created automatically)
+
+Holds one secret word per Private student (`Name | Secret word`), so they can see their own score in
+*Find my rank*. Keep the Sheet unshared with students. To give words to students who chose Private before this
+existed: in the Apps Script editor pick `makeSecretWords` → ▶ Run, then read the new rows in `SecretWords`.
+If a student forgets their word, look it up here (or edit it — the student must then use the new one).
