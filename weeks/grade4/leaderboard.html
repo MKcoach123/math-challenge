@@ -72,6 +72,8 @@ tr.me { background: #fff7ed; box-shadow: inset 4px 0 0 #f59e0b; }
   flex: 1; min-width: 180px; border: 2px solid #c7d2fe; border-radius: 8px; padding: 10px 14px; font-size: 15px; outline: none;
 }
 .findme input:focus { border-color: #4f46e5; }
+.findme #meName { flex: 3; }
+.findme #meSecret { flex: 0 1 150px; min-width: 130px; }
 .findme button {
   border: none; background: linear-gradient(135deg, #1d4ed8, #4f46e5); color: #fff; font-weight: 700; font-size: 15px;
   border-radius: 8px; padding: 10px 22px; cursor: pointer;
@@ -113,7 +115,7 @@ tr.me { background: #fff7ed; box-shadow: inset 4px 0 0 #f59e0b; }
     <div class="row">
       <input type="text" id="meName" placeholder="First name Last initial" maxlength="75" autocomplete="off"
              onkeydown="if(event.key==='Enter')findMe()">
-      <input type="text" id="meSecret" placeholder="Secret word (private only)" maxlength="8" autocomplete="off"
+      <input type="text" id="meSecret" placeholder="Secret word" maxlength="8" autocomplete="off"
              onkeydown="if(event.key==='Enter')findMe()">
       <button onclick="findMe()">Find me</button>
     </div>
