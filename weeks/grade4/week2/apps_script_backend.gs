@@ -24,7 +24,7 @@ var SUB_HEADER  = ['Timestamp', 'Week', 'Name', 'Display']
 
 // When each week stops accepting answers. Generated from week.json by build_week.py.
 var DEADLINES = { /* DEADLINES:START */
-  "Grade 4 — Week 1": "2026-11-13T19:00:00-08:00",
+  "Grade 4 — Week 1": "2026-11-20T19:00:00-08:00",
   "Grade 4 — Week 2": "2026-11-20T19:00:00-08:00",
   "Grade 4 — Week 3": "2026-12-04T19:00:00-08:00",
   "Grade 4 — Week 4": "2026-12-11T19:00:00-08:00",

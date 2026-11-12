@@ -303,7 +303,7 @@ labeled, so identity never depends on color alone.
 ## 5c. Weekly deadlines (added 2026-11-06)
 
 Every set stays open and visible. Sets 1–12 each close on a Friday at 7:00 PM Pacific, one week
-apart: Set 1 on 2026-11-13, Set 12 on 2027-02-19. The holiday Fridays (Nov 27, Dec 25, Jan 1) are
+apart: Set 1 on 2026-11-13 (moved to 2026-11-20 — same as Set 2 — after 2 classrooms joined), Set 12 on 2027-02-19. The holiday Fridays (Nov 27, Dec 25, Jan 1) are
 skipped, so no deadline lands on them. Extra Problems (week13) closes with Set 12, and its solutions
 open then: if it stayed open after that, students could copy from its solutions and still score.
 
